@@ -1,0 +1,10 @@
+[
+  {"id":"lin-1","sourceName":"Microsoft IDC","sourceCoords":[78.3392,17.4385],"targetName":"Orbit AI","targetCoords":[78.3778,17.4349],"relation":"Alumni Mafia","color":"#65d9ff"},
+  {"id":"lin-2","sourceName":"Amazon HYD","sourceCoords":[78.3398,17.4225],"targetName":"Finstack","targetCoords":[78.3419,17.4201],"relation":"Alumni Mafia","color":"#ffbd66"},
+  {"id":"lin-3","sourceName":"IIIT Hyderabad","sourceCoords":[78.3489,17.4456],"targetName":"NeuroLeaf Bio","targetCoords":[78.3666,17.4441],"relation":"Alumni Mafia","color":"#a78bfa"},
+  {"id":"lin-4","sourceName":"T-Hub","sourceCoords":[78.3662,17.4439],"targetName":"CloudMint","targetCoords":[78.3728,17.4337],"relation":"Incubated At","color":"#4ade80"},
+  {"id":"lin-5","sourceName":"IIIT Hyderabad","sourceCoords":[78.3489,17.4456],"targetName":"VoltForge","targetCoords":[78.3533,17.4588],"relation":"Alumni Mafia","color":"#a78bfa"},
+  {"id":"lin-6","sourceName":"Amazon HYD","sourceCoords":[78.3398,17.4225],"targetName":"AxonGrid","targetCoords":[78.3489,17.4484],"relation":"Alumni Mafia","color":"#ffbd66"},
+  {"id":"lin-7","sourceName":"Microsoft IDC","sourceCoords":[78.3392,17.4385],"targetName":"QuantaSec","targetCoords":[78.3508,17.4149],"relation":"Alumni Mafia","color":"#65d9ff"},
+  {"id":"lin-8","sourceName":"T-Hub","sourceCoords":[78.3662,17.4439],"targetName":"Terra Robotics","targetCoords":[78.3496,17.4452],"relation":"Incubated At","color":"#4ade80"}
+]

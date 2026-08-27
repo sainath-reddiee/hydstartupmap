@@ -1,0 +1,9 @@
+[
+  {"id":"space-1","name":"DLF Street Food District","type":"Street Food Hub","timings":"6 PM – 4 AM","openLate":true,"location":{"area":"Gachibowli","coordinates":[78.3485,17.4487]},"tags":["🍜 Late-night fuel","🛵 Easy parking","👥 Team hangout"]},
+  {"id":"space-2","name":"Cafe Niloufer Premium Lounge","type":"Late-Night Cafe","timings":"6 AM – 1 AM","wifiSpeed":"85 Mbps","openLate":true,"location":{"area":"Banjara Hills","coordinates":[78.4339,17.4129]},"tags":["🔌 Power sockets","☕ Irani chai","🤫 Quiet upstairs"]},
+  {"id":"space-3","name":"Hatch Station","type":"24/7 Hack Spot","timings":"Open 24/7","wifiSpeed":"240 Mbps","openLate":true,"location":{"area":"HITEC City","coordinates":[78.3815,17.4471]},"tags":["🖥️ Monitors","🔐 Secure access","🚿 Shower"]},
+  {"id":"space-4","name":"Roastery Coffee House","type":"Late-Night Cafe","timings":"8 AM – 11:30 PM","wifiSpeed":"110 Mbps","openLate":true,"location":{"area":"Banjara Hills","coordinates":[78.4281,17.4238]},"tags":["🌿 Courtyard","🔌 Select sockets","☕ Specialty coffee"]},
+  {"id":"space-5","name":"91Springboard HITEC","type":"Coworking Day-Pass","timings":"Open 24/7 for members","wifiSpeed":"300 Mbps","openLate":true,"location":{"area":"Madhapur","coordinates":[78.3911,17.4407]},"tags":["📞 Phone booths","🪑 Ergonomic","🍵 Pantry"]},
+  {"id":"space-6","name":"The Grind House","type":"Late-Night Cafe","timings":"10 AM – 2 AM","wifiSpeed":"120 Mbps","openLate":true,"location":{"area":"Kondapur","coordinates":[78.3652,17.4697]},"tags":["🔌 Every table","🎧 Focus booths","🥪 All-day menu"]},
+  {"id":"space-7","name":"WeWork RMZ Spire","type":"Coworking Day-Pass","timings":"8 AM – 10 PM","wifiSpeed":"280 Mbps","openLate":false,"location":{"area":"HITEC City","coordinates":[78.3704,17.4422]},"tags":["🏙️ Skyline view","📞 Booths","☕ Barista"]}
+]
