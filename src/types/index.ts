@@ -69,6 +69,10 @@ export interface Startup {
   founders?: Founder[];
   benefits?: string[];
   investors?: string[];
+  socials?: {
+    linkedin?: string;
+    x?: string;
+  };
   origin: {
     type: "Ex-BigTech" | "IIIT-H Alumni" | "T-Hub Cohort" | "Independent" | "Local Unicorn";
     anchorCompany?: string;
@@ -133,8 +137,26 @@ export interface RoadBillboard {
   tagline: string;
   ctaLink: string;
   isLive: boolean;
+  kind?: "virtual" | "physical" | "wall-of-fame";
+  status?: "Available" | "Booked" | "Live campaign";
+  dailyImpressions?: string;
+  weeklyPrice?: string;
+  dimensions?: string;
+  mediaOwner?: string;
+  imageUrl?: string;
   startsAt?: string;
   endsAt?: string;
+}
+
+export interface HoardingSighting {
+  id: string;
+  createdAt: string;
+  status: SubmissionStatus;
+  brandName: string;
+  junctionName: string;
+  caption: string;
+  submittedBy: string;
+  imageDataUrl?: string;
 }
 
 export interface NewsItem {
@@ -180,6 +202,7 @@ export interface CmsState {
   events: TechEvent[];
   news: NewsItem[];
   billboards: RoadBillboard[];
+  hoardings: HoardingSighting[];
   submissions: CompanySubmission[];
   adOrders: AdOrder[];
   updatedAt: string;

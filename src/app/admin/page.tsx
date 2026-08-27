@@ -9,7 +9,7 @@ import {
 import type { AdOrder, CmsState, CompanySubmission, Startup } from "@/types";
 import {
   approveSubmission, deleteStartup, exportCms, importCms, isAdminAuthed,
-  loadCms, loginAdmin, logoutAdmin, markAdOrder, rejectSubmission, resetCms,
+  loadCms, loginAdmin, logoutAdmin, markAdOrder, moderateHoarding, rejectSubmission, resetCms,
   subscribeCms, upsertStartup,
 } from "@/utils/cms";
 
@@ -175,6 +175,19 @@ export default function AdminPage() {
                 <p key={billboard.id}>{billboard.sponsorName} · {billboard.junctionName} · {billboard.isLive ? "LIVE" : "OFF"}</p>
               ))}
             </div>
+            {cms.hoardings.map((sighting) => (
+              <article className="admin-item" key={sighting.id}>
+                <span className={`status-pill ${sighting.status}`}>{sighting.status} sighting</span>
+                {sighting.imageDataUrl && <img className="admin-hoarding-photo" src={sighting.imageDataUrl} alt={sighting.caption} />}
+                <h3>{sighting.brandName}</h3>
+                <p>{sighting.junctionName} · {sighting.caption}</p>
+                <small>{sighting.submittedBy}</small>
+                <div className="admin-item-actions">
+                  <button className="approve" onClick={() => { moderateHoarding(sighting.id, "approved"); refresh(); }}>Approve</button>
+                  <button className="danger" onClick={() => { moderateHoarding(sighting.id, "rejected"); refresh(); }}>Reject</button>
+                </div>
+              </article>
+            ))}
           </div>
         )}
 

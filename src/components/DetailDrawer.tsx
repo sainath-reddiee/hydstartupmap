@@ -1,33 +1,43 @@
 "use client";
 
+import { useState } from "react";
 import {
-  ArrowUpRight, CalendarDays, Check, Clock3, ExternalLink,
-  MapPin, Users, X,
+  ArrowUpRight, Bookmark, BriefcaseBusiness, CalendarDays, Check, Clock3, ExternalLink,
+  Globe2, Landmark, MapPin, Share2, Users, X,
 } from "lucide-react";
-import type { Startup, TechEvent } from "@/types";
-import { nearestMetroLabel } from "@/utils/distance";
+import spacesData from "@/data/thirdspaces.json";
+import type { Startup, TechEvent, ThirdSpace } from "@/types";
+import { distanceKm, nearestMetroLabel } from "@/utils/distance";
+
+const spaces = spacesData as ThirdSpace[];
 
 type Props = {
   startup: Startup | null;
   event: TechEvent | null;
+  bookmarks: string[];
+  onToggleBookmark: (id: string) => void;
   onClose: () => void;
 };
 
-export default function DetailDrawer({ startup, event, onClose }: Props) {
+export default function DetailDrawer({ startup, event, bookmarks, onToggleBookmark, onClose }: Props) {
   const open = Boolean(startup || event);
   return (
     <>
       <button className={`drawer-scrim ${open ? "open" : ""}`} aria-label="Close details" onClick={onClose} />
       <section className={`drawer ${open ? "open" : ""}`} aria-hidden={!open}>
         <button className="drawer-close" onClick={onClose}><X size={19} /></button>
-        {startup && <CompanyProfile startup={startup} />}
+        {startup && <CompanyProfile key={startup.id} startup={startup} bookmarked={bookmarks.includes(startup.id)} onToggleBookmark={onToggleBookmark} />}
         {event && <EventProfile event={event} />}
       </section>
     </>
   );
 }
 
-function CompanyProfile({ startup }: { startup: Startup }) {
+function CompanyProfile({ startup, bookmarked, onToggleBookmark }: { startup: Startup; bookmarked: boolean; onToggleBookmark: (id: string) => void }) {
+  const [tab, setTab] = useState<"overview" | "jobs" | "funding">("overview");
+  const nearestCafe = spaces
+    .map((space) => ({ ...space, km: distanceKm(startup.location.coordinates, space.location.coordinates) }))
+    .sort((a, b) => a.km - b.km)[0];
   return (
     <>
       <div className="drawer-hero">
@@ -40,7 +50,11 @@ function CompanyProfile({ startup }: { startup: Startup }) {
         </div>
         <h2>{startup.name}</h2>
         <p>{startup.tagline}</p>
-        <a href={startup.website} target="_blank" rel="noreferrer">Visit website <ArrowUpRight size={14} /></a>
+        <div className="drawer-links">
+          <a href={startup.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> Website <ArrowUpRight size={12} /></a>
+          <a href={startup.socials?.linkedin ?? `https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(startup.name)}`} target="_blank" rel="noreferrer"><Share2 size={14} /> LinkedIn</a>
+          <button className={bookmarked ? "active" : ""} onClick={() => onToggleBookmark(startup.id)}><Bookmark size={14} fill="currentColor" /> {bookmarked ? "Saved" : "Save"}</button>
+        </div>
       </div>
 
       <div className="drawer-body">
@@ -50,6 +64,13 @@ function CompanyProfile({ startup }: { startup: Startup }) {
           <span><MapPin size={15} /><small>BASE</small><b>{startup.location.area}</b></span>
         </div>
 
+        <div className="profile-tabs">
+          <button className={tab === "overview" ? "active" : ""} onClick={() => setTab("overview")}><Globe2 size={14} /> Overview</button>
+          <button className={tab === "jobs" ? "active" : ""} onClick={() => setTab("jobs")}><BriefcaseBusiness size={14} /> Jobs <span>{startup.hiring.jobs.length}</span></button>
+          <button className={tab === "funding" ? "active" : ""} onClick={() => setTab("funding")}><Landmark size={14} /> Funding</button>
+        </div>
+
+        {tab === "overview" && <>
         <section>
           <div className="section-label">01 / MISSION</div>
           {startup.description.split("\n\n").map((text) => <p className="mission" key={text}>{text}</p>)}
@@ -78,7 +99,7 @@ function CompanyProfile({ startup }: { startup: Startup }) {
 
         <section>
           <div className="section-label">03 / TECH STACK</div>
-          <div className="tech-cloud">{startup.techStack.map((tech) => <span key={tech}>{tech}</span>)}</div>
+          <div className="tech-cloud categorized">{startup.techStack.map((tech, index) => <span data-kind={index % 4} key={tech}>{tech}</span>)}</div>
         </section>
 
         {(startup.benefits?.length || 0) > 0 && (
@@ -87,10 +108,11 @@ function CompanyProfile({ startup }: { startup: Startup }) {
             <div className="vibes large">{startup.benefits!.map((benefit) => <span key={benefit}><Check size={12} /> {benefit}</span>)}</div>
           </section>
         )}
+        </>}
 
-        <section>
+        {tab === "jobs" && <section className="profile-tab-panel">
           <div className="section-heading">
-            <div className="section-label">05 / OPEN ROLES</div>
+            <div className="section-label">ACTIVE JOB OPENINGS</div>
             <b>{startup.hiring.jobs.length} LIVE</b>
           </div>
           {startup.hiring.jobs.length ? startup.hiring.jobs.map((job) => (
@@ -104,10 +126,10 @@ function CompanyProfile({ startup }: { startup: Startup }) {
               <a href={job.applyUrl} target="_blank" rel="noreferrer">Apply <ArrowUpRight size={13} /></a>
             </div>
           )) : <p className="muted">No open roles right now. Bookmark this company to check back.</p>}
-        </section>
+        </section>}
 
-        <section>
-          <div className="section-label">06 / FUNDING SIGNAL</div>
+        {tab === "funding" && <section className="profile-tab-panel">
+          <div className="section-label">FUNDING & INVESTOR TIMELINE</div>
           <div className="timeline">
             {startup.funding.map((round, index) => (
               <div key={`${round.stage}-${index}`}>
@@ -121,15 +143,17 @@ function CompanyProfile({ startup }: { startup: Startup }) {
               </div>
             ))}
           </div>
-        </section>
+          {startup.investors?.length ? <div className="investor-cloud">{startup.investors.map((investor) => <span key={investor}>{investor}</span>)}</div> : null}
+        </section>}
 
         <section>
-          <div className="section-label">07 / LOCAL INTEL</div>
+          <div className="section-label">HYPER-LOCAL INTEL</div>
           <div className="local-card">
             <MapPin size={17} />
             <div>
               <b>{startup.location.building}</b>
               <p>{nearestMetroLabel(startup.location.coordinates)}</p>
+              <p>Nearest café/work spot: {nearestCafe.name} · {nearestCafe.km.toFixed(1)} km</p>
               {startup.source && <p>Source: {startup.source}</p>}
             </div>
           </div>

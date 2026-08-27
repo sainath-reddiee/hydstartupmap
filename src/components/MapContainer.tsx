@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import type { FillLayerSpecification, GeoJSONSource, Map as MapLibreMap, Marker, StyleSpecification } from "maplibre-gl";
 import { circle, featureCollection, lineString } from "@turf/turf";
@@ -21,8 +21,12 @@ type Props = {
   selectedEvent: TechEvent | null;
   hoveredId: string | null;
   commute: { area: string; radius: number } | null;
+  focusedArea: string | null;
   onSelectStartup: (startup: Startup) => void;
   onSelectEvent: (event: TechEvent) => void;
+  onFocusArea: (area: string | null) => void;
+  onSelectBillboard: (billboard: RoadBillboard) => void;
+  onSubmitHoarding: () => void;
 };
 
 function arcCoordinates(connection: LineageConnection) {
@@ -38,14 +42,17 @@ function arcCoordinates(connection: LineageConnection) {
 }
 
 export default function MapContainer({
-  mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, onSelectStartup, onSelectEvent,
+  mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
+  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
-  const callbacksRef = useRef({ onSelectStartup, onSelectEvent });
+  const [showAreas, setShowAreas] = useState(true);
+  const [showBillboards, setShowBillboards] = useState(true);
+  const callbacksRef = useRef({ onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard });
   const dataRef = useRef({ startups, events, billboards });
-  callbacksRef.current = { onSelectStartup, onSelectEvent };
+  callbacksRef.current = { onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard };
   dataRef.current = { startups, events, billboards };
 
   const clearMarkers = () => {
@@ -76,15 +83,33 @@ export default function MapContainer({
       markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(event.venue.coordinates).addTo(map));
     });
 
-    nextBillboards.forEach((billboard) => {
-      const element = document.createElement("a");
+    if (showBillboards) nextBillboards.forEach((billboard) => {
+      const element = document.createElement("button");
       element.className = "road-billboard";
-      element.href = billboard.ctaLink;
-      element.target = "_blank";
-      element.rel = "noreferrer";
+      element.dataset.kind = billboard.kind ?? "virtual";
       element.innerHTML = `<span>${billboard.sponsorName}</span><small>${billboard.tagline}</small>`;
+      element.addEventListener("click", () => callbacksRef.current.onSelectBillboard(billboard));
       markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(billboard.coordinates).addTo(map));
     });
+
+    if (showAreas) {
+      const counts = nextStartups.reduce<Record<string, number>>((result, startup) => {
+        result[startup.location.area] = (result[startup.location.area] ?? 0) + 1;
+        return result;
+      }, {});
+      Object.entries(counts).forEach(([area, count]) => {
+        const coordinates = AREA_CENTERS[area];
+        if (!coordinates) return;
+        const element = document.createElement("button");
+        element.className = `area-cluster ${focusedArea === area ? "active" : ""}`;
+        element.innerHTML = `<b>${count}</b><span>${area}</span>`;
+        element.addEventListener("click", () => {
+          map.flyTo({ center: coordinates, zoom: 15.6, pitch: 58, bearing: -18, duration: 1500 });
+          callbacksRef.current.onFocusArea(area);
+        });
+        markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(coordinates).addTo(map));
+      });
+    }
 
     spaces.forEach((space) => {
       const element = document.createElement("div");
@@ -155,6 +180,16 @@ export default function MapContainer({
         paint: { "line-color": "#0f766e", "line-width": 2, "line-dasharray": [3, 2], "line-opacity": 0.8 },
       });
 
+      map.addSource("area-focus", { type: "geojson", data: featureCollection([]) });
+      map.addLayer({
+        id: "area-focus-fill", type: "fill", source: "area-focus",
+        paint: { "fill-color": "#5eead4", "fill-opacity": 0.12 },
+      });
+      map.addLayer({
+        id: "area-focus-line", type: "line", source: "area-focus",
+        paint: { "line-color": "#0f766e", "line-width": 3, "line-opacity": 0.72 },
+      });
+
       renderMarkers(map);
     });
 
@@ -180,7 +215,7 @@ export default function MapContainer({
     if (!map) return;
     const update = () => renderMarkers(map);
     map.loaded() ? update() : map.once("load", update);
-  }, [startups, events, billboards, mode]);
+  }, [startups, events, billboards, mode, showAreas, showBillboards, focusedArea]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -238,6 +273,23 @@ export default function MapContainer({
     map.loaded() ? update() : map.once("load", update);
   }, [commute]);
 
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const update = () => {
+      const source = map.getSource("area-focus") as GeoJSONSource | undefined;
+      if (source) {
+        source.setData(focusedArea && AREA_CENTERS[focusedArea]
+          ? circle(AREA_CENTERS[focusedArea], 1.1, { steps: 64, units: "kilometers" })
+          : featureCollection([]));
+      }
+      if (focusedArea && AREA_CENTERS[focusedArea]) {
+        map.flyTo({ center: AREA_CENTERS[focusedArea], zoom: 15.6, pitch: 58, duration: 1400 });
+      }
+    };
+    map.loaded() ? update() : map.once("load", update);
+  }, [focusedArea]);
+
   return (
     <div className="map-shell">
       <div ref={containerRef} className="map-canvas" />
@@ -245,6 +297,15 @@ export default function MapContainer({
       <div className="map-status">
         <span className="status-dot" /> HYDERABAD WEST GRID
         <b>{mode === "night" ? "NIGHT PULSE" : "DAY SCAN"}</b>
+      </div>
+      <div className="map-layer-switcher">
+        <button className={showAreas ? "active" : ""} onClick={() => setShowAreas((value) => !value)}>
+          <i className="layer-area" /> Area signals
+        </button>
+        <button className={showBillboards ? "active" : ""} onClick={() => setShowBillboards((value) => !value)}>
+          <i className="layer-ooh" /> Roadside OOH
+        </button>
+        <button onClick={onSubmitHoarding}>+ Spotted a hoarding?</button>
       </div>
       <div className="map-legend">
         <span><i className="legend-startup" /> Startups</span>

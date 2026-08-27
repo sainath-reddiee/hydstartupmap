@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bookmark, BriefcaseBusiness, Building2, CalendarDays, ChevronRight, Clock3,
   MapPin, Moon, Navigation, Newspaper, Search, SlidersHorizontal, Sparkles, Wifi, Zap,
@@ -27,6 +27,8 @@ type Props = {
   onSelectEvent: (event: TechEvent) => void;
   onHover: (id: string | null) => void;
   onCommuteChange: (value: { area: string; radius: number } | null) => void;
+  focusedArea: string | null;
+  onAreaFocus: (area: string | null) => void;
 };
 
 export default function DirectoryPanel(props: Props) {
@@ -37,6 +39,22 @@ export default function DirectoryPanel(props: Props) {
   const [commuteEnabled, setCommuteEnabled] = useState(false);
   const [homeArea, setHomeArea] = useState("HITEC City");
   const [radius, setRadius] = useState(8);
+
+  useEffect(() => {
+    setArea(props.focusedArea ?? "All");
+  }, [props.focusedArea]);
+
+  const areaCounts = useMemo(() => Object.entries(
+    props.startups.reduce<Record<string, number>>((counts, startup) => {
+      counts[startup.location.area] = (counts[startup.location.area] ?? 0) + 1;
+      return counts;
+    }, {}),
+  ).sort((a, b) => b[1] - a[1]), [props.startups]);
+
+  const chooseArea = (nextArea: string) => {
+    setArea(nextArea);
+    props.onAreaFocus(nextArea === "All" ? null : nextArea);
+  };
 
   const setCommute = (enabled: boolean, nextArea = homeArea, nextRadius = radius) => {
     setCommuteEnabled(enabled);
@@ -102,11 +120,18 @@ export default function DirectoryPanel(props: Props) {
             </div>
             <div className="area-row">
               <SlidersHorizontal size={14} />
-              <select value={area} onChange={(e) => setArea(e.target.value)}>
-                <option>All</option>
-                {areaNames.map((name) => <option key={name}>{name}</option>)}
-              </select>
+              <strong>EXPLORE BY AREA</strong>
               <span>{filteredStartups.length} signals</span>
+            </div>
+            <div className="area-signals">
+              <button className={area === "All" ? "active" : ""} onClick={() => chooseArea("All")}>
+                <b>{props.startups.length}</b><span>All Hyderabad</span>
+              </button>
+              {areaCounts.map(([name, count]) => (
+                <button key={name} className={area === name || props.focusedArea === name ? "active" : ""} onClick={() => chooseArea(name)}>
+                  <b>{count}</b><span>{name}</span>
+                </button>
+              ))}
             </div>
             <div className={`commute ${commuteEnabled ? "active" : ""}`}>
               <div className="commute-title">

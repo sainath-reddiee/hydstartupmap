@@ -3,9 +3,9 @@
 import { FormEvent, useState } from "react";
 import { ArrowUpRight, Building2, Check, Plus, ShieldCheck, Sparkles, X, Zap } from "lucide-react";
 import type { AreaName, StartupCategory } from "@/types";
-import { checkoutFor, createAdOrder, submitCompany } from "@/utils/cms";
+import { checkoutFor, createAdOrder, submitCompany, submitHoarding } from "@/utils/cms";
 
-export type ModalKind = "boost" | "billboard" | "submit" | "job" | "event";
+export type ModalKind = "boost" | "billboard" | "submit" | "job" | "event" | "hoarding";
 
 const offers = {
   boost: {
@@ -58,6 +58,67 @@ export default function ActionModal({ kind, onClose }: { kind: ModalKind | null;
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
   if (!kind) return null;
+
+  if (kind === "hoarding") {
+    const submitSighting = async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      const file = data.get("photo");
+      let imageDataUrl: string | undefined;
+      if (file instanceof File && file.size > 0) {
+        if (file.size > 750_000) {
+          alert("Please upload a photo smaller than 750 KB for browser storage.");
+          return;
+        }
+        imageDataUrl = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(String(reader.result));
+          reader.onerror = () => reject(reader.error);
+          reader.readAsDataURL(file);
+        });
+      }
+      submitHoarding({
+        brandName: String(data.get("brandName") || ""),
+        junctionName: String(data.get("junctionName") || ""),
+        caption: String(data.get("caption") || ""),
+        submittedBy: String(data.get("email") || ""),
+        imageDataUrl,
+      });
+      setSubmitted(true);
+    };
+
+    return (
+      <div className="modal-wrap" role="dialog" aria-modal="true">
+        <button className="modal-scrim" onClick={onClose} aria-label="Close" />
+        <div className="modal animate-pop">
+          <button className="modal-close" onClick={onClose}><X size={18} /></button>
+          {!submitted ? (
+            <>
+              <span className="modal-icon">📸</span>
+              <span className="eyebrow">HOARDING WALL OF FAME</span>
+              <h2>Spotted a great startup billboard?</h2>
+              <p>Share the campaign, location and your reaction. Approved sightings appear on Hyderabad&apos;s OOH pulse.</p>
+              <form onSubmit={submitSighting}>
+                <label>BRAND / CAMPAIGN<input name="brandName" required placeholder="e.g. CRED vs. Zepto" /></label>
+                <label>JUNCTION / ROAD<input name="junctionName" required placeholder="e.g. Durgam Cheruvu" /></label>
+                <label>YOUR EMAIL<input name="email" required type="email" placeholder="you@email.com" /></label>
+                <label>PHOTO<input name="photo" required type="file" accept="image/*" /></label>
+                <label>CAPTION / REACTION<textarea name="caption" required placeholder="What made this hoarding worth spotting?" /></label>
+                <button className="modal-primary" type="submit">Send to the wall <ArrowUpRight size={15} /></button>
+              </form>
+            </>
+          ) : (
+            <div className="success">
+              <span><Check size={28} /></span>
+              <h2>Sighting received</h2>
+              <p>The owner can approve it from the admin OOH queue before it appears publicly.</p>
+              <button className="modal-primary" onClick={onClose}>Back to the map</button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (kind === "submit") {
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {

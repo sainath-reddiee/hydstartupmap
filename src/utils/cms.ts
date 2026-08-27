@@ -7,6 +7,7 @@ import type {
   AdProduct,
   CmsState,
   CompanySubmission,
+  HoardingSighting,
   NewsItem,
   RoadBillboard,
   Startup,
@@ -42,6 +43,7 @@ function seedState(): CmsState {
     events: eventsSeed as TechEvent[],
     news: newsSeed as NewsItem[],
     billboards: sponsorsSeed.billboards as RoadBillboard[],
+    hoardings: [],
     submissions: [],
     adOrders: [],
     updatedAt: new Date().toISOString(),
@@ -87,7 +89,11 @@ export function loadCms(): CmsState {
       startups: parsed.startups?.length ? parsed.startups : seedState().startups,
       events: parsed.events?.length ? parsed.events : seedState().events,
       news: parsed.news?.length ? parsed.news : seedState().news,
-      billboards: parsed.billboards?.length ? parsed.billboards : seedState().billboards,
+      billboards: [
+        ...(parsed.billboards ?? []),
+        ...seedState().billboards.filter((seed) => !(parsed.billboards ?? []).some((item) => item.id === seed.id)),
+      ],
+      hoardings: parsed.hoardings ?? [],
       submissions: parsed.submissions ?? [],
       adOrders: parsed.adOrders ?? [],
     };
@@ -126,6 +132,25 @@ export function submitCompany(input: Omit<CompanySubmission, "id" | "createdAt" 
     status: "pending",
   };
   return saveCms({ ...state, submissions: [submission, ...state.submissions] });
+}
+
+export function submitHoarding(input: Omit<HoardingSighting, "id" | "createdAt" | "status">) {
+  const state = loadCms();
+  const sighting: HoardingSighting = {
+    ...input,
+    id: `hoarding-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+    status: "pending",
+  };
+  return saveCms({ ...state, hoardings: [sighting, ...state.hoardings] });
+}
+
+export function moderateHoarding(id: string, status: "approved" | "rejected") {
+  const state = loadCms();
+  return saveCms({
+    ...state,
+    hoardings: state.hoardings.map((item) => item.id === id ? { ...item, status } : item),
+  });
 }
 
 export function approveSubmission(id: string, edits?: Partial<Startup>) {

@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Header from "./Header";
 import DirectoryPanel from "./DirectoryPanel";
 import DetailDrawer from "./DetailDrawer";
+import BillboardDrawer from "./BillboardDrawer";
 import ActionModal, { ModalKind } from "./ActionModal";
 import type { Mode, NewsItem, RoadBillboard, Startup, TechEvent } from "@/types";
 import { getPublishedStartups, loadCms, subscribeCms } from "@/utils/cms";
@@ -43,6 +44,8 @@ export default function HydTechPulse() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [commute, setCommute] = useState<{ area: string; radius: number } | null>(null);
   const [modal, setModal] = useState<ModalKind | null>(null);
+  const [focusedArea, setFocusedArea] = useState<string | null>(null);
+  const [selectedBillboard, setSelectedBillboard] = useState<RoadBillboard | null>(null);
 
   const refresh = () => {
     const cms = loadCms();
@@ -98,6 +101,8 @@ export default function HydTechPulse() {
           onSelectEvent={selectEvent}
           onHover={setHoveredId}
           onCommuteChange={setCommute}
+          focusedArea={focusedArea}
+          onAreaFocus={setFocusedArea}
         />
         <MapContainer
           mode={mode}
@@ -108,16 +113,38 @@ export default function HydTechPulse() {
           selectedEvent={selectedEvent}
           hoveredId={hoveredId}
           commute={commute}
+          focusedArea={focusedArea}
           onSelectStartup={selectStartup}
           onSelectEvent={selectEvent}
+          onFocusArea={setFocusedArea}
+          onSelectBillboard={(billboard) => {
+            setSelectedStartup(null);
+            setSelectedEvent(null);
+            setSelectedBillboard(billboard);
+          }}
+          onSubmitHoarding={() => setModal("hoarding")}
         />
       </div>
       <DetailDrawer
         startup={selectedStartup}
         event={selectedEvent}
+        bookmarks={bookmarks}
+        onToggleBookmark={(id) => setBookmarks(toggleStoredBookmark(id))}
         onClose={() => {
           setSelectedStartup(null);
           setSelectedEvent(null);
+        }}
+      />
+      <BillboardDrawer
+        billboard={selectedBillboard}
+        onClose={() => setSelectedBillboard(null)}
+        onBookVirtual={() => {
+          setSelectedBillboard(null);
+          setModal("billboard");
+        }}
+        onSubmitSighting={() => {
+          setSelectedBillboard(null);
+          setModal("hoarding");
         }}
       />
       <ActionModal kind={modal} onClose={() => setModal(null)} />
