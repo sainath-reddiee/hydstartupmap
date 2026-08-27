@@ -52,6 +52,9 @@ export default function MapContainer({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
+    // Turbopack does not currently emit MapLibre v6's module worker as a public
+    // asset, so point MapLibre at the matching, cacheable ESM worker directly.
+    maplibregl.setWorkerUrl("https://cdn.jsdelivr.net/npm/maplibre-gl@6.6.0/dist/maplibre-gl-worker.mjs");
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: "https://tiles.openfreemap.org/styles/liberty",
