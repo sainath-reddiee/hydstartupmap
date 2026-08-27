@@ -307,6 +307,18 @@ export default function MapContainer({
         </button>
         <button onClick={onSubmitHoarding}>+ Spotted a hoarding?</button>
       </div>
+      {showBillboards && (
+        <div className="map-ooh-tray">
+          <div className="map-ooh-heading"><span>PRIME OOH INVENTORY</span><b>{billboards.length} SLOTS</b></div>
+          {billboards.slice(0, 4).map((billboard) => (
+            <button key={billboard.id} onClick={() => onSelectBillboard(billboard)}>
+              <i data-kind={billboard.kind ?? "virtual"} />
+              <span><b>{billboard.junctionName}</b><small>{billboard.kind === "physical" ? billboard.dailyImpressions : billboard.weeklyPrice ?? "Digital slot"}</small></span>
+              <em>{billboard.status === "Available" ? "BOOK" : "VIEW"}</em>
+            </button>
+          ))}
+        </div>
+      )}
       <div className="map-legend">
         <span><i className="legend-startup" /> Startups</span>
         <span><i className="legend-event" /> Events</span>
