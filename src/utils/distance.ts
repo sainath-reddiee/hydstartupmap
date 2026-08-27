@@ -8,6 +8,8 @@ export const AREA_CENTERS: Record<string, [number, number]> = {
   "Jubilee Hills": [78.4071, 17.4304],
   Kondapur: [78.3634, 17.4698],
   "Banjara Hills": [78.4382, 17.4152],
+  Raidurg: [78.3748, 17.442],
+  Nanakramguda: [78.3445, 17.4188],
 };
 
 export function distanceKm(from: [number, number], to: [number, number]) {
@@ -24,4 +26,13 @@ export function nearestMetroLabel(coords: [number, number]) {
     .map((metro) => ({ ...metro, km: distanceKm(coords, metro.coords) }))
     .sort((a, b) => a.km - b.km)[0];
   return `${nearest.name} · ${nearest.km.toFixed(1)} km`;
+}
+
+export function relativeTime(date: string) {
+  const diff = Date.now() - new Date(`${date}T12:00:00`).getTime();
+  const days = Math.max(0, Math.round(diff / 86400000));
+  if (days === 0) return "today";
+  if (days === 1) return "1d";
+  if (days < 30) return `${days}d`;
+  return `${Math.round(days / 30)}mo`;
 }

@@ -1,0 +1,89 @@
+[
+  {
+    "id": "news-1",
+    "title": "Darwinbox deepens AI-native HR stack from Hyderabad HQ",
+    "source": "Entrackr",
+    "url": "https://example.com/news/darwinbox-ai",
+    "publishedAt": "2026-08-26",
+    "tags": ["HRTech", "Unicorn", "AI"],
+    "companyId": "darwinbox",
+    "summary": "Hyderabad's unicorn continues shipping agentic workflows for enterprise HR teams across Asia and the Middle East.",
+    "isFeatured": true
+  },
+  {
+    "id": "news-2",
+    "title": "Skyroot Aerospace advances Vikram-1 launch readiness",
+    "source": "Inc42",
+    "url": "https://example.com/news/skyroot",
+    "publishedAt": "2026-08-25",
+    "tags": ["Space", "Deeptech", "Funding"],
+    "companyId": "skyroot",
+    "summary": "The Hyderabad space startup is scaling manufacturing and mission ops for India's private launch corridor.",
+    "isFeatured": true
+  },
+  {
+    "id": "news-3",
+    "title": "Keka HR expands product engineering hub in Gachibowli",
+    "source": "YourStory",
+    "url": "https://example.com/news/keka",
+    "publishedAt": "2026-08-24",
+    "tags": ["SaaS", "Hiring"],
+    "companyId": "keka",
+    "summary": "Keka is hiring across product and platform teams as mid-market HR demand accelerates.",
+    "isFeatured": false
+  },
+  {
+    "id": "news-4",
+    "title": "NxtWave crosses new learner milestone with Hyderabad-first model",
+    "source": "Economic Times",
+    "url": "https://example.com/news/nxtwave",
+    "publishedAt": "2026-08-23",
+    "tags": ["Edtech", "Growth"],
+    "companyId": "nxtwave",
+    "summary": "The edtech company is expanding CCBP programs while growing its local engineering footprint.",
+    "isFeatured": false
+  },
+  {
+    "id": "news-5",
+    "title": "Bluecopa raises fresh capital to automate finance ops",
+    "source": "T-Hub Stories",
+    "url": "https://example.com/news/bluecopa",
+    "publishedAt": "2026-08-22",
+    "tags": ["Fintech", "T-Hub", "Funding"],
+    "companyId": "bluecopa",
+    "summary": "The T-Hub-backed finance automation startup is expanding enterprise accounts across India.",
+    "isFeatured": true
+  },
+  {
+    "id": "news-6",
+    "title": "T-Hub Demo Day puts Hyderabad deeptech on investor radar",
+    "source": "HydTechPulse",
+    "url": "https://example.com/news/thub-demo",
+    "publishedAt": "2026-08-21",
+    "tags": ["Events", "Investors", "Deeptech"],
+    "summary": "Hardware, climate and AI founders pitched to local and global funds at T-Hub Phase 2.",
+    "isFeatured": false
+  },
+  {
+    "id": "news-7",
+    "title": "NephroPlus accelerates clinic network and care tech stack",
+    "source": "Business Standard",
+    "url": "https://example.com/news/nephroplus",
+    "publishedAt": "2026-08-20",
+    "tags": ["Healthtech", "Expansion"],
+    "companyId": "nephroplus",
+    "summary": "India's dialysis network is investing in care coordination tools from its Hyderabad base.",
+    "isFeatured": false
+  },
+  {
+    "id": "news-8",
+    "title": "Bhanzu brings math learning product push to Hyderabad talent",
+    "source": "Inc42",
+    "url": "https://example.com/news/bhanzu",
+    "publishedAt": "2026-08-19",
+    "tags": ["Edtech", "Hiring"],
+    "companyId": "bhanzu",
+    "summary": "The edtech brand is building content and product teams closer to its founder ecosystem.",
+    "isFeatured": false
+  }
+]

@@ -1,43 +1,465 @@
 [
   {
-    "id": "orbit-ai", "name": "Orbit AI", "tagline": "Autonomous copilots for industrial operations", "description": "Orbit AI gives operations teams a live intelligence layer across factories and field assets. Its Hyderabad team combines multimodal models with edge inference to catch failures before they happen.\n\nThe company is building an India-first industrial foundation model, trained on real maintenance workflows and designed to run securely inside customer networks.", "website": "https://example.com/orbit-ai", "foundedYear": 2022, "teamSize": "51–100", "category": "AI & Data", "stage": "Series A", "techStack": ["Python", "PyTorch", "Rust", "Kubernetes"],
-    "funding": [{"stage": "Series A", "amount": "$8.5M", "date": "Mar 2026", "leadInvestors": ["Peak XV Surge", "Together Fund"]}, {"stage": "Seed", "amount": "$2M", "date": "Jun 2023", "leadInvestors": ["Speciale Invest"]}],
-    "origin": {"type": "Ex-BigTech", "anchorCompany": "Microsoft IDC"}, "location": {"area": "Gachibowli", "building": "Knowledge City, Tower 2", "coordinates": [78.3778, 17.4349]},
-    "hiring": {"isHiring": true, "careersUrl": "https://example.com/orbit-ai/careers", "jobs": [{"id": "orb-1", "title": "Senior ML Engineer", "department": "Data/AI", "type": "Full-time", "salaryRange": "₹28–42 LPA", "techStack": ["PyTorch", "Python"], "applyUrl": "https://example.com/apply/orb-1", "isFeatured": true}, {"id": "orb-2", "title": "Platform Engineer", "department": "Engineering", "type": "Full-time", "salaryRange": "₹22–32 LPA", "techStack": ["Rust", "Kubernetes"], "applyUrl": "https://example.com/apply/orb-2"}]},
-    "vibes": ["🚇 6m to Raidurg", "☕ Great coffee", "🌿 Terrace"], "isBoosted": true
+    "id": "darwinbox",
+    "name": "Darwinbox",
+    "tagline": "AI-native HCM for the modern enterprise",
+    "description": "Darwinbox is Hyderabad's unicorn HR platform used by global enterprises to run hiring, payroll, performance and employee experience on one cloud stack.\n\nBuilt for Asia-first complexity, the product blends workflow automation with AI copilots so People teams can operate at scale without losing local compliance nuance.",
+    "website": "https://darwinbox.com",
+    "foundedYear": 2015,
+    "teamSize": "1001–5000",
+    "category": "SaaS & Enterprise",
+    "stage": "Unicorn",
+    "techStack": ["Java", "React", "Kubernetes", "AWS", "Python"],
+    "funding": [
+      {"stage": "Unicorn", "amount": "$1B+ valuation", "date": "2022+", "leadInvestors": ["SoftBank Vision Fund", "Microsoft"], "valuation": "$1B+"}
+    ],
+    "founders": [
+      {"name": "Jayadeep Pati", "role": "Co-founder", "previous": "Enterprise SaaS"},
+      {"name": "Chaitanya Peddi", "role": "Co-founder", "previous": "Product & Growth"},
+      {"name": "Rohit Chennamaneni", "role": "Co-founder", "previous": "Technology"}
+    ],
+    "benefits": ["Health insurance", "Flexible leave", "Learning stipend", "Hybrid friendly"],
+    "investors": ["SoftBank Vision Fund", "Microsoft", "Sequoia"],
+    "origin": {"type": "Local Unicorn", "anchorCompany": "Hyderabad HQ"},
+    "location": {"area": "HITEC City", "building": "Raidurg / Knowledge City corridor", "coordinates": [78.3752, 17.4448]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://darwinbox.com/careers",
+      "jobs": [
+        {"id": "dar-1", "title": "Senior Backend Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹35–55 LPA", "techStack": ["Java", "AWS"], "applyUrl": "https://darwinbox.com/careers", "isFeatured": true, "description": "Build scalable HCM services used by global enterprises."},
+        {"id": "dar-2", "title": "Product Designer", "department": "Design", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹25–40 LPA", "techStack": ["Figma"], "applyUrl": "https://darwinbox.com/careers"}
+      ]
+    },
+    "vibes": ["🦄 Unicorn campus", "🚇 Near Raidurg", "🌏 Global customers"],
+    "isBoosted": true,
+    "isPublished": true,
+    "source": "StartupBlink / Built In Hyderabad"
   },
   {
-    "id": "finstack", "name": "Finstack", "tagline": "Programmable treasury for modern Indian businesses", "description": "Finstack unifies cash positions, payouts, and working-capital insights for finance teams. Its rule engine turns fragmented bank workflows into one auditable operating layer.\n\nBuilt by fintech infrastructure veterans, the platform is focused on mid-market companies scaling across multiple entities.", "website": "https://example.com/finstack", "foundedYear": 2021, "teamSize": "26–50", "category": "Fintech", "stage": "Series A", "techStack": ["TypeScript", "Go", "PostgreSQL", "React"],
-    "funding": [{"stage": "Series A", "amount": "$6M", "date": "Nov 2025", "leadInvestors": ["Blume Ventures"]}], "origin": {"type": "Ex-BigTech", "anchorCompany": "Amazon HYD"}, "location": {"area": "Financial District", "building": "WaveRock SEZ", "coordinates": [78.3419, 17.4201]},
-    "hiring": {"isHiring": true, "careersUrl": "https://example.com/finstack/careers", "jobs": [{"id": "fin-1", "title": "Backend Engineer II", "department": "Engineering", "type": "Full-time", "salaryRange": "₹20–30 LPA", "techStack": ["Go", "PostgreSQL"], "applyUrl": "https://example.com/apply/fin-1"}, {"id": "fin-2", "title": "Product Designer", "department": "Design", "type": "Full-time", "salaryRange": "₹16–24 LPA", "techStack": ["Figma"], "applyUrl": "https://example.com/apply/fin-2"}]}, "vibes": ["🏙️ Skyline views", "🚌 Shuttle", "🏋️ Gym"]
+    "id": "keka",
+    "name": "Keka HR",
+    "tagline": "People management software for growing companies",
+    "description": "Keka helps mid-market companies run payroll, attendance, performance and employee engagement without spreadsheet chaos.\n\nFrom Gachibowli, the team ships a polished HR suite loved by startups and scale-ups across India.",
+    "website": "https://www.keka.com",
+    "foundedYear": 2017,
+    "teamSize": "501–1000",
+    "category": "SaaS & Enterprise",
+    "stage": "Series B+",
+    "techStack": [".NET", "React", "Azure", "SQL Server"],
+    "funding": [
+      {"stage": "Series B+", "amount": "Undisclosed", "date": "2022+", "leadInvestors": ["WestBridge"]}
+    ],
+    "founders": [{"name": "Vijay Yalamanchili", "role": "Founder & CEO", "previous": "HRTech founder"}],
+    "benefits": ["Medical cover", "WFH setup support", "Learning budget"],
+    "investors": ["WestBridge"],
+    "origin": {"type": "Independent"},
+    "location": {"area": "Gachibowli", "building": "Keka HQ, Gachibowli", "coordinates": [78.3485, 17.4408]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.keka.com/careers",
+      "jobs": [
+        {"id": "kek-1", "title": "Full Stack Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹22–38 LPA", "techStack": ["React", ".NET"], "applyUrl": "https://www.keka.com/careers", "isFeatured": true},
+        {"id": "kek-2", "title": "Customer Success Manager", "department": "Sales", "type": "Full-time", "workMode": "On-site", "salaryRange": "₹12–20 LPA", "applyUrl": "https://www.keka.com/careers"}
+      ]
+    },
+    "vibes": ["💚 Strong culture", "🏢 Gachibowli HQ", "📈 Fast shipping"],
+    "isBoosted": true,
+    "isPublished": true,
+    "source": "StartupBlink"
   },
   {
-    "id": "neuroleaf", "name": "NeuroLeaf Bio", "tagline": "AI-guided diagnostics for community clinics", "description": "NeuroLeaf builds compact diagnostic tools for clinics beyond tier-one hospitals. Its vision models help technicians produce consistent results at the point of care.\n\nThe team works with hospital networks to validate every workflow and keep clinicians in control of decisions.", "website": "https://example.com/neuroleaf", "foundedYear": 2020, "teamSize": "26–50", "category": "Healthtech & Bio", "stage": "Series A", "techStack": ["Python", "TensorFlow", "Flutter", "GCP"],
-    "funding": [{"stage": "Series A", "amount": "$5.2M", "date": "Jan 2026", "leadInvestors": ["Endiya Partners"]}], "origin": {"type": "IIIT-H Alumni", "anchorCompany": "IIIT Hyderabad"}, "location": {"area": "HITEC City", "building": "T-Hub Phase 2", "coordinates": [78.3666, 17.4441]},
-    "hiring": {"isHiring": true, "careersUrl": "https://example.com/neuroleaf/careers", "jobs": [{"id": "neu-1", "title": "Computer Vision Scientist", "department": "Data/AI", "type": "Full-time", "salaryRange": "₹24–36 LPA", "techStack": ["TensorFlow", "Python"], "applyUrl": "https://example.com/apply/neu-1", "isFeatured": true}]}, "vibes": ["🧪 Wet lab access", "🚇 Near Raidurg", "🥗 Healthy cafe"], "isBoosted": true
+    "id": "skyroot",
+    "name": "Skyroot Aerospace",
+    "tagline": "Private space launch vehicles built in Hyderabad",
+    "description": "Skyroot is building India's private launch capability with the Vikram rocket family for small satellite missions.\n\nThe company combines propulsion, structures and mission software under one deeptech stack in Hyderabad.",
+    "website": "https://skyroot.in",
+    "foundedYear": 2018,
+    "teamSize": "201–500",
+    "category": "Space & Aerospace",
+    "stage": "Series B+",
+    "techStack": ["C++", "Python", "MATLAB", "Embedded"],
+    "funding": [
+      {"stage": "Series B+", "amount": "$50M+", "date": "2023+", "leadInvestors": ["GIC", "Temasek"]}
+    ],
+    "founders": [
+      {"name": "Pawan Kumar Chandana", "role": "Co-founder & CEO", "previous": "ISRO"},
+      {"name": "Naga Bharath Daka", "role": "Co-founder & COO", "previous": "ISRO"}
+    ],
+    "benefits": ["Mission ownership", "Deeptech lab access", "Health cover"],
+    "investors": ["GIC", "Temasek", "Greenko"],
+    "origin": {"type": "Independent", "anchorCompany": "ISRO alumni"},
+    "location": {"area": "Financial District", "building": "Skyroot facilities corridor", "coordinates": [78.3432, 17.4215]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://skyroot.in/careers",
+      "jobs": [
+        {"id": "sky-1", "title": "Propulsion Engineer", "department": "Engineering", "type": "Full-time", "workMode": "On-site", "salaryRange": "₹18–32 LPA", "techStack": ["MATLAB", "CFD"], "applyUrl": "https://skyroot.in/careers", "isFeatured": true}
+      ]
+    },
+    "vibes": ["🚀 Rockets", "🧪 Hardware labs", "🇮🇳 Make-in-India"],
+    "isPublished": true,
+    "source": "StartupBlink"
   },
   {
-    "id": "cloudmint", "name": "CloudMint", "tagline": "FinOps autopilot for cloud-native teams", "description": "CloudMint continuously maps cloud spend to engineering ownership and suggests safe savings. Teams can act on recommendations directly from Slack with policy controls.\n\nThe product is built for engineering leaders who need cost accountability without slowing delivery.", "website": "https://example.com/cloudmint", "foundedYear": 2023, "teamSize": "11–25", "category": "SaaS & Enterprise", "stage": "Seed", "techStack": ["Next.js", "Go", "ClickHouse", "AWS"],
-    "funding": [{"stage": "Seed", "amount": "$2.4M", "date": "Feb 2026", "leadInvestors": ["Together Fund"]}], "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"}, "location": {"area": "Madhapur", "building": "Sattva Knowledge City", "coordinates": [78.3728, 17.4337]},
-    "hiring": {"isHiring": true, "careersUrl": "https://example.com/cloudmint/careers", "jobs": [{"id": "clo-1", "title": "Founding Product Manager", "department": "Product", "type": "Full-time", "salaryRange": "₹24–34 LPA", "techStack": ["FinOps", "B2B SaaS"], "applyUrl": "https://example.com/apply/clo-1"}]}, "vibes": ["🐕 Dog-friendly", "🍜 8m to DLF", "🧑‍💻 Maker room"]
+    "id": "nxtwave",
+    "name": "NxtWave",
+    "tagline": "Intensive tech education for India's next builders",
+    "description": "NxtWave runs outcome-driven CCBP programs that help students and early professionals become job-ready developers.\n\nThe Hyderabad-born edtech company mixes product-led learning with high-touch mentorship.",
+    "website": "https://www.ccbp.in",
+    "foundedYear": 2020,
+    "teamSize": "501–1000",
+    "category": "Edtech",
+    "stage": "Series B+",
+    "techStack": ["Python", "React", "Node.js", "PostgreSQL"],
+    "funding": [
+      {"stage": "Series B+", "amount": "$50M+", "date": "2024+", "leadInvestors": ["General Catalyst"]}
+    ],
+    "founders": [
+      {"name": "Sashank Reddy", "role": "Co-founder", "previous": "Edtech"},
+      {"name": "Rahul Attuluri", "role": "Co-founder", "previous": "Amazon"}
+    ],
+    "benefits": ["Learning culture", "Flexible hours", "Medical insurance"],
+    "investors": ["General Catalyst", "Better Capital"],
+    "origin": {"type": "Ex-BigTech", "anchorCompany": "Amazon HYD"},
+    "location": {"area": "Madhapur", "building": "NxtWave campus / Madhapur", "coordinates": [78.3911, 17.4407]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.ccbp.in",
+      "jobs": [
+        {"id": "nxt-1", "title": "Curriculum Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹15–28 LPA", "techStack": ["Python", "React"], "applyUrl": "https://www.ccbp.in", "isFeatured": true},
+        {"id": "nxt-2", "title": "Growth Marketer", "department": "Growth", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹12–22 LPA", "applyUrl": "https://www.ccbp.in"}
+      ]
+    },
+    "vibes": ["📚 Builder culture", "🧑‍🏫 Mentorship", "🌱 High energy"],
+    "isPublished": true,
+    "source": "StartupBlink"
   },
   {
-    "id": "voltforge", "name": "VoltForge", "tagline": "Smarter power electronics for electric fleets", "description": "VoltForge designs modular powertrain controllers for commercial EV fleets. Its digital twin catches thermal issues before vehicles leave the depot.\n\nThe hardware and firmware teams prototype locally and partner with fleet operators across India.", "website": "https://example.com/voltforge", "foundedYear": 2019, "teamSize": "51–100", "category": "Deeptech & Hardware", "stage": "Series B+", "techStack": ["C++", "Rust", "MATLAB", "AWS IoT"],
-    "funding": [{"stage": "Series B+", "amount": "$18M", "date": "Aug 2025", "leadInvestors": ["Elevation Capital", "Athera"]}], "origin": {"type": "IIIT-H Alumni", "anchorCompany": "IIIT Hyderabad"}, "location": {"area": "Kondapur", "building": "Botanical Garden Tech Park", "coordinates": [78.3533, 17.4588]},
-    "hiring": {"isHiring": true, "careersUrl": "https://example.com/voltforge/careers", "jobs": [{"id": "vol-1", "title": "Embedded Systems Engineer", "department": "Engineering", "type": "Full-time", "salaryRange": "₹18–28 LPA", "techStack": ["C++", "CAN"], "applyUrl": "https://example.com/apply/vol-1"}]}, "vibes": ["🔧 Hardware lab", "🌳 Garden campus", "🛵 EV charging"]
+    "id": "bluecopa",
+    "name": "Bluecopa",
+    "tagline": "AI & automation for finance operations",
+    "description": "Bluecopa helps finance teams automate reconciliation, reporting and operational workflows with AI.\n\nA T-Hub ecosystem company, it is building the modern finance ops layer for Indian enterprises.",
+    "website": "https://www.bluecopa.com",
+    "foundedYear": 2021,
+    "teamSize": "51–100",
+    "category": "Fintech",
+    "stage": "Series A",
+    "techStack": ["Python", "TypeScript", "AWS", "dbt"],
+    "funding": [
+      {"stage": "Series A", "amount": "Undisclosed", "date": "2024+", "leadInvestors": ["Elevation Capital"]}
+    ],
+    "founders": [{"name": "Bluecopa Founding Team", "role": "Founders", "previous": "Finance & SaaS"}],
+    "benefits": ["Hybrid work", "Learning stipend", "Health cover"],
+    "investors": ["Elevation Capital"],
+    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
+    "location": {"area": "HITEC City", "building": "T-Hub Phase 2", "coordinates": [78.3666, 17.4441]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.bluecopa.com/careers",
+      "jobs": [
+        {"id": "blu-1", "title": "ML Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹24–40 LPA", "techStack": ["Python", "AWS"], "applyUrl": "https://www.bluecopa.com/careers", "isFeatured": true}
+      ]
+    },
+    "vibes": ["🏦 Finance ops", "🚀 T-Hub DNA", "🤖 AI automation"],
+    "isBoosted": true,
+    "isPublished": true,
+    "source": "T-Hub"
   },
   {
-    "id": "loopcart", "name": "LoopCart", "tagline": "Circular commerce for India's next billion shoppers", "description": "LoopCart helps brands take back, refurbish, and resell products through one embedded checkout. The platform manages pickup, grading, and resale pricing.\n\nIts consumer experience makes sustainable purchasing feel as simple as buying new.", "website": "https://example.com/loopcart", "foundedYear": 2022, "teamSize": "26–50", "category": "Consumer & D2C", "stage": "Seed", "techStack": ["React Native", "Node.js", "Python", "MongoDB"],
-    "funding": [{"stage": "Seed", "amount": "$3.1M", "date": "Dec 2025", "leadInvestors": ["3one4 Capital"]}], "origin": {"type": "Independent"}, "location": {"area": "Jubilee Hills", "building": "Road No. 36 Studio", "coordinates": [78.4071, 17.4304]},
-    "hiring": {"isHiring": true, "careersUrl": "https://example.com/loopcart/careers", "jobs": [{"id": "loo-1", "title": "Growth Lead", "department": "Growth", "type": "Full-time", "salaryRange": "₹15–22 LPA", "techStack": ["Lifecycle", "Analytics"], "applyUrl": "https://example.com/apply/loo-1"}]}, "vibes": ["🎨 Design studio", "☕ Cafe district", "🕓 Flex hours"]
+    "id": "bhanzu",
+    "name": "Bhanzu",
+    "tagline": "Making every child love mathematics",
+    "description": "Bhanzu is an edtech company building engaging math learning experiences for students.\n\nIts product and growth teams combine pedagogy with high-retention consumer experiences.",
+    "website": "https://bhanzu.com",
+    "foundedYear": 2020,
+    "teamSize": "201–500",
+    "category": "Edtech",
+    "stage": "Series B+",
+    "techStack": ["React", "Node.js", "Python"],
+    "funding": [
+      {"stage": "Series B+", "amount": "$30M+", "date": "2023+", "leadInvestors": ["Peak XV"]}
+    ],
+    "founders": [{"name": "Neelakantha Bhanu", "role": "Founder", "previous": "Educator & performer"}],
+    "benefits": ["Creative culture", "Health benefits", "Flexible leave"],
+    "investors": ["Peak XV", "Goodwater"],
+    "origin": {"type": "Independent"},
+    "location": {"area": "Jubilee Hills", "building": "Bhanzu Hyderabad base", "coordinates": [78.4071, 17.4304]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://bhanzu.com/careers",
+      "jobs": [
+        {"id": "bha-1", "title": "Product Manager", "department": "Product", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹25–40 LPA", "applyUrl": "https://bhanzu.com/careers"}
+      ]
+    },
+    "vibes": ["🎓 Education impact", "🎨 Creative teams"],
+    "isPublished": true,
+    "source": "StartupBlink"
   },
-  {"id":"axon-grid","name":"AxonGrid","tagline":"Real-time intelligence for urban logistics","description":"AxonGrid orchestrates city fleets with predictive routing and live demand sensing.\n\nIts control tower helps operators cut idle miles and delivery delays.","website":"https://example.com/axon","foundedYear":2021,"teamSize":"26–50","category":"AI & Data","stage":"Seed","techStack":["Python","Kafka","React"],"funding":[{"stage":"Seed","amount":"$2.8M","date":"May 2025","leadInvestors":["Kalaari"]}],"origin":{"type":"Ex-BigTech","anchorCompany":"Amazon HYD"},"location":{"area":"Gachibowli","building":"DLF Cyber City","coordinates":[78.3489,17.4484]},"hiring":{"isHiring":true,"careersUrl":"https://example.com/axon/jobs","jobs":[{"id":"axo-1","title":"Data Platform Engineer","department":"Engineering","type":"Full-time","salaryRange":"₹19–29 LPA","techStack":["Kafka","Python"],"applyUrl":"https://example.com/apply/axo-1"}]},"vibes":["🌙 Night-shift friendly","🍜 DLF food street"]},
-  {"id":"medwire","name":"MedWire","tagline":"Interoperable records for specialist care","description":"MedWire moves verified clinical context between care teams.\n\nIts consent-first network reduces repeat tests and administrative work.","website":"https://example.com/medwire","foundedYear":2020,"teamSize":"11–25","category":"Healthtech & Bio","stage":"Seed","techStack":["Java","FHIR","React"],"funding":[{"stage":"Seed","amount":"$1.7M","date":"Sep 2024","leadInvestors":["Endiya Partners"]}],"origin":{"type":"T-Hub Cohort","anchorCompany":"T-Hub"},"location":{"area":"Banjara Hills","building":"Care District Hub","coordinates":[78.4382,17.4152]},"hiring":{"isHiring":false,"careersUrl":"https://example.com/medwire/jobs","jobs":[]},"vibes":["🏥 Hospital network","☕ Quiet focus"]},
-  {"id":"quanta-sec","name":"QuantaSec","tagline":"Identity security built for machine agents","description":"QuantaSec issues short-lived credentials to autonomous software agents.\n\nSecurity teams get policy, evidence, and revocation in one control plane.","website":"https://example.com/quanta","foundedYear":2024,"teamSize":"11–25","category":"SaaS & Enterprise","stage":"Seed","techStack":["Rust","Go","WebAssembly"],"funding":[{"stage":"Seed","amount":"$2.2M","date":"Apr 2026","leadInvestors":["Accel"]}],"origin":{"type":"Ex-BigTech","anchorCompany":"Microsoft IDC"},"location":{"area":"Financial District","building":"GAR Infobahn","coordinates":[78.3508,17.4149]},"hiring":{"isHiring":true,"careersUrl":"https://example.com/quanta/jobs","jobs":[{"id":"qua-1","title":"Security Engineer","department":"Engineering","type":"Full-time","salaryRange":"₹26–38 LPA","techStack":["Rust","IAM"],"applyUrl":"https://example.com/apply/qua-1","isFeatured":true}]},"vibes":["🔐 Security guild","🚌 Metro shuttle"]},
-  {"id":"paperplane","name":"Paperplane Labs","tagline":"Collaborative docs that understand your business","description":"Paperplane turns scattered company knowledge into living project briefs.\n\nIts contextual assistant cites every answer and respects workspace permissions.","website":"https://example.com/paperplane","foundedYear":2023,"teamSize":"11–25","category":"SaaS & Enterprise","stage":"Bootstrapped","techStack":["TypeScript","Postgres","OpenAI"],"funding":[{"stage":"Bootstrapped"}],"origin":{"type":"Independent"},"location":{"area":"Madhapur","building":"Inorbit Work Loft","coordinates":[78.3869,17.4328]},"hiring":{"isHiring":true,"careersUrl":"https://example.com/paperplane/jobs","jobs":[{"id":"pap-1","title":"Product Engineer","department":"Engineering","type":"Full-time","salaryRange":"₹18–28 LPA","techStack":["TypeScript","React"],"applyUrl":"https://example.com/apply/pap-1"}]},"vibes":["🛠️ Ship Fridays","🚇 Near metro"]},
-  {"id":"kisan-os","name":"KisanOS","tagline":"Decision support for climate-smart farms","description":"KisanOS combines local weather and crop signals into daily field actions.\n\nRegional language workflows keep advice useful at the farm gate.","website":"https://example.com/kisan","foundedYear":2018,"teamSize":"51–100","category":"AI & Data","stage":"Series B+","techStack":["Python","Kotlin","PostGIS"],"funding":[{"stage":"Series B+","amount":"$14M","date":"Jul 2025","leadInvestors":["Omnivore"]}],"origin":{"type":"IIIT-H Alumni","anchorCompany":"IIIT Hyderabad"},"location":{"area":"HITEC City","building":"Cyber Towers","coordinates":[78.3773,17.4504]},"hiring":{"isHiring":false,"careersUrl":"https://example.com/kisan/jobs","jobs":[]},"vibes":["🌾 Field days","🚇 HITEC City Metro"]},
-  {"id":"swiftpay","name":"SwiftPay Infra","tagline":"Instant reconciliation for payment teams","description":"SwiftPay reconciles high-volume payment rails in real time.\n\nException workflows help finance teams close books without spreadsheets.","website":"https://example.com/swiftpay","foundedYear":2021,"teamSize":"26–50","category":"Fintech","stage":"Series A","techStack":["Java","Kafka","ClickHouse"],"funding":[{"stage":"Series A","amount":"$7M","date":"Oct 2025","leadInvestors":["Stellaris"]}],"origin":{"type":"Ex-BigTech","anchorCompany":"Amazon HYD"},"location":{"area":"Kondapur","building":"Cigniti Campus","coordinates":[78.3677,17.4641]},"hiring":{"isHiring":true,"careersUrl":"https://example.com/swiftpay/jobs","jobs":[{"id":"swi-1","title":"Product Analyst","department":"Product","type":"Full-time","salaryRange":"₹12–18 LPA","techStack":["SQL","Mixpanel"],"applyUrl":"https://example.com/apply/swi-1"}]},"vibes":["📊 Data culture","🍱 Great cafeteria"]},
-  {"id":"terra-robotics","name":"Terra Robotics","tagline":"Autonomous inspection for critical infrastructure","description":"Terra builds rugged inspection rovers for hazardous industrial sites.\n\nIts autonomy stack creates repeatable digital records without exposing workers.","website":"https://example.com/terra","foundedYear":2020,"teamSize":"26–50","category":"Deeptech & Hardware","stage":"Series A","techStack":["ROS 2","C++","CUDA"],"funding":[{"stage":"Series A","amount":"$9M","date":"Jun 2026","leadInvestors":["Speciale Invest"]}],"origin":{"type":"T-Hub Cohort","anchorCompany":"T-Hub"},"location":{"area":"Gachibowli","building":"IIIT-H Innovation Center","coordinates":[78.3496,17.4452]},"hiring":{"isHiring":true,"careersUrl":"https://example.com/terra/jobs","jobs":[{"id":"ter-1","title":"Robotics Intern","department":"Engineering","type":"Internship","salaryRange":"₹50–75K / mo","techStack":["ROS 2","C++"],"applyUrl":"https://example.com/apply/ter-1"}]},"vibes":["🤖 Robot arena","🧪 Prototyping lab"]},
-  {"id":"nudgehealth","name":"Nudge Health","tagline":"Preventive care people actually stick with","description":"Nudge pairs clinical plans with behavioral coaching in a simple mobile routine.\n\nEmployers use aggregate insights while employee health data stays private.","website":"https://example.com/nudge","foundedYear":2022,"teamSize":"11–25","category":"Healthtech & Bio","stage":"Seed","techStack":["Flutter","Node.js","FHIR"],"funding":[{"stage":"Seed","amount":"$2M","date":"Jan 2025","leadInvestors":["HealthQuad"]}],"origin":{"type":"Independent"},"location":{"area":"Jubilee Hills","building":"Apollo Innovation Hub","coordinates":[78.4145,17.4258]},"hiring":{"isHiring":false,"careersUrl":"https://example.com/nudge/jobs","jobs":[]},"vibes":["🧘 Wellness budget","🌳 Green campus"]},
-  {"id":"mango-studios","name":"Mango Studios","tagline":"Interactive shopping for independent brands","description":"Mango gives small brands shoppable video storefronts with built-in community.\n\nIts creator tools turn product stories into measurable discovery loops.","website":"https://example.com/mango","foundedYear":2024,"teamSize":"1–10","category":"Consumer & D2C","stage":"Pre-Seed","techStack":["Next.js","WebRTC","Supabase"],"funding":[{"stage":"Pre-Seed","amount":"$650K","date":"Mar 2026","leadInvestors":["All In Capital"]}],"origin":{"type":"T-Hub Cohort","anchorCompany":"T-Hub"},"location":{"area":"HITEC City","building":"T-Hub Phase 2","coordinates":[78.3658,17.4434]},"hiring":{"isHiring":true,"careersUrl":"https://example.com/mango/jobs","jobs":[{"id":"man-1","title":"Brand Design Intern","department":"Design","type":"Internship","salaryRange":"₹30–45K / mo","techStack":["Figma","Motion"],"applyUrl":"https://example.com/apply/man-1"}]},"vibes":["🎥 Creator studio","⚡ High energy"]}
+  {
+    "id": "nephroplus",
+    "name": "NephroPlus",
+    "tagline": "India's largest dialysis care network",
+    "description": "NephroPlus operates dialysis centres and care programs across India with a strong Hyderabad presence.\n\nThe company blends clinical operations with care-tech systems for better patient outcomes.",
+    "website": "https://www.nephroplus.com",
+    "foundedYear": 2009,
+    "teamSize": "1001–5000",
+    "category": "Healthtech & Bio",
+    "stage": "Series B+",
+    "techStack": ["Java", "React", "Cloud"],
+    "funding": [
+      {"stage": "Series B+", "amount": "$100M+", "date": "2021+", "leadInvestors": ["International finance partners"]}
+    ],
+    "founders": [{"name": "Kamal Shah / Vikram Vuppala (leadership)", "role": "Leadership", "previous": "Healthcare"}],
+    "benefits": ["Healthcare mission", "Insurance", "Stable ops culture"],
+    "investors": ["International finance partners"],
+    "origin": {"type": "Independent"},
+    "location": {"area": "Banjara Hills", "building": "NephroPlus Hyderabad ops", "coordinates": [78.4382, 17.4152]},
+    "hiring": {
+      "isHiring": false,
+      "careersUrl": "https://www.nephroplus.com",
+      "jobs": []
+    },
+    "vibes": ["🏥 Care network", "❤️ Impact-first"],
+    "isPublished": true,
+    "source": "StartupBlink"
+  },
+  {
+    "id": "callhealth",
+    "name": "CallHealth",
+    "tagline": "Integrated healthcare delivery platform",
+    "description": "CallHealth connects diagnostics, doctor consults and home healthcare into one care delivery experience.\n\nThe Hyderabad company focuses on accessible, coordinated care for families and enterprises.",
+    "website": "https://www.callhealth.com",
+    "foundedYear": 2015,
+    "teamSize": "501–1000",
+    "category": "Healthtech & Bio",
+    "stage": "Series B+",
+    "techStack": ["Java", "Android", "AWS"],
+    "funding": [
+      {"stage": "Series B+", "amount": "Undisclosed", "date": "2020+", "leadInvestors": ["Healthcare investors"]}
+    ],
+    "founders": [{"name": "CallHealth Founding Team", "role": "Founders", "previous": "Healthcare"}],
+    "benefits": ["Healthcare mission", "Medical cover"],
+    "investors": ["Healthcare investors"],
+    "origin": {"type": "Independent"},
+    "location": {"area": "Madhapur", "building": "CallHealth Hyderabad", "coordinates": [78.3869, 17.4328]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.callhealth.com",
+      "jobs": [
+        {"id": "cal-1", "title": "Backend Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹16–28 LPA", "techStack": ["Java", "AWS"], "applyUrl": "https://www.callhealth.com"}
+      ]
+    },
+    "vibes": ["🩺 Care delivery", "🏠 Home health"],
+    "isPublished": true,
+    "source": "StartupBlink"
+  },
+  {
+    "id": "infinitylearn",
+    "name": "Infinity Learn",
+    "tagline": "Personalized learning for school students",
+    "description": "Infinity Learn builds adaptive learning products for K-12 students across India.\n\nIts Hyderabad product org focuses on personalization, assessment and parent engagement.",
+    "website": "https://infinitylearn.com",
+    "foundedYear": 2019,
+    "teamSize": "201–500",
+    "category": "Edtech",
+    "stage": "Series A",
+    "techStack": ["Kotlin", "React", "Python"],
+    "funding": [
+      {"stage": "Series A", "amount": "Undisclosed", "date": "2022+", "leadInvestors": ["Edtech investors"]}
+    ],
+    "founders": [{"name": "Infinity Learn Team", "role": "Founders", "previous": "Edtech"}],
+    "benefits": ["Learning culture", "Hybrid options"],
+    "investors": ["Edtech investors"],
+    "origin": {"type": "Independent"},
+    "location": {"area": "Kondapur", "building": "Infinity Learn HYD", "coordinates": [78.3677, 17.4641]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://infinitylearn.com",
+      "jobs": [
+        {"id": "inf-1", "title": "Android Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹18–30 LPA", "techStack": ["Kotlin"], "applyUrl": "https://infinitylearn.com"}
+      ]
+    },
+    "vibes": ["📱 Mobile-first", "👨‍👩‍👧 Parent apps"],
+    "isPublished": true,
+    "source": "StartupBlink"
+  },
+  {
+    "id": "cosmoserve",
+    "name": "Cosmoserve",
+    "tagline": "Technology for a cleaner orbital environment",
+    "description": "Cosmoserve is a T-Hub highlighted deeptech venture working on space debris and orbital sustainability challenges.\n\nThe team sits at the intersection of aerospace engineering and applied AI.",
+    "website": "https://www.t-hub.co/startups",
+    "foundedYear": 2022,
+    "teamSize": "11–25",
+    "category": "Space & Aerospace",
+    "stage": "Seed",
+    "techStack": ["Python", "C++", "Simulation"],
+    "funding": [
+      {"stage": "Seed", "amount": "Undisclosed", "date": "2024+", "leadInvestors": ["Deeptech angels"]}
+    ],
+    "founders": [{"name": "Cosmoserve Founders", "role": "Founders", "previous": "Space tech"}],
+    "benefits": ["Mission-driven", "Lab access"],
+    "investors": ["Deeptech angels"],
+    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
+    "location": {"area": "HITEC City", "building": "T-Hub Phase 2", "coordinates": [78.3658, 17.4434]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.t-hub.co/startups",
+      "jobs": [
+        {"id": "cos-1", "title": "Space Systems Intern", "department": "Engineering", "type": "Internship", "workMode": "On-site", "salaryRange": "₹40–70K / mo", "techStack": ["Python", "C++"], "applyUrl": "https://www.t-hub.co/startups"}
+      ]
+    },
+    "vibes": ["🛰️ Space tech", "🌱 Sustainability"],
+    "isPublished": true,
+    "source": "T-Hub"
+  },
+  {
+    "id": "xeeed",
+    "name": "Xeeed IO",
+    "tagline": "Edge AI, IoT and automation for industry",
+    "description": "Xeeed IO builds Edge AI and IoT automation solutions for industrial and enterprise environments.\n\nAs part of the T-Hub community, the company focuses on practical deployments outside the lab.",
+    "website": "https://www.t-hub.co/startups",
+    "foundedYear": 2021,
+    "teamSize": "11–25",
+    "category": "AI & Data",
+    "stage": "Seed",
+    "techStack": ["Python", "Edge AI", "IoT"],
+    "funding": [
+      {"stage": "Seed", "amount": "Undisclosed", "date": "2023+", "leadInvestors": ["Angel network"]}
+    ],
+    "founders": [{"name": "Xeeed Founders", "role": "Founders", "previous": "IoT / AI"}],
+    "benefits": ["Hands-on hardware", "Flexible roles"],
+    "investors": ["Angel network"],
+    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
+    "location": {"area": "Madhapur", "building": "T-Hub ecosystem", "coordinates": [78.3728, 17.4337]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.t-hub.co/startups",
+      "jobs": [
+        {"id": "xee-1", "title": "Edge AI Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹16–28 LPA", "techStack": ["Python", "PyTorch"], "applyUrl": "https://www.t-hub.co/startups"}
+      ]
+    },
+    "vibes": ["📡 Edge devices", "🏭 Industry AI"],
+    "isPublished": true,
+    "source": "T-Hub"
+  },
+  {
+    "id": "neerovel",
+    "name": "Neerovel",
+    "tagline": "IoT & AI for smart water management",
+    "description": "Neerovel uses sensors and intelligence to help cities and campuses manage water more efficiently.\n\nThe T-Hub associated startup focuses on measurable sustainability outcomes.",
+    "website": "https://www.t-hub.co/startups",
+    "foundedYear": 2020,
+    "teamSize": "11–25",
+    "category": "Deeptech & Hardware",
+    "stage": "Seed",
+    "techStack": ["IoT", "Python", "Cloud"],
+    "funding": [
+      {"stage": "Seed", "amount": "Undisclosed", "date": "2023+", "leadInvestors": ["Climate angels"]}
+    ],
+    "founders": [{"name": "Neerovel Founders", "role": "Founders", "previous": "Climate / IoT"}],
+    "benefits": ["Impact work", "Field + product mix"],
+    "investors": ["Climate angels"],
+    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
+    "location": {"area": "Gachibowli", "building": "T-Hub / IIIT corridor", "coordinates": [78.3496, 17.4452]},
+    "hiring": {
+      "isHiring": false,
+      "careersUrl": "https://www.t-hub.co/startups",
+      "jobs": []
+    },
+    "vibes": ["💧 Water tech", "🌍 Climate impact"],
+    "isPublished": true,
+    "source": "T-Hub"
+  },
+  {
+    "id": "orbit-ai",
+    "name": "Orbit AI",
+    "tagline": "Autonomous copilots for industrial operations",
+    "description": "Orbit AI gives operations teams a live intelligence layer across factories and field assets.\n\nIts Hyderabad team combines multimodal models with edge inference to catch failures before they happen.",
+    "website": "https://example.com/orbit-ai",
+    "foundedYear": 2022,
+    "teamSize": "51–100",
+    "category": "AI & Data",
+    "stage": "Series A",
+    "techStack": ["Python", "PyTorch", "Rust", "Kubernetes"],
+    "funding": [
+      {"stage": "Series A", "amount": "$8.5M", "date": "Mar 2026", "leadInvestors": ["Peak XV Surge", "Together Fund"]}
+    ],
+    "founders": [{"name": "Ex-Microsoft founders", "role": "Founders", "previous": "Microsoft IDC"}],
+    "benefits": ["Dog-friendly", "Learning budget", "Hybrid"],
+    "investors": ["Peak XV Surge", "Together Fund"],
+    "origin": {"type": "Ex-BigTech", "anchorCompany": "Microsoft IDC"},
+    "location": {"area": "Gachibowli", "building": "Knowledge City, Tower 2", "coordinates": [78.3778, 17.4349]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://example.com/orbit-ai/careers",
+      "jobs": [
+        {"id": "orb-1", "title": "Senior ML Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹28–42 LPA", "techStack": ["PyTorch", "Python"], "applyUrl": "https://example.com/apply/orb-1", "isFeatured": true}
+      ]
+    },
+    "vibes": ["🚇 6m to Raidurg", "☕ Great coffee"],
+    "isBoosted": true,
+    "isPublished": true,
+    "source": "HydTechPulse curated"
+  },
+  {
+    "id": "quanta-sec",
+    "name": "QuantaSec",
+    "tagline": "Identity security built for machine agents",
+    "description": "QuantaSec issues short-lived credentials to autonomous software agents.\n\nSecurity teams get policy, evidence and revocation in one control plane.",
+    "website": "https://example.com/quanta",
+    "foundedYear": 2024,
+    "teamSize": "11–25",
+    "category": "SaaS & Enterprise",
+    "stage": "Seed",
+    "techStack": ["Rust", "Go", "WebAssembly"],
+    "funding": [
+      {"stage": "Seed", "amount": "$2.2M", "date": "Apr 2026", "leadInvestors": ["Accel"]}
+    ],
+    "founders": [{"name": "Ex-Microsoft security team", "role": "Founders", "previous": "Microsoft IDC"}],
+    "benefits": ["Security guild", "Latest hardware", "Hybrid"],
+    "investors": ["Accel"],
+    "origin": {"type": "Ex-BigTech", "anchorCompany": "Microsoft IDC"},
+    "location": {"area": "Financial District", "building": "GAR Infobahn", "coordinates": [78.3508, 17.4149]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://example.com/quanta/jobs",
+      "jobs": [
+        {"id": "qua-1", "title": "Security Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹26–38 LPA", "techStack": ["Rust", "IAM"], "applyUrl": "https://example.com/apply/qua-1", "isFeatured": true}
+      ]
+    },
+    "vibes": ["🔐 Security guild", "🚌 Metro shuttle"],
+    "isPublished": true,
+    "source": "HydTechPulse curated"
+  },
+  {
+    "id": "cloudmint",
+    "name": "CloudMint",
+    "tagline": "FinOps autopilot for cloud-native teams",
+    "description": "CloudMint continuously maps cloud spend to engineering ownership and suggests safe savings.\n\nBuilt inside the T-Hub ecosystem for engineering leaders who need cost accountability without slowing delivery.",
+    "website": "https://example.com/cloudmint",
+    "foundedYear": 2023,
+    "teamSize": "11–25",
+    "category": "SaaS & Enterprise",
+    "stage": "Seed",
+    "techStack": ["Next.js", "Go", "ClickHouse", "AWS"],
+    "funding": [
+      {"stage": "Seed", "amount": "$2.4M", "date": "Feb 2026", "leadInvestors": ["Together Fund"]}
+    ],
+    "founders": [{"name": "T-Hub cohort founders", "role": "Founders", "previous": "Cloud infra"}],
+    "benefits": ["Dog-friendly", "Maker room", "Hybrid"],
+    "investors": ["Together Fund"],
+    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
+    "location": {"area": "Madhapur", "building": "Sattva Knowledge City", "coordinates": [78.3728, 17.4337]},
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://example.com/cloudmint/careers",
+      "jobs": [
+        {"id": "clo-1", "title": "Founding Product Manager", "department": "Product", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹24–34 LPA", "techStack": ["FinOps", "B2B SaaS"], "applyUrl": "https://example.com/apply/clo-1"}
+      ]
+    },
+    "vibes": ["🐕 Dog-friendly", "🍜 8m to DLF"],
+    "isPublished": true,
+    "source": "T-Hub inspired"
+  }
 ]

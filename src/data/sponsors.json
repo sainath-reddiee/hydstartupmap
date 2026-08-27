@@ -1,13 +1,14 @@
 {
   "marquee": [
-    {"label":"ORBIT AI","message":"8 engineering roles now open","tone":"cyan"},
-    {"label":"DECCAN OSS","message":"48-hour hackathon · Sep 12","tone":"violet"},
-    {"label":"NEUROLEAF","message":"Clinical AI team is hiring","tone":"lime"},
-    {"label":"HYD PULSE","message":"New: night-shift developer map","tone":"amber"}
+    {"label":"DARWINBOX","message":"Hyderabad unicorn · engineering roles open","tone":"cyan"},
+    {"label":"SKYROOT","message":"Private launch stack hiring in HYD","tone":"violet"},
+    {"label":"KEKA","message":"People platform teams expanding in Gachibowli","tone":"lime"},
+    {"label":"BLUECOPA","message":"T-Hub finance AI · featured on the map","tone":"amber"},
+    {"label":"NXTWAVE","message":"Edtech builders hiring curriculum engineers","tone":"cyan"}
   ],
   "billboards": [
-    {"id":"bill-1","junctionName":"Cyber Towers","coordinates":[78.3773,17.4504],"sponsorName":"Orbit AI","tagline":"BUILD THE INDUSTRIAL BRAIN","ctaLink":"https://example.com/orbit-ai/careers","isLive":true},
-    {"id":"bill-2","junctionName":"Gachibowli Flyover","coordinates":[78.3566,17.4374],"sponsorName":"HydTechPulse","tagline":"YOUR BRAND, ABOVE THE GRID","ctaLink":"https://checkout.dodopayments.com/buy/pdt_billboard_demo","isLive":true},
-    {"id":"bill-3","junctionName":"Mindspace Junction","coordinates":[78.3814,17.4432],"sponsorName":"CloudMint","tagline":"MAKE CLOUD SPEND VISIBLE","ctaLink":"https://example.com/cloudmint","isLive":true}
+    {"id":"bill-1","junctionName":"Cyber Towers","coordinates":[78.3773,17.4504],"sponsorName":"Darwinbox","tagline":"AI-NATIVE HCM FROM HYDERABAD","ctaLink":"https://darwinbox.com/careers","isLive":true},
+    {"id":"bill-2","junctionName":"Gachibowli Flyover","coordinates":[78.3566,17.4374],"sponsorName":"HydTechPulse","tagline":"LIST · BOOST · HIRE ON THE MAP","ctaLink":"https://checkout.dodopayments.com/buy/pdt_billboard_demo","isLive":true},
+    {"id":"bill-3","junctionName":"Mindspace Junction","coordinates":[78.3814,17.4432],"sponsorName":"Keka HR","tagline":"BUILD PEOPLE PRODUCTS HERE","ctaLink":"https://www.keka.com/careers","isLive":true}
   ]
 }

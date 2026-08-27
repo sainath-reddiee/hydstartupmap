@@ -4,22 +4,19 @@ import { useEffect, useRef } from "react";
 import * as maplibregl from "maplibre-gl";
 import type { FillLayerSpecification, GeoJSONSource, Map as MapLibreMap, Marker, StyleSpecification } from "maplibre-gl";
 import { circle, featureCollection, lineString } from "@turf/turf";
-import startupsData from "@/data/startups.json";
-import eventsData from "@/data/events.json";
 import thirdspacesData from "@/data/thirdspaces.json";
 import lineageData from "@/data/lineage.json";
-import sponsorsData from "@/data/sponsors.json";
 import type { LineageConnection, Mode, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
 import { AREA_CENTERS } from "@/utils/distance";
 
-const startups = startupsData as Startup[];
-const events = eventsData as TechEvent[];
 const spaces = thirdspacesData as ThirdSpace[];
 const lineage = lineageData as LineageConnection[];
-const billboards = sponsorsData.billboards as RoadBillboard[];
 
 type Props = {
   mode: Mode;
+  startups: Startup[];
+  events: TechEvent[];
+  billboards: RoadBillboard[];
   selectedStartup: Startup | null;
   selectedEvent: TechEvent | null;
   hoveredId: string | null;
@@ -41,19 +38,68 @@ function arcCoordinates(connection: LineageConnection) {
 }
 
 export default function MapContainer({
-  mode, selectedStartup, selectedEvent, hoveredId, commute, onSelectStartup, onSelectEvent,
+  mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, onSelectStartup, onSelectEvent,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const callbacksRef = useRef({ onSelectStartup, onSelectEvent });
+  const dataRef = useRef({ startups, events, billboards });
   callbacksRef.current = { onSelectStartup, onSelectEvent };
+  dataRef.current = { startups, events, billboards };
+
+  const clearMarkers = () => {
+    markersRef.current.forEach((marker) => marker.remove());
+    markersRef.current = [];
+  };
+
+  const renderMarkers = (map: MapLibreMap) => {
+    clearMarkers();
+    const { startups: nextStartups, events: nextEvents, billboards: nextBillboards } = dataRef.current;
+
+    nextStartups.forEach((startup) => {
+      const element = document.createElement("button");
+      element.className = `map-pin ${startup.isBoosted ? "map-pin--boosted" : ""}`;
+      element.dataset.id = startup.id;
+      element.setAttribute("aria-label", `Open ${startup.name}`);
+      element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span><i></i>`;
+      element.addEventListener("click", () => callbacksRef.current.onSelectStartup(startup));
+      markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(startup.location.coordinates).addTo(map));
+    });
+
+    nextEvents.forEach((event) => {
+      const element = document.createElement("button");
+      element.className = `event-beacon ${event.isFeatured ? "event-beacon--featured" : ""}`;
+      element.setAttribute("aria-label", event.title);
+      element.innerHTML = "<span></span>";
+      element.addEventListener("click", () => callbacksRef.current.onSelectEvent(event));
+      markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(event.venue.coordinates).addTo(map));
+    });
+
+    nextBillboards.forEach((billboard) => {
+      const element = document.createElement("a");
+      element.className = "road-billboard";
+      element.href = billboard.ctaLink;
+      element.target = "_blank";
+      element.rel = "noreferrer";
+      element.innerHTML = `<span>${billboard.sponsorName}</span><small>${billboard.tagline}</small>`;
+      markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(billboard.coordinates).addTo(map));
+    });
+
+    spaces.forEach((space) => {
+      const element = document.createElement("div");
+      element.className = "night-marker";
+      element.dataset.nightMarker = "true";
+      element.title = space.name;
+      element.textContent = "✦";
+      element.style.display = mode === "night" ? "grid" : "none";
+      markersRef.current.push(new maplibregl.Marker({ element }).setLngLat(space.location.coordinates).addTo(map));
+    });
+  };
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
-    // Turbopack does not currently emit MapLibre v6's module worker as a public
-    // asset, so point MapLibre at the matching, cacheable ESM worker directly.
     maplibregl.setWorkerUrl("https://cdn.jsdelivr.net/npm/maplibre-gl@6.6.0/dist/maplibre-gl-worker.mjs");
     const map = new maplibregl.Map({
       container: containerRef.current,
@@ -102,50 +148,14 @@ export default function MapContainer({
       map.addSource("commute-radius", { type: "geojson", data: featureCollection([]) });
       map.addLayer({
         id: "commute-fill", type: "fill", source: "commute-radius",
-        paint: { "fill-color": "#55e6b2", "fill-opacity": 0.08 },
+        paint: { "fill-color": "#0f766e", "fill-opacity": 0.08 },
       });
       map.addLayer({
         id: "commute-line", type: "line", source: "commute-radius",
-        paint: { "line-color": "#55e6b2", "line-width": 2, "line-dasharray": [3, 2], "line-opacity": 0.8 },
+        paint: { "line-color": "#0f766e", "line-width": 2, "line-dasharray": [3, 2], "line-opacity": 0.8 },
       });
 
-      startups.forEach((startup) => {
-        const element = document.createElement("button");
-        element.className = `map-pin ${startup.isBoosted ? "map-pin--boosted" : ""}`;
-        element.dataset.id = startup.id;
-        element.setAttribute("aria-label", `Open ${startup.name}`);
-        element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span><i></i>`;
-        element.addEventListener("click", () => callbacksRef.current.onSelectStartup(startup));
-        markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(startup.location.coordinates).addTo(map));
-      });
-
-      events.forEach((event) => {
-        const element = document.createElement("button");
-        element.className = "event-beacon";
-        element.setAttribute("aria-label", event.title);
-        element.innerHTML = "<span></span>";
-        element.addEventListener("click", () => callbacksRef.current.onSelectEvent(event));
-        markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(event.venue.coordinates).addTo(map));
-      });
-
-      billboards.filter((item) => item.isLive).forEach((billboard) => {
-        const element = document.createElement("a");
-        element.className = "road-billboard";
-        element.href = billboard.ctaLink;
-        element.target = "_blank";
-        element.rel = "noreferrer";
-        element.innerHTML = `<span>${billboard.sponsorName}</span><small>${billboard.tagline}</small>`;
-        markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(billboard.coordinates).addTo(map));
-      });
-
-      spaces.forEach((space) => {
-        const element = document.createElement("div");
-        element.className = "night-marker";
-        element.dataset.nightMarker = "true";
-        element.title = space.name;
-        element.textContent = "✦";
-        markersRef.current.push(new maplibregl.Marker({ element }).setLngLat(space.location.coordinates).addTo(map));
-      });
+      renderMarkers(map);
     });
 
     const dashFrames = [[0, 4, 3], [1, 4, 2], [2, 4, 1], [3, 4, 0]];
@@ -159,11 +169,18 @@ export default function MapContainer({
 
     return () => {
       window.clearInterval(dashTimer);
-      markersRef.current.forEach((marker) => marker.remove());
+      clearMarkers();
       map.remove();
       mapRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const update = () => renderMarkers(map);
+    map.loaded() ? update() : map.once("load", update);
+  }, [startups, events, billboards, mode]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -174,10 +191,13 @@ export default function MapContainer({
         el.style.display = mode === "night" ? "grid" : "none";
       });
       if (map.getLayer("hyd-3d-buildings")) {
-        map.setPaintProperty("hyd-3d-buildings", "fill-extrusion-color",
+        map.setPaintProperty(
+          "hyd-3d-buildings",
+          "fill-extrusion-color",
           mode === "night"
             ? ["interpolate", ["linear"], ["get", "render_height"], 0, "#12243b", 80, "#164e63", 200, "#8b5cf6"]
-            : ["interpolate", ["linear"], ["get", "render_height"], 0, "#b9c7d0", 80, "#8399a7", 200, "#657f8f"]);
+            : ["interpolate", ["linear"], ["get", "render_height"], 0, "#b9c7d0", 80, "#8399a7", 200, "#657f8f"],
+        );
         map.setPaintProperty("hyd-3d-buildings", "fill-extrusion-opacity", mode === "night" ? 0.9 : 0.72);
       }
     };

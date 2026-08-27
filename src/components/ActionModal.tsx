@@ -1,61 +1,160 @@
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { ArrowUpRight, Building2, Check, Plus, ShieldCheck, Sparkles, X, Zap } from "lucide-react";
+import type { AreaName, StartupCategory } from "@/types";
+import { checkoutFor, createAdOrder, submitCompany } from "@/utils/cms";
 
-export type ModalKind = "boost" | "billboard" | "submit";
+export type ModalKind = "boost" | "billboard" | "submit" | "job" | "event";
 
 const offers = {
   boost: {
-    icon: Zap, kicker: "SPATIAL PROMOTION / 01", title: "Own the skyline.", price: "₹2,499", period: "/ week",
-    description: "Turn your company into an XL 3D signal with a persistent sonar beacon across the ecosystem map.",
-    features: ["2× map pin scale", "Pulsating sonar beacon", "Priority directory placement", "Weekly visibility report"],
-    checkout: process.env.NEXT_PUBLIC_DODO_BOOST_URL ?? "https://checkout.dodopayments.com/buy/pdt_boost_demo",
+    icon: Zap,
+    kicker: "FEATURED PIN",
+    title: "XL Boosted 3D Pin",
+    price: "₹2,499",
+    period: "/ week",
+    description: "2× map pin scale with a pulsating sonar beacon and priority directory placement.",
+    features: ["2× pin scale", "Sonar beacon", "Priority listing", "Weekly visibility"],
+    product: "boost" as const,
   },
   billboard: {
-    icon: Building2, kicker: "SPATIAL PROMOTION / 02", title: "Rent the intersection.", price: "₹1,499", period: "/ week",
-    description: "Place a glowing virtual unipole at one of Hyderabad's highest-signal tech intersections.",
-    features: ["3D branded billboard", "Clickable destination", "Premium junction placement", "Creative setup included"],
-    checkout: process.env.NEXT_PUBLIC_DODO_BILLBOARD_URL ?? "https://checkout.dodopayments.com/buy/pdt_billboard_demo",
+    icon: Building2,
+    kicker: "ROAD BILLBOARD",
+    title: "3D Virtual Road Billboard",
+    price: "₹1,499",
+    period: "/ week",
+    description: "Glowing unipole placement at Cyber Towers, Mindspace or Gachibowli Flyover.",
+    features: ["3D unipole", "Clickable CTA", "Premium junction", "Creative setup"],
+    product: "billboard" as const,
+  },
+  job: {
+    icon: Sparkles,
+    kicker: "JOB SPOTLIGHT",
+    title: "Featured Job Spotlight",
+    price: "₹499",
+    period: "/ week",
+    description: "Pin your role with a golden featured card at the top of Hyderabad's jobs board.",
+    features: ["Pinned job card", "Gold highlight", "Map company pulse", "Direct apply CTA"],
+    product: "job-spotlight" as const,
+  },
+  event: {
+    icon: Sparkles,
+    kicker: "EVENT BEACON",
+    title: "Featured Event Beacon",
+    price: "₹499",
+    period: "/ event",
+    description: "Highlight your meetup, hackathon or demo day with a glowing calendar beacon.",
+    features: ["Featured badge", "Map beacon", "Directory boost", "RSVP spotlight"],
+    product: "event-beacon" as const,
   },
 };
 
+const areas: AreaName[] = ["HITEC City", "Madhapur", "Gachibowli", "Financial District", "Jubilee Hills", "Kondapur", "Banjara Hills", "Raidurg", "Nanakramguda"];
+const categories: StartupCategory[] = ["AI & Data", "SaaS & Enterprise", "Fintech", "Healthtech & Bio", "Deeptech & Hardware", "Consumer & D2C", "Edtech", "Space & Aerospace"];
+
 export default function ActionModal({ kind, onClose }: { kind: ModalKind | null; onClose: () => void }) {
   const [submitted, setSubmitted] = useState(false);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+
   if (!kind) return null;
-  if (kind === "submit") return (
-    <div className="modal-wrap" role="dialog" aria-modal="true">
-      <button className="modal-scrim" onClick={onClose} aria-label="Close" />
-      <div className="modal">
-        <button className="modal-close" onClick={onClose}><X size={18} /></button>
-        {!submitted ? <>
-          <span className="modal-icon"><Plus /></span><span className="eyebrow">COMMUNITY SIGNAL / FREE</span>
-          <h2>Put your company<br/>on the grid.</h2><p>Share the basics. We&apos;ll review the signal before it goes live.</p>
-          <form onSubmit={(event) => { event.preventDefault(); setSubmitted(true); }}>
-            <label>COMPANY NAME<input required placeholder="e.g. Acme Labs" /></label>
-            <label>WEBSITE<input required type="url" placeholder="https://" /></label>
-            <label>ONE-LINE PITCH<textarea required placeholder="What are you building?" /></label>
-            <button className="modal-primary" type="submit">Submit for review <ArrowUpRight size={15} /></button>
-          </form>
-        </> : <div className="success"><span><Check size={28} /></span><h2>Signal received.</h2><p>Your listing is queued for community review. No account needed.</p><button className="modal-primary" onClick={onClose}>Back to the map</button></div>}
+
+  if (kind === "submit") {
+    const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      submitCompany({
+        companyName: String(data.get("companyName") || ""),
+        website: String(data.get("website") || ""),
+        pitch: String(data.get("pitch") || ""),
+        area: String(data.get("area") || "HITEC City") as AreaName,
+        category: String(data.get("category") || "SaaS & Enterprise") as StartupCategory,
+        contactEmail: String(data.get("email") || ""),
+        careersUrl: String(data.get("careersUrl") || ""),
+      });
+      setSubmitted(true);
+    };
+
+    return (
+      <div className="modal-wrap" role="dialog" aria-modal="true">
+        <button className="modal-scrim" onClick={onClose} aria-label="Close" />
+        <div className="modal animate-pop">
+          <button className="modal-close" onClick={onClose}><X size={18} /></button>
+          {!submitted ? (
+            <>
+              <span className="modal-icon"><Plus /></span>
+              <span className="eyebrow">FREE LISTING · ADMIN REVIEW</span>
+              <h2>List your Hyderabad company</h2>
+              <p>Submit once. The owner reviews, edits if needed, then publishes to the map.</p>
+              <form onSubmit={onSubmit}>
+                <label>COMPANY NAME<input name="companyName" required placeholder="e.g. Darwinbox" /></label>
+                <label>WEBSITE<input name="website" required type="url" placeholder="https://" /></label>
+                <label>CONTACT EMAIL<input name="email" required type="email" placeholder="you@company.com" /></label>
+                <div className="form-grid">
+                  <label>AREA<select name="area">{areas.map((area) => <option key={area}>{area}</option>)}</select></label>
+                  <label>CATEGORY<select name="category">{categories.map((category) => <option key={category}>{category}</option>)}</select></label>
+                </div>
+                <label>CAREERS URL<input name="careersUrl" type="url" placeholder="https://..." /></label>
+                <label>ONE-LINE PITCH<textarea name="pitch" required placeholder="What are you building in Hyderabad?" /></label>
+                <button className="modal-primary" type="submit">Send for approval <ArrowUpRight size={15} /></button>
+              </form>
+            </>
+          ) : (
+            <div className="success">
+              <span><Check size={28} /></span>
+              <h2>Submitted for review</h2>
+              <p>Your listing is in the admin approval queue. It appears publicly only after approval.</p>
+              <button className="modal-primary" onClick={onClose}>Back to the map</button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   const offer = offers[kind];
   const Icon = offer.icon;
+
+  const startCheckout = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const order = createAdOrder({
+      product: offer.product,
+      companyName: String(data.get("companyName") || ""),
+      contactEmail: String(data.get("email") || ""),
+      notes: String(data.get("notes") || ""),
+    });
+    setCheckoutUrl(order.checkoutUrl);
+    window.open(order.checkoutUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <div className="modal-wrap" role="dialog" aria-modal="true">
       <button className="modal-scrim" onClick={onClose} aria-label="Close" />
-      <div className="modal offer-modal">
+      <div className="modal offer-modal animate-pop">
         <button className="modal-close" onClick={onClose}><X size={18} /></button>
-        <span className="modal-icon"><Icon /></span><span className="eyebrow">{offer.kicker}</span>
-        <h2>{offer.title}</h2><p>{offer.description}</p>
+        <span className="modal-icon"><Icon /></span>
+        <span className="eyebrow">{offer.kicker}</span>
+        <h2>{offer.title}</h2>
+        <p>{offer.description}</p>
         <div className="offer-price"><strong>{offer.price}</strong><span>{offer.period}</span></div>
         <ul>{offer.features.map((item) => <li key={item}><Check size={14} /> {item}</li>)}</ul>
-        <a className="modal-primary" href={offer.checkout} target="_blank" rel="noreferrer">Continue with Dodo Payments <ArrowUpRight size={15} /></a>
-        <small className="secure"><ShieldCheck size={13} /> Secure checkout powered by Dodo Payments</small>
-        <div className="offer-note"><Sparkles size={14} /> No account or dashboard required. Placement details are collected after checkout.</div>
+        {!checkoutUrl ? (
+          <form onSubmit={startCheckout}>
+            <label>COMPANY / BRAND<input name="companyName" required placeholder="Company name" /></label>
+            <label>BILLING EMAIL<input name="email" required type="email" placeholder="finance@company.com" /></label>
+            <label>NOTES<textarea name="notes" placeholder="Junction preference, job title, campaign dates..." /></label>
+            <button className="modal-primary" type="submit">Pay with Dodo Payments <ArrowUpRight size={15} /></button>
+          </form>
+        ) : (
+          <div className="success">
+            <span><Check size={28} /></span>
+            <h2>Checkout opened</h2>
+            <p>Complete Dodo Payments in the new tab. Admin can mark this campaign live after payment.</p>
+            <a className="modal-primary" href={checkoutUrl} target="_blank" rel="noreferrer">Reopen checkout <ArrowUpRight size={15} /></a>
+          </div>
+        )}
+        <small className="secure"><ShieldCheck size={13} /> Secure checkout powered by Dodo Payments · {checkoutFor(offer.product).amount}</small>
       </div>
     </div>
   );
