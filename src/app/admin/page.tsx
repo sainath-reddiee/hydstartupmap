@@ -12,6 +12,8 @@ import {
   loadCms, loginAdmin, logoutAdmin, markAdOrder, moderateHoarding, rejectSubmission, resetCms,
   subscribeCms, upsertStartup,
 } from "@/utils/cms";
+import { applyJobsToCompany } from "@/utils/jobSync";
+import type { JobRole } from "@/types";
 
 type AdminTab = "queue" | "companies" | "ads" | "news" | "export";
 
@@ -23,6 +25,40 @@ export default function AdminPage() {
   const [tab, setTab] = useState<AdminTab>("queue");
   const [editing, setEditing] = useState<Startup | null>(null);
   const [showPin, setShowPin] = useState(false);
+  const [syncStatus, setSyncStatus] = useState("");
+  const [syncing, setSyncing] = useState(false);
+
+  const syncJobs = async (companyId: string) => {
+    setSyncing(true);
+    setSyncStatus(companyId === "all" ? "Syncing all careers feeds…" : `Syncing ${companyId}…`);
+    try {
+      const response = await fetch("/api/jobs/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ companyId }),
+      });
+      const payload = await response.json() as {
+        results?: Array<{ companyId: string; companyName: string; count: number; source: string; jobs: JobRole[]; ok: boolean; error?: string }>;
+        error?: string;
+      };
+      if (!response.ok || !payload.results) {
+        throw new Error(payload.error || "Sync failed");
+      }
+      let applied = 0;
+      payload.results.forEach((result) => {
+        if (result.ok && result.jobs.length) {
+          applyJobsToCompany(result.companyId, result.jobs, result.source);
+          applied += 1;
+        }
+      });
+      refresh();
+      setSyncStatus(`Synced ${applied} companies · ${payload.results.reduce((sum, item) => sum + item.count, 0)} roles`);
+    } catch (error) {
+      setSyncStatus(error instanceof Error ? error.message : "Sync failed");
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const refresh = () => setCms(loadCms());
 
@@ -137,6 +173,16 @@ export default function AdminPage() {
 
         {tab === "companies" && (
           <div className="admin-grid">
+            <article className="admin-item">
+              <h3>Careers sync</h3>
+              <p>Pull open roles from configured ATS boards (Greenhouse / Lever / Ashby) or the curated Hyderabad careers feed for each company.</p>
+              <div className="admin-item-actions">
+                <button className="approve" disabled={syncing} onClick={() => syncJobs("all")}>
+                  <RefreshCcw size={14} /> {syncing ? "Syncing…" : "Sync all job boards"}
+                </button>
+              </div>
+              {syncStatus && <small>{syncStatus}</small>}
+            </article>
             {cms.startups.map((startup) => (
               <article key={startup.id} className="admin-item">
                 <div className="admin-item-top">
@@ -148,6 +194,7 @@ export default function AdminPage() {
                 </div>
                 <div className="admin-item-actions">
                   <button onClick={() => setEditing(startup)}>Edit</button>
+                  <button disabled={syncing} onClick={() => syncJobs(startup.id)}>Sync jobs</button>
                   <button onClick={() => {
                     upsertStartup({ ...startup, isBoosted: !startup.isBoosted });
                     refresh();
