@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, BarChart3, Building2, Camera, MapPin, Ruler, X } from "lucide-react";
+import { ArrowUpRight, BarChart3, Building2, Camera, MapPin, Ruler, Trash2, X } from "lucide-react";
 import type { RoadBillboard } from "@/types";
 
 export default function BillboardDrawer({
@@ -8,16 +8,19 @@ export default function BillboardDrawer({
   onClose,
   onBookVirtual,
   onSubmitSighting,
+  onDeletePersonal,
 }: {
   billboard: RoadBillboard | null;
   onClose: () => void;
   onBookVirtual: () => void;
   onSubmitSighting: () => void;
+  onDeletePersonal?: (id: string) => void;
 }) {
   if (!billboard) return null;
 
   const isPhysical = billboard.kind === "physical";
   const isWall = billboard.kind === "wall-of-fame";
+  const isPersonal = billboard.mediaOwner === "Personal";
 
   return (
     <>
@@ -26,7 +29,15 @@ export default function BillboardDrawer({
         <button className="drawer-close" onClick={onClose}><X size={18} /></button>
         <div className={`billboard-visual ${isPhysical ? "physical" : isWall ? "wall" : "virtual"}`}>
           <div className="ooh-scanline" />
-          <span>{isPhysical ? "PHYSICAL OOH INVENTORY" : isWall ? "COMMUNITY WALL OF FAME" : "VIRTUAL MAP SLOT"}</span>
+          <span>
+            {isPersonal
+              ? "PERSONAL DYNAMIC BOARD"
+              : isPhysical
+                ? "PHYSICAL OOH INVENTORY"
+                : isWall
+                  ? "COMMUNITY WALL OF FAME"
+                  : "VIRTUAL MAP SLOT"}
+          </span>
           <strong>{billboard.sponsorName}</strong>
           <p>{billboard.tagline}</p>
         </div>
@@ -36,11 +47,13 @@ export default function BillboardDrawer({
           </span>
           <h2>{billboard.junctionName}</h2>
           <p className="inventory-copy">
-            {isPhysical
-              ? "Prime roadside inventory mapped for tech brands targeting Hyderabad’s highest-value commuter corridor."
-              : isWall
-                ? "A community-captured startup campaign from Hyderabad’s streets. Add your sighting and reaction."
-                : "An exclusive, clickable 3D ad unit rendered beside the road inside HydTechPulse."}
+            {isPersonal
+              ? "You placed this board manually. It stays live in your local HydTechPulse CMS and can be removed anytime."
+              : isPhysical
+                ? "Prime roadside inventory mapped for tech brands targeting Hyderabad’s highest-value commuter corridor."
+                : isWall
+                  ? "A community-captured startup campaign from Hyderabad’s streets. Add your sighting and reaction."
+                  : "An exclusive, clickable 3D ad unit rendered beside the road inside HydTechPulse."}
           </p>
 
           <div className="inventory-metrics">
@@ -49,9 +62,19 @@ export default function BillboardDrawer({
             <span><Building2 size={17} /><small>OWNER</small><b>{billboard.mediaOwner ?? "HydTechPulse"}</b></span>
           </div>
 
-          <div className="inventory-location"><MapPin size={17} /><div><small>EXACT PLACEMENT</small><b>{billboard.junctionName}, Hyderabad</b></div></div>
+          <div className="inventory-location">
+            <MapPin size={17} />
+            <div>
+              <small>EXACT PLACEMENT</small>
+              <b>{billboard.coordinates[1].toFixed(5)}, {billboard.coordinates[0].toFixed(5)}</b>
+            </div>
+          </div>
 
-          {isWall ? (
+          {isPersonal ? (
+            <button className="inventory-cta danger" onClick={() => onDeletePersonal?.(billboard.id)}>
+              <Trash2 size={16} /> Remove this personal board
+            </button>
+          ) : isWall ? (
             <button className="inventory-cta" onClick={onSubmitSighting}><Camera size={16} /> Upload your hoarding sighting</button>
           ) : isPhysical ? (
             <a className="inventory-cta" href={billboard.ctaLink}>Inquire to book physical hoarding <ArrowUpRight size={15} /></a>
@@ -61,9 +84,11 @@ export default function BillboardDrawer({
             </button>
           )}
           <p className="inventory-disclaimer">
-            {isPhysical
-              ? "Estimated reach is directional. Final availability and pricing are confirmed by the partner media owner."
-              : "Virtual placements are activated after Dodo Payments confirmation and creative review."}
+            {isPersonal
+              ? "Personal boards are stored in this browser’s local CMS and sync across the map instantly."
+              : isPhysical
+                ? "Estimated reach is directional. Final availability and pricing are confirmed by the partner media owner."
+                : "Virtual placements are activated after Dodo Payments confirmation and creative review."}
           </p>
         </div>
       </section>

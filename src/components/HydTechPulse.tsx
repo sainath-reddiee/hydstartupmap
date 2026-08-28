@@ -8,7 +8,7 @@ import DetailDrawer from "./DetailDrawer";
 import BillboardDrawer from "./BillboardDrawer";
 import ActionModal, { ModalKind } from "./ActionModal";
 import type { Mode, NewsItem, RoadBillboard, Startup, TechEvent } from "@/types";
-import { getPublishedStartups, loadCms, subscribeCms } from "@/utils/cms";
+import { deleteBillboard, getPublishedStartups, loadCms, placeBillboard, subscribeCms } from "@/utils/cms";
 import { getBookmarks, getStoredMode, setStoredMode, toggleStoredBookmark } from "@/utils/storage";
 
 const MapContainer = dynamic(() => import("./MapContainer"), {
@@ -123,6 +123,11 @@ export default function HydTechPulse() {
             setSelectedBillboard(billboard);
           }}
           onSubmitHoarding={() => setModal("hoarding")}
+          onPromote={() => setModal("billboard")}
+          onPlaceBoard={(input) => {
+            placeBillboard(input);
+            refresh();
+          }}
         />
       </div>
       <DetailDrawer
@@ -145,6 +150,11 @@ export default function HydTechPulse() {
         onSubmitSighting={() => {
           setSelectedBillboard(null);
           setModal("hoarding");
+        }}
+        onDeletePersonal={(id) => {
+          deleteBillboard(id);
+          setSelectedBillboard(null);
+          refresh();
         }}
       />
       <ActionModal kind={modal} onClose={() => setModal(null)} />

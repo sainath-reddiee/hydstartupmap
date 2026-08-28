@@ -46,7 +46,6 @@ function CompanyProfile({ startup, bookmarked, onToggleBookmark }: { startup: St
         <div className="hero-badges">
           <span>{startup.category}</span>
           <span>{startup.stage}</span>
-          {startup.isBoosted && <span className="boost-chip">XL BOOST</span>}
         </div>
         <h2>{startup.name}</h2>
         <p>{startup.tagline}</p>

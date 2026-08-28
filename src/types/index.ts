@@ -17,7 +17,18 @@ export type AreaName =
   | "Kondapur"
   | "Banjara Hills"
   | "Raidurg"
-  | "Nanakramguda";
+  | "Nanakramguda"
+  | "Kokapet"
+  | "Kukatpally"
+  | "Miyapur"
+  | "Ameerpet"
+  | "Begumpet"
+  | "Secunderabad"
+  | "Old City"
+  | "Uppal"
+  | "Pocharam"
+  | "Shamshabad"
+  | "Kompally";
 
 export type WorkMode = "On-site" | "Hybrid" | "Remote";
 export type Mode = "day" | "night";
