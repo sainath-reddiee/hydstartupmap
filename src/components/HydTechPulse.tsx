@@ -6,7 +6,6 @@ import Header from "./Header";
 import DirectoryPanel from "./DirectoryPanel";
 import DetailDrawer from "./DetailDrawer";
 import BillboardDrawer from "./BillboardDrawer";
-import BottomAdStrip from "./BottomAdStrip";
 import ActionModal, { ModalKind } from "./ActionModal";
 import type { Mode, NewsItem, RoadBillboard, Startup, TechEvent } from "@/types";
 import { getPublishedStartups, loadCms, subscribeCms } from "@/utils/cms";
@@ -124,6 +123,7 @@ export default function HydTechPulse() {
             setSelectedBillboard(billboard);
           }}
           onSubmitHoarding={() => setModal("hoarding")}
+          onPromote={() => setModal("billboard")}
         />
       </div>
       <DetailDrawer
@@ -148,7 +148,6 @@ export default function HydTechPulse() {
           setModal("hoarding");
         }}
       />
-      <BottomAdStrip onPromote={() => setModal("billboard")} />
       <ActionModal kind={modal} onClose={() => setModal(null)} />
     </main>
   );

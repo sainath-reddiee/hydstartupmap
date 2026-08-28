@@ -8,15 +8,18 @@ import thirdspacesData from "@/data/thirdspaces.json";
 import lineageData from "@/data/lineage.json";
 import type { LineageConnection, Mode, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
 import { AREA_CENTERS } from "@/utils/distance";
+import BottomAdStrip from "./BottomAdStrip";
 
 const spaces = thirdspacesData as ThirdSpace[];
 const lineage = lineageData as LineageConnection[];
 
-/** Keep the camera inside Hyderabad's tech corridor only. */
+/** Greater Hyderabad / GHMC + ORR — Charminar to Shamshabad, Miyapur to Pocharam. */
 const HYD_BOUNDS: [[number, number], [number, number]] = [
-  [78.30, 17.36],
-  [78.50, 17.54],
+  [78.22, 17.20],
+  [78.66, 17.60],
 ];
+const HYD_CENTER: [number, number] = [78.43, 17.405];
+const CITY_VIEW = { center: HYD_CENTER, zoom: 10.65, pitch: 22, bearing: -8 } as const;
 
 type Props = {
   mode: Mode;
@@ -33,6 +36,7 @@ type Props = {
   onFocusArea: (area: string | null) => void;
   onSelectBillboard: (billboard: RoadBillboard) => void;
   onSubmitHoarding: () => void;
+  onPromote: () => void;
 };
 
 function arcCoordinates(connection: LineageConnection) {
@@ -55,7 +59,7 @@ function clusterTone(count: number) {
 
 export default function MapContainer({
   mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
-  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding,
+  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onPromote,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -99,7 +103,6 @@ export default function MapContainer({
       element.innerHTML = `<b>${count}</b><span>${area}</span>`;
       element.setAttribute("aria-label", `${count} startups in ${area}`);
       element.addEventListener("click", () => {
-        map.flyTo({ center: coordinates, zoom: 14.8, pitch: 52, bearing: -16, duration: 1400 });
         callbacksRef.current.onFocusArea(area);
       });
       markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(coordinates).addTo(map));
@@ -173,13 +176,18 @@ export default function MapContainer({
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: "https://tiles.openfreemap.org/styles/liberty",
-      center: [78.375, 17.44],
-      zoom: 11.85,
-      pitch: 28,
-      bearing: -12,
-      minZoom: 11,
-      maxZoom: 17,
+      center: CITY_VIEW.center,
+      zoom: CITY_VIEW.zoom,
+      pitch: CITY_VIEW.pitch,
+      bearing: CITY_VIEW.bearing,
+      minZoom: 10,
+      maxZoom: 18,
       maxBounds: HYD_BOUNDS,
+      pixelRatio: Math.max(window.devicePixelRatio || 1, 2),
+      canvasContextAttributes: { antialias: true, powerPreference: "high-performance" },
+      fadeDuration: 80,
+      renderWorldCopies: false,
+      cooperativeGestures: false,
       attributionControl: false,
     });
     mapRef.current = map;
@@ -248,14 +256,6 @@ export default function MapContainer({
     });
 
     map.on("zoomend", syncZoomMode);
-    map.on("moveend", () => {
-      // Soft clamp: if user pans too far, ease back into Hyderabad.
-      const center = map.getCenter();
-      const [[west, south], [east, north]] = HYD_BOUNDS;
-      if (center.lng < west || center.lng > east || center.lat < south || center.lat > north) {
-        map.easeTo({ center: [78.375, 17.44], duration: 700 });
-      }
-    });
 
     const dashFrames = [[0, 4, 3], [1, 4, 2], [2, 4, 1], [3, 4, 0]];
     let frame = 0;
@@ -345,9 +345,7 @@ export default function MapContainer({
           : featureCollection([]));
       }
       if (focusedArea && AREA_CENTERS[focusedArea]) {
-        map.flyTo({ center: AREA_CENTERS[focusedArea], zoom: 14.8, pitch: 52, duration: 1300 });
-      } else if (!focusedArea && map.getZoom() > 13) {
-        map.flyTo({ center: [78.375, 17.44], zoom: 11.85, pitch: 28, bearing: -12, duration: 1100 });
+        map.flyTo({ center: AREA_CENTERS[focusedArea], zoom: 14.8, pitch: 52, bearing: -16, duration: 1300 });
       }
     };
     map.loaded() ? update() : map.once("load", update);
@@ -358,23 +356,25 @@ export default function MapContainer({
       <div ref={containerRef} className="map-canvas" />
       <div className="map-gradient" />
       <div className="map-status">
-        <span className="status-dot" /> HYDERABAD ONLY
-        <b>{detailZoom ? "AREA DETAIL" : "CITY OVERVIEW"}</b>
+        <span className="status-dot" /> GREATER HYDERABAD
+        <b>{detailZoom ? "STREET DETAIL" : "CITY OVERVIEW"}</b>
       </div>
       <div className="map-layer-switcher">
         <button className={showBillboards ? "active" : ""} onClick={() => setShowBillboards((value) => !value)}>
           <i className="layer-ooh" /> Roadside OOH
         </button>
         <button onClick={onSubmitHoarding}>+ Spotted a hoarding?</button>
-        {focusedArea && (
-          <button onClick={() => onFocusArea(null)}>Reset city view</button>
-        )}
+        <button onClick={() => {
+          onFocusArea(null);
+          mapRef.current?.flyTo({ ...CITY_VIEW, duration: 1100 });
+        }}>Reset city view</button>
       </div>
       <div className="map-legend">
         <span><i className="legend-cluster" /> Area counts</span>
         <span><i className="legend-startup" /> Startups</span>
         <span><i className="legend-ooh" /> Road boards</span>
       </div>
+      <BottomAdStrip onPromote={onPromote} />
     </div>
   );
 }

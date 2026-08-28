@@ -10,6 +10,17 @@ export const AREA_CENTERS: Record<string, [number, number]> = {
   "Banjara Hills": [78.4382, 17.4152],
   Raidurg: [78.3748, 17.442],
   Nanakramguda: [78.3445, 17.4188],
+  Kokapet: [78.3345, 17.3965],
+  Kukatpally: [78.3985, 17.4948],
+  Miyapur: [78.3578, 17.4969],
+  Ameerpet: [78.4483, 17.4375],
+  Begumpet: [78.4632, 17.4435],
+  Secunderabad: [78.4983, 17.4399],
+  "Old City": [78.4747, 17.3616],
+  Uppal: [78.5584, 17.3984],
+  Pocharam: [78.6128, 17.4582],
+  Shamshabad: [78.4298, 17.2403],
+  Kompally: [78.4795, 17.5462],
 };
 
 export function distanceKm(from: [number, number], to: [number, number]) {
@@ -21,6 +32,13 @@ export function nearestMetroLabel(coords: [number, number]) {
     { name: "Raidurg Metro", coords: [78.3748, 17.442] as [number, number] },
     { name: "Durgam Cheruvu Metro", coords: [78.3873, 17.4375] as [number, number] },
     { name: "HITEC City Metro", coords: [78.3847, 17.448] as [number, number] },
+    { name: "Ameerpet Metro", coords: [78.4483, 17.4375] as [number, number] },
+    { name: "Secunderabad East Metro", coords: [78.5088, 17.4344] as [number, number] },
+    { name: "MG Bus Station Metro", coords: [78.4806, 17.3850] as [number, number] },
+    { name: "Uppal Metro", coords: [78.5584, 17.3984] as [number, number] },
+    { name: "Miyapur Metro", coords: [78.3578, 17.4969] as [number, number] },
+    { name: "Kukatpally Metro", coords: [78.3985, 17.4948] as [number, number] },
+    { name: "Begumpet Metro", coords: [78.4632, 17.4435] as [number, number] },
   ];
   const nearest = metros
     .map((metro) => ({ ...metro, km: distanceKm(coords, metro.coords) }))

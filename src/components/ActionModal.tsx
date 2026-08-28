@@ -40,7 +40,12 @@ const offers = {
   },
 };
 
-const areas: AreaName[] = ["HITEC City", "Madhapur", "Gachibowli", "Financial District", "Jubilee Hills", "Kondapur", "Banjara Hills", "Raidurg", "Nanakramguda"];
+const areas: AreaName[] = [
+  "HITEC City", "Madhapur", "Gachibowli", "Financial District", "Jubilee Hills",
+  "Kondapur", "Banjara Hills", "Raidurg", "Nanakramguda", "Kokapet", "Kukatpally",
+  "Miyapur", "Ameerpet", "Begumpet", "Secunderabad", "Old City", "Uppal",
+  "Pocharam", "Shamshabad", "Kompally",
+];
 const categories: StartupCategory[] = ["AI & Data", "SaaS & Enterprise", "Fintech", "Healthtech & Bio", "Deeptech & Hardware", "Consumer & D2C", "Edtech", "Space & Aerospace"];
 
 export default function ActionModal({ kind, onClose }: { kind: ModalKind | null; onClose: () => void }) {
