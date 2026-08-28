@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Bookmark, BriefcaseBusiness, Building2, CalendarDays, ChevronRight, Clock3,
-  MapPin, Moon, Navigation, Newspaper, Search, SlidersHorizontal, Sparkles, Wifi,
+  Flame, MapPinned, Moon, Navigation, Newspaper, Search, Sparkles, Wifi, X,
 } from "lucide-react";
 import type { DirectoryTab, Mode, NewsItem, Startup, StartupCategory, TechEvent, ThirdSpace } from "@/types";
-import { AREA_CENTERS, distanceKm, relativeTime } from "@/utils/distance";
+import { AREA_CENTERS, buildAreaInsights, distanceKm, relativeTime } from "@/utils/distance";
 import spacesData from "@/data/thirdspaces.json";
 
 const spaces = spacesData as ThirdSpace[];
@@ -36,6 +36,7 @@ export default function DirectoryPanel(props: Props) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<StartupCategory | "All">("All");
   const [area, setArea] = useState("All");
+  const [sortBy, setSortBy] = useState<"signal" | "hiring" | "newest">("signal");
   const [commuteEnabled, setCommuteEnabled] = useState(false);
   const [homeArea, setHomeArea] = useState("HITEC City");
   const [radius, setRadius] = useState(8);
@@ -44,12 +45,7 @@ export default function DirectoryPanel(props: Props) {
     setArea(props.focusedArea ?? "All");
   }, [props.focusedArea]);
 
-  const areaCounts = useMemo(() => Object.entries(
-    props.startups.reduce<Record<string, number>>((counts, startup) => {
-      counts[startup.location.area] = (counts[startup.location.area] ?? 0) + 1;
-      return counts;
-    }, {}),
-  ).sort((a, b) => b[1] - a[1]), [props.startups]);
+  const areaInsights = useMemo(() => buildAreaInsights(props.startups), [props.startups]);
 
   const chooseArea = (nextArea: string) => {
     setArea(nextArea);
@@ -61,13 +57,40 @@ export default function DirectoryPanel(props: Props) {
     props.onCommuteChange(enabled ? { area: nextArea, radius: nextRadius } : null);
   };
 
-  const filteredStartups = useMemo(() => props.startups.filter((startup) => {
-    const matchesText = `${startup.name} ${startup.tagline} ${startup.techStack.join(" ")}`.toLowerCase().includes(query.toLowerCase());
-    const matchesCategory = category === "All" || startup.category === category;
-    const matchesArea = area === "All" || startup.location.area === area;
-    const matchesRadius = !commuteEnabled || distanceKm(AREA_CENTERS[homeArea], startup.location.coordinates) <= radius;
-    return matchesText && matchesCategory && matchesArea && matchesRadius;
-  }), [props.startups, query, category, area, commuteEnabled, homeArea, radius]);
+  const searchSuggestions = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (q.length < 2) return [] as Array<{ type: "area" | "startup" | "category"; label: string; meta: string }>;
+    const areas = areaInsights
+      .filter((item) => item.name.toLowerCase().includes(q) || item.topCategory.toLowerCase().includes(q))
+      .slice(0, 4)
+      .map((item) => ({ type: "area" as const, label: item.name, meta: `${item.count} cos · ${item.signal}` }));
+    const cats = categories
+      .filter((item) => item !== "All" && item.toLowerCase().includes(q))
+      .slice(0, 3)
+      .map((item) => ({ type: "category" as const, label: item, meta: "Category filter" }));
+    const cos = props.startups
+      .filter((item) => `${item.name} ${item.tagline}`.toLowerCase().includes(q))
+      .slice(0, 4)
+      .map((item) => ({ type: "startup" as const, label: item.name, meta: item.location.area }));
+    return [...areas, ...cats, ...cos].slice(0, 8);
+  }, [query, areaInsights, props.startups]);
+
+  const filteredStartups = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const list = props.startups.filter((startup) => {
+      const hay = `${startup.name} ${startup.tagline} ${startup.category} ${startup.location.area} ${startup.techStack.join(" ")} ${startup.vibes.join(" ")}`.toLowerCase();
+      const matchesText = !q || hay.includes(q);
+      const matchesCategory = category === "All" || startup.category === category;
+      const matchesArea = area === "All" || startup.location.area === area;
+      const matchesRadius = !commuteEnabled || distanceKm(AREA_CENTERS[homeArea], startup.location.coordinates) <= radius;
+      return matchesText && matchesCategory && matchesArea && matchesRadius;
+    });
+    return list.sort((a, b) => {
+      if (sortBy === "hiring") return b.hiring.jobs.length - a.hiring.jobs.length;
+      if (sortBy === "newest") return b.foundedYear - a.foundedYear;
+      return Number(Boolean(b.isBoosted)) - Number(Boolean(a.isBoosted)) || b.hiring.jobs.length - a.hiring.jobs.length;
+    });
+  }, [props.startups, query, category, area, commuteEnabled, homeArea, radius, sortBy]);
 
   const allJobs = useMemo(() => props.startups
     .flatMap((startup) => startup.hiring.jobs.map((job) => ({ ...job, startup })))
@@ -85,6 +108,26 @@ export default function DirectoryPanel(props: Props) {
     { id: "events", label: "Events", icon: CalendarDays, count: props.events.length },
     { id: "night", label: "Night", icon: Moon, count: spaces.length },
   ];
+
+  const applySuggestion = (item: { type: "area" | "startup" | "category"; label: string }) => {
+    if (item.type === "area") {
+      chooseArea(item.label);
+      setQuery("");
+      setTab("startups");
+      return;
+    }
+    if (item.type === "category") {
+      setCategory(item.label as StartupCategory);
+      setQuery("");
+      setTab("startups");
+      return;
+    }
+    const startup = props.startups.find((entry) => entry.name === item.label);
+    if (startup) {
+      props.onSelectStartup(startup);
+      setQuery("");
+    }
+  };
 
   return (
     <aside className="directory">
@@ -105,11 +148,34 @@ export default function DirectoryPanel(props: Props) {
       </div>
 
       <div className="directory-tools">
-        <label className="search">
-          <Search size={16} />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder={`Search ${tab}...`} />
-          <kbd>⌘K</kbd>
-        </label>
+        <div className="search-wrap">
+          <label className="search">
+            <Search size={16} />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={tab === "startups" ? "Search company, area, stack..." : `Search ${tab}...`}
+            />
+            {query ? (
+              <button type="button" className="search-clear" aria-label="Clear search" onClick={() => setQuery("")}>
+                <X size={14} />
+              </button>
+            ) : (
+              <kbd>⌘K</kbd>
+            )}
+          </label>
+          {tab === "startups" && searchSuggestions.length > 0 && (
+            <div className="search-suggest">
+              {searchSuggestions.map((item) => (
+                <button key={`${item.type}-${item.label}`} type="button" onClick={() => applySuggestion(item)}>
+                  <small>{item.type}</small>
+                  <strong>{item.label}</strong>
+                  <span>{item.meta}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         {tab === "startups" && (
           <>
@@ -118,21 +184,40 @@ export default function DirectoryPanel(props: Props) {
                 <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{item}</button>
               ))}
             </div>
+
             <div className="area-row">
-              <SlidersHorizontal size={14} />
+              <MapPinned size={14} />
               <strong>EXPLORE BY AREA</strong>
               <span>{filteredStartups.length} signals</span>
             </div>
+            <div className="area-sort">
+              <button className={sortBy === "signal" ? "active" : ""} onClick={() => setSortBy("signal")}>Signal</button>
+              <button className={sortBy === "hiring" ? "active" : ""} onClick={() => setSortBy("hiring")}>Hiring heat</button>
+              <button className={sortBy === "newest" ? "active" : ""} onClick={() => setSortBy("newest")}>Newest</button>
+            </div>
             <div className="area-signals">
               <button className={area === "All" ? "active" : ""} onClick={() => chooseArea("All")}>
-                <b>{props.startups.length}</b><span>All Hyderabad</span>
+                <b>{props.startups.length}</b>
+                <span>All Hyderabad<small>Full grid</small></span>
               </button>
-              {areaCounts.map(([name, count]) => (
-                <button key={name} className={area === name || props.focusedArea === name ? "active" : ""} onClick={() => chooseArea(name)}>
-                  <b>{count}</b><span>{name}</span>
+              {areaInsights.map((insight) => (
+                <button
+                  key={insight.name}
+                  className={`area-pulse heat-${insight.heat} ${area === insight.name || props.focusedArea === insight.name ? "active" : ""}`}
+                  onClick={() => chooseArea(insight.name)}
+                >
+                  <b>{insight.count}</b>
+                  <span>
+                    {insight.name}
+                    <small>
+                      {insight.heat === "hot" && <Flame size={10} />}
+                      {insight.signal}
+                    </small>
+                  </span>
                 </button>
               ))}
             </div>
+
             <div className={`commute ${commuteEnabled ? "active" : ""}`}>
               <div className="commute-title">
                 <span><Navigation size={15} /> Commute radar</span>
@@ -176,7 +261,7 @@ export default function DirectoryPanel(props: Props) {
               </div>
               <p>{startup.tagline}</p>
               <div className="meta">
-                <span><MapPin size={12} /> {startup.location.area}</span>
+                <span><MapPinned size={12} /> {startup.location.area}</span>
                 <span>{startup.category}</span>
                 {startup.hiring.isHiring && <span className="hiring">{startup.hiring.jobs.length} OPEN</span>}
               </div>
@@ -287,7 +372,7 @@ export default function DirectoryPanel(props: Props) {
         )}
 
         {tab === "startups" && filteredStartups.length === 0 && (
-          <div className="empty"><Search size={28} /><h3>No signals in range</h3><p>Try widening your commute radar or clearing a filter.</p></div>
+          <div className="empty"><Search size={28} /><h3>No signals in range</h3><p>Try another area, clear search, or widen commute radar.</p></div>
         )}
       </div>
     </aside>

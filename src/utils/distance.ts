@@ -1,4 +1,5 @@
 import { distance, point } from "@turf/turf";
+import type { Startup } from "@/types";
 
 export const AREA_CENTERS: Record<string, [number, number]> = {
   "HITEC City": [78.3772, 17.4483],
@@ -53,4 +54,47 @@ export function relativeTime(date: string) {
   if (days === 1) return "1d";
   if (days < 30) return `${days}d`;
   return `${Math.round(days / 30)}mo`;
+}
+
+export type AreaInsight = {
+  name: string;
+  count: number;
+  openJobs: number;
+  topCategory: string;
+  heat: "hot" | "warm" | "calm";
+  signal: string;
+};
+
+/** Unique area pulse: density + hiring heat + dominant category. */
+export function buildAreaInsights(startups: Startup[]): AreaInsight[] {
+  const buckets = new Map<string, Startup[]>();
+  startups.forEach((startup) => {
+    const list = buckets.get(startup.location.area) ?? [];
+    list.push(startup);
+    buckets.set(startup.location.area, list);
+  });
+
+  return Array.from(buckets.entries())
+    .map(([name, items]) => {
+      const openJobs = items.reduce((sum, item) => sum + item.hiring.jobs.length, 0);
+      const categoryVotes = items.reduce<Record<string, number>>((votes, item) => {
+        votes[item.category] = (votes[item.category] ?? 0) + 1;
+        return votes;
+      }, {});
+      const topCategory = Object.entries(categoryVotes).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "Mixed";
+      const heat: AreaInsight["heat"] = openJobs >= 6 || items.length >= 4 ? "hot" : openJobs >= 2 ? "warm" : "calm";
+      const signal = heat === "hot"
+        ? `${openJobs} open roles · dense`
+        : heat === "warm"
+          ? `${topCategory.split(" ")[0]} pulse`
+          : "Quiet corridor";
+      return { name, count: items.length, openJobs, topCategory, heat, signal };
+    })
+    .sort((a, b) => b.openJobs - a.openJobs || b.count - a.count);
+}
+
+export function nearestAreaName(coords: [number, number]) {
+  return Object.entries(AREA_CENTERS)
+    .map(([name, center]) => ({ name, km: distanceKm(coords, center) }))
+    .sort((a, b) => a.km - b.km)[0]?.name ?? "HITEC City";
 }

@@ -258,6 +258,41 @@ export function upsertBillboard(item: RoadBillboard) {
   });
 }
 
+/** Owner/personal tool: drop a live board at any map coordinate (stored in local CMS). */
+export function placeBillboard(input: {
+  sponsorName: string;
+  tagline: string;
+  junctionName: string;
+  coordinates: [number, number];
+  kind?: RoadBillboard["kind"];
+  ctaLink?: string;
+}) {
+  const item: RoadBillboard = {
+    id: `place-${Date.now()}`,
+    junctionName: input.junctionName,
+    coordinates: input.coordinates,
+    sponsorName: input.sponsorName,
+    tagline: input.tagline,
+    ctaLink: input.ctaLink || "https://example.com",
+    isLive: true,
+    kind: input.kind ?? "virtual",
+    status: "Live campaign",
+    dailyImpressions: "Manual pin",
+    weeklyPrice: "Owner placed",
+    dimensions: "Dynamic roadside board",
+    mediaOwner: "Personal",
+  };
+  return upsertBillboard(item);
+}
+
+export function deleteBillboard(id: string) {
+  const state = loadCms();
+  return saveCms({
+    ...state,
+    billboards: state.billboards.filter((item) => item.id !== id),
+  });
+}
+
 export function createAdOrder(input: {
   product: AdProduct;
   companyName: string;

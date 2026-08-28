@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import type { FillLayerSpecification, GeoJSONSource, Map as MapLibreMap, Marker, StyleSpecification } from "maplibre-gl";
 import { circle, featureCollection, lineString } from "@turf/turf";
+import { MapPinPlus, Search, X } from "lucide-react";
 import thirdspacesData from "@/data/thirdspaces.json";
 import lineageData from "@/data/lineage.json";
 import type { LineageConnection, Mode, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
-import { AREA_CENTERS } from "@/utils/distance";
+import { AREA_CENTERS, nearestAreaName } from "@/utils/distance";
 import BottomAdStrip from "./BottomAdStrip";
 
 const spaces = thirdspacesData as ThirdSpace[];
@@ -32,6 +33,14 @@ type Props = {
   onSelectBillboard: (billboard: RoadBillboard) => void;
   onSubmitHoarding: () => void;
   onPromote: () => void;
+  onPlaceBoard: (input: {
+    sponsorName: string;
+    tagline: string;
+    junctionName: string;
+    coordinates: [number, number];
+    kind: "virtual" | "physical" | "wall-of-fame";
+    ctaLink?: string;
+  }) => void;
 };
 
 function arcCoordinates(connection: LineageConnection) {
@@ -48,16 +57,27 @@ function arcCoordinates(connection: LineageConnection) {
 
 export default function MapContainer({
   mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
-  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onPromote,
+  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onPromote, onPlaceBoard,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const [showBillboards, setShowBillboards] = useState(true);
+  const [placeMode, setPlaceMode] = useState(false);
+  const [draftCoords, setDraftCoords] = useState<[number, number] | null>(null);
+  const [areaJump, setAreaJump] = useState("");
+  const placeModeRef = useRef(false);
   const callbacksRef = useRef({ onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard });
   const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode });
   callbacksRef.current = { onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard };
   dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode };
+  placeModeRef.current = placeMode;
+
+  const areaMatches = useMemo(() => {
+    const q = areaJump.trim().toLowerCase();
+    if (!q) return [] as string[];
+    return Object.keys(AREA_CENTERS).filter((name) => name.toLowerCase().includes(q)).slice(0, 6);
+  }, [areaJump]);
 
   const clearMarkers = () => {
     markersRef.current.forEach((marker) => marker.remove());
@@ -83,7 +103,10 @@ export default function MapContainer({
         element.dataset.id = startup.id;
         element.setAttribute("aria-label", `Open ${startup.name}`);
         element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span><i></i>`;
-        element.addEventListener("click", () => callbacksRef.current.onSelectStartup(startup));
+        element.addEventListener("click", (event) => {
+          event.stopPropagation();
+          callbacksRef.current.onSelectStartup(startup);
+        });
         markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(startup.location.coordinates).addTo(map));
       });
 
@@ -92,17 +115,20 @@ export default function MapContainer({
       element.className = `event-beacon ${event.isFeatured ? "event-beacon--featured" : ""}`;
       element.setAttribute("aria-label", event.title);
       element.innerHTML = "<span></span>";
-      element.addEventListener("click", () => callbacksRef.current.onSelectEvent(event));
+      element.addEventListener("click", (clickEvent) => {
+        clickEvent.stopPropagation();
+        callbacksRef.current.onSelectEvent(event);
+      });
       markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(event.venue.coordinates).addTo(map));
     });
 
     if (boardsOn) {
       nextBillboards.forEach((billboard) => {
         const element = document.createElement("button");
-        element.className = "road-billboard";
+        element.className = `road-billboard ${billboard.mediaOwner === "Personal" ? "is-personal" : ""}`;
         element.dataset.kind = billboard.kind ?? "virtual";
         element.innerHTML = `
-          <em>AD</em>
+          <em>${billboard.mediaOwner === "Personal" ? "YOU" : "AD"}</em>
           <div class="board-face">
             <span>${billboard.sponsorName}</span>
             <small>${billboard.junctionName}</small>
@@ -110,7 +136,10 @@ export default function MapContainer({
           <i class="board-pole"></i>
           <i class="board-base"></i>
         `;
-        element.addEventListener("click", () => callbacksRef.current.onSelectBillboard(billboard));
+        element.addEventListener("click", (clickEvent) => {
+          clickEvent.stopPropagation();
+          callbacksRef.current.onSelectBillboard(billboard);
+        });
         markersRef.current.push(
           new maplibregl.Marker({ element, anchor: "bottom", offset: [0, 0] })
             .setLngLat(billboard.coordinates)
@@ -155,6 +184,7 @@ export default function MapContainer({
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
     map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-left");
+    map.addControl(new maplibregl.ScaleControl({ maxWidth: 100 }), "bottom-left");
 
     map.on("load", () => {
       const layers = map.getStyle().layers as StyleSpecification["layers"];
@@ -171,7 +201,7 @@ export default function MapContainer({
             "fill-extrusion-color": ["interpolate", ["linear"], ["get", "render_height"], 0, "#b9c7d0", 80, "#8399a7", 200, "#657f8f"],
             "fill-extrusion-height": ["coalesce", ["get", "render_height"], ["get", "height"], 8],
             "fill-extrusion-base": ["coalesce", ["get", "render_min_height"], 0],
-            "fill-extrusion-opacity": 0.7,
+            "fill-extrusion-opacity": 0.72,
             "fill-extrusion-vertical-gradient": true,
           },
         }, labelLayer?.id);
@@ -210,6 +240,11 @@ export default function MapContainer({
       renderMarkers(map);
     });
 
+    map.on("click", (event) => {
+      if (!placeModeRef.current) return;
+      setDraftCoords([Number(event.lngLat.lng.toFixed(5)), Number(event.lngLat.lat.toFixed(5))]);
+    });
+
     const dashFrames = [[0, 4, 3], [1, 4, 2], [2, 4, 1], [3, 4, 0]];
     let frame = 0;
     const dashTimer = window.setInterval(() => {
@@ -230,6 +265,14 @@ export default function MapContainer({
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
+    const canvas = map.getCanvas();
+    canvas.style.cursor = placeMode ? "crosshair" : "";
+    containerRef.current?.classList.toggle("place-mode", placeMode);
+  }, [placeMode]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
     const update = () => renderMarkers(map);
     map.loaded() ? update() : map.once("load", update);
   }, [startups, events, billboards, mode, showBillboards, focusedArea]);
@@ -244,10 +287,10 @@ export default function MapContainer({
           "hyd-3d-buildings",
           "fill-extrusion-color",
           mode === "night"
-            ? ["interpolate", ["linear"], ["get", "render_height"], 0, "#12243b", 80, "#164e63", 200, "#8b5cf6"]
+            ? ["interpolate", ["linear"], ["get", "render_height"], 0, "#4b5d75", 80, "#3d5168", 200, "#6d5b9a"]
             : ["interpolate", ["linear"], ["get", "render_height"], 0, "#b9c7d0", 80, "#8399a7", 200, "#657f8f"],
         );
-        map.setPaintProperty("hyd-3d-buildings", "fill-extrusion-opacity", mode === "night" ? 0.9 : 0.7);
+        map.setPaintProperty("hyd-3d-buildings", "fill-extrusion-opacity", mode === "night" ? 0.78 : 0.72);
       }
     };
     map.loaded() ? applyMode() : map.once("load", applyMode);
@@ -304,17 +347,66 @@ export default function MapContainer({
     map.loaded() ? update() : map.once("load", update);
   }, [focusedArea]);
 
+  const jumpToArea = (name: string) => {
+    onFocusArea(name);
+    setAreaJump("");
+  };
+
+  const submitPlacement = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!draftCoords) return;
+    const data = new FormData(event.currentTarget);
+    onPlaceBoard({
+      sponsorName: String(data.get("sponsorName") || "My brand"),
+      tagline: String(data.get("tagline") || "PLACED ON HYDTECHPULSE"),
+      junctionName: String(data.get("junctionName") || nearestAreaName(draftCoords)),
+      coordinates: draftCoords,
+      kind: (String(data.get("kind") || "virtual") as "virtual" | "physical" | "wall-of-fame"),
+      ctaLink: String(data.get("ctaLink") || ""),
+    });
+    setDraftCoords(null);
+    setPlaceMode(false);
+  };
+
   return (
-    <div className="map-shell">
+    <div className={`map-shell ${placeMode ? "is-placing" : ""}`}>
       <div ref={containerRef} className="map-canvas" />
       <div className="map-gradient" />
+
       <div className="map-status">
         <span className="status-dot" /> LIVE MAP
-        <b>FREE EXPLORE</b>
+        <b>{placeMode ? "PLACE MODE" : "FREE EXPLORE"}</b>
       </div>
+
+      <div className="map-area-jump">
+        <Search size={14} />
+        <input
+          value={areaJump}
+          onChange={(e) => setAreaJump(e.target.value)}
+          placeholder="Jump to area..."
+          aria-label="Jump to Hyderabad area"
+        />
+        {areaMatches.length > 0 && (
+          <div className="map-area-jump-list">
+            {areaMatches.map((name) => (
+              <button key={name} type="button" onClick={() => jumpToArea(name)}>{name}</button>
+            ))}
+          </div>
+        )}
+      </div>
+
       <div className="map-layer-switcher">
         <button className={showBillboards ? "active" : ""} onClick={() => setShowBillboards((value) => !value)}>
           <i className="layer-ooh" /> Roadside OOH
+        </button>
+        <button
+          className={placeMode ? "active place-toggle" : "place-toggle"}
+          onClick={() => {
+            setPlaceMode((value) => !value);
+            setDraftCoords(null);
+          }}
+        >
+          <MapPinPlus size={12} /> Place board
         </button>
         <button onClick={onSubmitHoarding}>+ Spotted a hoarding?</button>
         <button onClick={() => {
@@ -322,6 +414,35 @@ export default function MapContainer({
           mapRef.current?.flyTo({ ...DEFAULT_VIEW, duration: 1100 });
         }}>Reset view</button>
       </div>
+
+      {placeMode && (
+        <div className="place-hint">
+          Click anywhere on the map to drop your board. Saved locally — dynamic & editable.
+        </div>
+      )}
+
+      {draftCoords && (
+        <form className="place-board-form" onSubmit={submitPlacement}>
+          <div className="place-board-head">
+            <strong>Place board here</strong>
+            <button type="button" aria-label="Cancel placement" onClick={() => setDraftCoords(null)}><X size={14} /></button>
+          </div>
+          <p>{draftCoords[1].toFixed(5)}, {draftCoords[0].toFixed(5)} · near {nearestAreaName(draftCoords)}</p>
+          <label>Brand / sponsor<input name="sponsorName" required placeholder="Your brand" defaultValue="" /></label>
+          <label>Junction / landmark<input name="junctionName" required defaultValue={`${nearestAreaName(draftCoords)} roadside`} /></label>
+          <label>Tagline<input name="tagline" required placeholder="Short campaign line" /></label>
+          <label>Kind
+            <select name="kind" defaultValue="virtual">
+              <option value="virtual">Virtual map slot</option>
+              <option value="physical">Physical OOH</option>
+              <option value="wall-of-fame">Wall of fame</option>
+            </select>
+          </label>
+          <label>CTA link (optional)<input name="ctaLink" type="url" placeholder="https://..." /></label>
+          <button className="place-board-submit" type="submit">Pin board live</button>
+        </form>
+      )}
+
       <div className="map-legend">
         <span><i className="legend-startup" /> Startups</span>
         <span><i className="legend-event" /> Events</span>
