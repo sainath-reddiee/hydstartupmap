@@ -1,31 +1,21 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { ArrowUpRight, Building2, Check, Plus, ShieldCheck, Sparkles, X, Zap } from "lucide-react";
+import { ArrowUpRight, Building2, Check, Plus, ShieldCheck, Sparkles, X } from "lucide-react";
 import type { AreaName, StartupCategory } from "@/types";
 import { checkoutFor, createAdOrder, submitCompany, submitHoarding } from "@/utils/cms";
 
-export type ModalKind = "boost" | "billboard" | "submit" | "job" | "event" | "hoarding";
+export type ModalKind = "billboard" | "submit" | "job" | "event" | "hoarding";
 
 const offers = {
-  boost: {
-    icon: Zap,
-    kicker: "FEATURED PIN",
-    title: "XL Boosted 3D Pin",
-    price: "₹2,499",
-    period: "/ week",
-    description: "2× map pin scale with a pulsating sonar beacon and priority directory placement.",
-    features: ["2× pin scale", "Sonar beacon", "Priority listing", "Weekly visibility"],
-    product: "boost" as const,
-  },
   billboard: {
     icon: Building2,
-    kicker: "ROAD BILLBOARD",
-    title: "3D Virtual Road Billboard",
-    price: "₹1,499",
+    kicker: "ROADSIDE BILLBOARD",
+    title: "Virtual Tech Billboard",
+    price: "₹1,999",
     period: "/ week",
-    description: "Glowing unipole placement at Cyber Towers, Mindspace or Gachibowli Flyover.",
-    features: ["3D unipole", "Clickable CTA", "Premium junction", "Creative setup"],
+    description: "Book a glowing roadside digital unipole at Cyber Towers, Mindspace Circle or Gachibowli Flyover — placed on the road, not on rooftops.",
+    features: ["Roadside unipole", "Clickable CTA", "Prime junction", "Bottom strip option"],
     product: "billboard" as const,
   },
   job: {

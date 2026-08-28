@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Building2, Moon, Newspaper, Plus, Radio, Sparkles, Sun, Zap } from "lucide-react";
+import { Building2, Moon, Newspaper, Plus, Radio, Sparkles, Sun } from "lucide-react";
 import sponsorsData from "@/data/sponsors.json";
 import type { Mode } from "@/types";
 
@@ -9,7 +9,7 @@ type Props = {
   mode: Mode;
   stats: { startups: number; jobs: number; events: number; news: number };
   onModeChange: (mode: Mode) => void;
-  onOpenModal: (modal: "boost" | "billboard" | "submit" | "job" | "event") => void;
+  onOpenModal: (modal: "billboard" | "submit" | "job" | "event") => void;
 };
 
 export default function Header({ mode, stats, onModeChange, onOpenModal }: Props) {
@@ -36,7 +36,6 @@ export default function Header({ mode, stats, onModeChange, onOpenModal }: Props
             <button className={mode === "day" ? "active" : ""} onClick={() => onModeChange("day")}><Sun size={14} /> Day</button>
             <button className={mode === "night" ? "active" : ""} onClick={() => onModeChange("night")}><Moon size={14} /> Night</button>
           </div>
-          <button className="action-btn action-btn--boost" onClick={() => onOpenModal("boost")}><Zap size={15} /> Boost <small>₹2,499</small></button>
           <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("billboard")}><Building2 size={15} /> Billboard</button>
           <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("job")}><Sparkles size={15} /> Job ad</button>
           <button className="action-btn action-btn--submit" onClick={() => onOpenModal("submit")}><Plus size={15} /> Add company</button>

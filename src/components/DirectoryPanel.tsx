@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Bookmark, BriefcaseBusiness, Building2, CalendarDays, ChevronRight, Clock3,
-  MapPin, Moon, Navigation, Newspaper, Search, SlidersHorizontal, Sparkles, Wifi, Zap,
+  MapPin, Moon, Navigation, Newspaper, Search, SlidersHorizontal, Sparkles, Wifi,
 } from "lucide-react";
 import type { DirectoryTab, Mode, NewsItem, Startup, StartupCategory, TechEvent, ThirdSpace } from "@/types";
 import { AREA_CENTERS, distanceKm, relativeTime } from "@/utils/distance";
@@ -162,13 +162,12 @@ export default function DirectoryPanel(props: Props) {
         {tab === "startups" && filteredStartups.map((startup, index) => (
           <article
             key={startup.id}
-            className={`startup-card ${startup.isBoosted ? "boosted" : ""}`}
+            className="startup-card"
             style={{ animationDelay: `${index * 40}ms` }}
             onMouseEnter={() => props.onHover(startup.id)}
             onMouseLeave={() => props.onHover(null)}
             onClick={() => props.onSelectStartup(startup)}
           >
-            {startup.isBoosted && <span className="boost-label"><Zap size={11} /> XL BOOST</span>}
             <div className="startup-logo">{startup.name.slice(0, 2).toUpperCase()}</div>
             <div className="startup-info">
               <div className="card-title">

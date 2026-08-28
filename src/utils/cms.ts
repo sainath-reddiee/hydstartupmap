@@ -24,7 +24,7 @@ const CHECKOUT: Record<AdProduct, { amount: string; url: string }> = {
     url: process.env.NEXT_PUBLIC_DODO_BOOST_URL ?? "https://checkout.dodopayments.com/buy/pdt_boost_demo",
   },
   billboard: {
-    amount: "₹1,499",
+    amount: "₹1,999",
     url: process.env.NEXT_PUBLIC_DODO_BILLBOARD_URL ?? "https://checkout.dodopayments.com/buy/pdt_billboard_demo",
   },
   "job-spotlight": {
@@ -89,10 +89,14 @@ export function loadCms(): CmsState {
       startups: parsed.startups?.length ? parsed.startups : seedState().startups,
       events: parsed.events?.length ? parsed.events : seedState().events,
       news: parsed.news?.length ? parsed.news : seedState().news,
-      billboards: [
-        ...(parsed.billboards ?? []),
-        ...seedState().billboards.filter((seed) => !(parsed.billboards ?? []).some((item) => item.id === seed.id)),
-      ],
+      billboards: (() => {
+        const seeded = seedState().billboards;
+        const saved = parsed.billboards ?? [];
+        const seedIds = new Set(seeded.map((item) => item.id));
+        // Prefer curated seed placement for known inventory so road coordinates stay correct.
+        const custom = saved.filter((item) => !seedIds.has(item.id));
+        return [...seeded, ...custom];
+      })(),
       hoardings: parsed.hoardings ?? [],
       submissions: parsed.submissions ?? [],
       adOrders: parsed.adOrders ?? [],
