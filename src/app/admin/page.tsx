@@ -13,6 +13,7 @@ import {
   subscribeCms, upsertStartup,
 } from "@/utils/cms";
 import { applyJobsToCompany } from "@/utils/jobSync";
+import { CAREERS_HINT, isGoogleFormUrl } from "@/utils/careers";
 import type { JobRole } from "@/types";
 
 type AdminTab = "queue" | "companies" | "ads" | "news" | "export";
@@ -356,7 +357,18 @@ function EditStartupModal({
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault();
-    onSave(draft);
+    if (draft.hiring.careersUrl && isGoogleFormUrl(draft.hiring.careersUrl)) {
+      alert("Use a careers page, LinkedIn, or Wellfound — not a Google Form.");
+      return;
+    }
+    onSave({
+      ...draft,
+      hiring: {
+        ...draft.hiring,
+        careersUrl: draft.hiring.careersUrl.trim(),
+        isHiring: Boolean(draft.hiring.careersUrl.trim()) || draft.hiring.jobs.length > 0,
+      },
+    });
   };
 
   return (
@@ -370,10 +382,23 @@ function EditStartupModal({
         <label>TAGLINE<input value={draft.tagline} onChange={(e) => setDraft({ ...draft, tagline: e.target.value })} /></label>
         <label>WEBSITE<input value={draft.website} onChange={(e) => setDraft({ ...draft, website: e.target.value })} /></label>
         <label>DESCRIPTION<textarea value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} /></label>
-        <label>CAREERS URL<input value={draft.hiring.careersUrl} onChange={(e) => setDraft({
-          ...draft,
-          hiring: { ...draft.hiring, careersUrl: e.target.value },
-        })} /></label>
+        <label>
+          Hiring?— <span className="field-optional">optional</span>
+          <input
+            value={draft.hiring.careersUrl}
+            type="url"
+            placeholder="https://yourcompany.com/careers"
+            onChange={(e) => setDraft({
+              ...draft,
+              hiring: {
+                ...draft.hiring,
+                careersUrl: e.target.value,
+                isHiring: Boolean(e.target.value.trim()) || draft.hiring.jobs.length > 0,
+              },
+            })}
+          />
+          <small className="field-hint">{CAREERS_HINT}</small>
+        </label>
         <label>
           OPEN JOBS JSON
           <textarea

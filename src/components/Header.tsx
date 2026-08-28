@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { Building2, Moon, Newspaper, Plus, Radio, Sparkles, Sun } from "lucide-react";
+import { Building2, Moon, Plus, Radio, Sparkles, Sun } from "lucide-react";
 import sponsorsData from "@/data/sponsors.json";
 import type { Mode } from "@/types";
 
@@ -39,7 +38,6 @@ export default function Header({ mode, stats, onModeChange, onOpenModal }: Props
           <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("billboard")}><Building2 size={15} /> Billboard</button>
           <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("job")}><Sparkles size={15} /> Job ad</button>
           <button className="action-btn action-btn--submit" onClick={() => onOpenModal("submit")}><Plus size={15} /> Add company</button>
-          <Link href="/admin" className="admin-link" title="Admin portal"><Newspaper size={15} /></Link>
         </div>
       </nav>
 

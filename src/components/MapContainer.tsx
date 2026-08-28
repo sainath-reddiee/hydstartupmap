@@ -1,14 +1,14 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as maplibregl from "maplibre-gl";
 import type { FillLayerSpecification, GeoJSONSource, Map as MapLibreMap, Marker, StyleSpecification } from "maplibre-gl";
 import { circle, featureCollection, lineString } from "@turf/turf";
-import { Flame, MapPinPlus, PanelsTopLeft, Search, X } from "lucide-react";
+import { Flame, Search } from "lucide-react";
 import thirdspacesData from "@/data/thirdspaces.json";
 import lineageData from "@/data/lineage.json";
 import type { LineageConnection, Mode, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
-import { AREA_CENTERS, buildAreaInsights, nearestAreaName } from "@/utils/distance";
+import { AREA_CENTERS, buildAreaInsights } from "@/utils/distance";
 import BottomAdStrip from "./BottomAdStrip";
 
 const spaces = thirdspacesData as ThirdSpace[];
@@ -36,15 +36,6 @@ type Props = {
   onFocusArea: (area: string | null) => void;
   onSelectBillboard: (billboard: RoadBillboard) => void;
   onSubmitHoarding: () => void;
-  onPromote: () => void;
-  onPlaceBoard: (input: {
-    sponsorName: string;
-    tagline: string;
-    junctionName: string;
-    coordinates: [number, number];
-    kind: "virtual" | "physical" | "wall-of-fame";
-    ctaLink?: string;
-  }) => void;
 };
 
 function arcCoordinates(connection: LineageConnection) {
@@ -61,24 +52,19 @@ function arcCoordinates(connection: LineageConnection) {
 
 export default function MapContainer({
   mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
-  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onPromote, onPlaceBoard,
+  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const [showBillboards, setShowBillboards] = useState(true);
   const [showHeat, setShowHeat] = useState(true);
-  const [showInventory, setShowInventory] = useState(true);
-  const [placeMode, setPlaceMode] = useState(false);
-  const [draftCoords, setDraftCoords] = useState<[number, number] | null>(null);
   const [areaJump, setAreaJump] = useState("");
   const [areaMenuOpen, setAreaMenuOpen] = useState(false);
-  const placeModeRef = useRef(false);
   const callbacksRef = useRef({ onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard });
   const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode });
   callbacksRef.current = { onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard };
   dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode };
-  placeModeRef.current = placeMode;
 
   const insights = useMemo(() => buildAreaInsights(startups), [startups]);
 
@@ -289,11 +275,6 @@ export default function MapContainer({
       renderMarkers(map);
     });
 
-    map.on("click", (event) => {
-      if (!placeModeRef.current) return;
-      setDraftCoords([Number(event.lngLat.lng.toFixed(5)), Number(event.lngLat.lat.toFixed(5))]);
-    });
-
     const dashFrames = [[0, 4, 3], [1, 4, 2], [2, 4, 1], [3, 4, 0]];
     let frame = 0;
     const dashTimer = window.setInterval(() => {
@@ -310,13 +291,6 @@ export default function MapContainer({
       mapRef.current = null;
     };
   }, []);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    map.getCanvas().style.cursor = placeMode ? "crosshair" : "";
-    containerRef.current?.classList.toggle("place-mode", placeMode);
-  }, [placeMode]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -413,24 +387,8 @@ export default function MapContainer({
     map.loaded() ? update() : map.once("load", update);
   }, [insights, showHeat]);
 
-  const submitPlacement = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!draftCoords) return;
-    const data = new FormData(event.currentTarget);
-    onPlaceBoard({
-      sponsorName: String(data.get("sponsorName") || "My brand"),
-      tagline: String(data.get("tagline") || "PLACED ON HYDTECHPULSE"),
-      junctionName: String(data.get("junctionName") || nearestAreaName(draftCoords)),
-      coordinates: draftCoords,
-      kind: (String(data.get("kind") || "virtual") as "virtual" | "physical" | "wall-of-fame"),
-      ctaLink: String(data.get("ctaLink") || ""),
-    });
-    setDraftCoords(null);
-    setPlaceMode(false);
-  };
-
   return (
-    <div className={`map-shell ${placeMode ? "is-placing" : ""}`}>
+    <div className={`map-shell ${billboards.length ? "" : "map-shell--no-ads"}`}>
       <div ref={containerRef} className="map-canvas" />
       <div className="map-gradient" />
 
@@ -478,18 +436,6 @@ export default function MapContainer({
         <button className={showHeat ? "active" : ""} onClick={() => setShowHeat((value) => !value)}>
           <Flame size={12} /> Hiring heat
         </button>
-        <button className={showInventory ? "active" : ""} onClick={() => setShowInventory((value) => !value)}>
-          <PanelsTopLeft size={12} /> Inventory
-        </button>
-        <button
-          className={placeMode ? "active place-toggle" : "place-toggle"}
-          onClick={() => {
-            setPlaceMode((value) => !value);
-            setDraftCoords(null);
-          }}
-        >
-          <MapPinPlus size={12} /> Place board
-        </button>
         <button onClick={onSubmitHoarding}>+ Spotted</button>
         <button onClick={() => {
           onFocusArea(null);
@@ -497,68 +443,13 @@ export default function MapContainer({
         }}>Reset</button>
       </div>
 
-      {placeMode && (
-        <div className="place-hint">
-          Click a roadside spot to drop your board — dynamic, local, editable.
-        </div>
-      )}
-
-      {draftCoords && (
-        <form className="place-board-form" onSubmit={submitPlacement}>
-          <div className="place-board-head">
-            <strong>Place board here</strong>
-            <button type="button" aria-label="Cancel placement" onClick={() => setDraftCoords(null)}><X size={14} /></button>
-          </div>
-          <p>{draftCoords[1].toFixed(5)}, {draftCoords[0].toFixed(5)} · near {nearestAreaName(draftCoords)}</p>
-          <label>Brand / sponsor<input name="sponsorName" required placeholder="Your brand" /></label>
-          <label>Junction / landmark<input name="junctionName" required defaultValue={`${nearestAreaName(draftCoords)} roadside`} /></label>
-          <label>Tagline<input name="tagline" required placeholder="Short campaign line" /></label>
-          <label>Kind
-            <select name="kind" defaultValue="virtual">
-              <option value="virtual">Virtual map slot</option>
-              <option value="physical">Physical OOH</option>
-              <option value="wall-of-fame">Wall of fame</option>
-            </select>
-          </label>
-          <label>CTA link (optional)<input name="ctaLink" type="url" placeholder="https://..." /></label>
-          <button className="place-board-submit" type="submit">Pin board live</button>
-        </form>
-      )}
-
-      {showInventory && (
-        <div className="board-inventory">
-          <div className="board-inventory-head">
-            <strong>Board inventory</strong>
-            <button type="button" onClick={onPromote}>Book slot</button>
-          </div>
-          <div className="board-inventory-track">
-            {billboards.map((board) => (
-              <button
-                key={board.id}
-                type="button"
-                className={`inventory-card kind-${board.kind ?? "virtual"}`}
-                onClick={() => {
-                  mapRef.current?.flyTo({ center: board.coordinates, zoom: 15.2, pitch: 48, duration: 900 });
-                  onSelectBillboard(board);
-                }}
-              >
-                <span>{board.kind === "physical" ? "OOH" : board.kind === "wall-of-fame" ? "SPOT" : board.mediaOwner === "Personal" ? "YOU" : "AD"}</span>
-                <strong>{board.sponsorName}</strong>
-                <small>{board.junctionName}</small>
-                <em>{board.weeklyPrice ?? "Live"}</em>
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="map-legend">
         <span><i className="legend-startup" /> Startups</span>
         <span><i className="legend-jobs" /> Open roles</span>
         <span><i className="legend-ooh" /> Boards</span>
         <span><i className="legend-heat" /> Hiring heat</span>
       </div>
-      <BottomAdStrip onPromote={onPromote} billboards={billboards} onSelectBillboard={onSelectBillboard} />
+      <BottomAdStrip billboards={billboards} onSelectBillboard={onSelectBillboard} />
     </div>
   );
 }

@@ -97,13 +97,18 @@ export default function DirectoryPanel(props: Props) {
     .filter(({ title, startup, techStack }) => `${title} ${startup.name} ${(techStack ?? []).join(" ")}`.toLowerCase().includes(query.toLowerCase()))
     .sort((a, b) => Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured))), [props.startups, query]);
 
+  const hiringBoards = useMemo(() => props.startups.filter((startup) => {
+    if (!startup.hiring.careersUrl || startup.hiring.jobs.length > 0) return false;
+    return `${startup.name} ${startup.hiring.careersUrl}`.toLowerCase().includes(query.toLowerCase());
+  }), [props.startups, query]);
+
   const filteredNews = useMemo(() => props.news
     .filter((item) => `${item.title} ${item.source} ${item.summary}`.toLowerCase().includes(query.toLowerCase()))
     .sort((a, b) => Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured)) || b.publishedAt.localeCompare(a.publishedAt)), [props.news, query]);
 
   const tabs: Array<{ id: DirectoryTab; label: string; icon: typeof Building2; count: number }> = [
     { id: "startups", label: "Startups", icon: Building2, count: props.startups.length },
-    { id: "jobs", label: "Jobs", icon: BriefcaseBusiness, count: allJobs.length },
+    { id: "jobs", label: "Jobs", icon: BriefcaseBusiness, count: allJobs.length + hiringBoards.length },
     { id: "news", label: "News", icon: Newspaper, count: props.news.length },
     { id: "events", label: "Events", icon: CalendarDays, count: props.events.length },
     { id: "night", label: "Night", icon: Moon, count: spaces.length },
@@ -263,7 +268,11 @@ export default function DirectoryPanel(props: Props) {
               <div className="meta">
                 <span><MapPinned size={12} /> {startup.location.area}</span>
                 <span>{startup.category}</span>
-                {startup.hiring.isHiring && <span className="hiring">{startup.hiring.jobs.length} OPEN</span>}
+                {startup.hiring.jobs.length > 0 ? (
+                  <span className="hiring">{startup.hiring.jobs.length} OPEN</span>
+                ) : startup.hiring.careersUrl ? (
+                  <span className="hiring">HIRING</span>
+                ) : null}
               </div>
               <div className="vibes">{startup.vibes.slice(0, 2).map((vibe) => <span key={vibe}>{vibe}</span>)}</div>
             </div>
@@ -275,6 +284,26 @@ export default function DirectoryPanel(props: Props) {
               <Bookmark size={16} fill="currentColor" />
             </button>
             <ChevronRight className="card-arrow" size={18} />
+          </article>
+        ))}
+
+        {tab === "jobs" && hiringBoards.map((startup, index) => (
+          <article
+            key={`${startup.id}-careers`}
+            className="job-card"
+            style={{ animationDelay: `${(allJobs.length + index) * 35}ms` }}
+            onClick={() => props.onSelectStartup(startup)}
+          >
+            <div className="job-top">
+              <div className="startup-logo small">{startup.name.slice(0, 2).toUpperCase()}</div>
+              <div>
+                <h3>Open roles at {startup.name}</h3>
+                <p>{startup.location.area} · listed on their careers page</p>
+              </div>
+            </div>
+            <a href={startup.hiring.careersUrl} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>
+              View listings
+            </a>
           </article>
         ))}
 

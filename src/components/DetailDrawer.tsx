@@ -112,7 +112,7 @@ function CompanyProfile({ startup, bookmarked, onToggleBookmark }: { startup: St
         {tab === "jobs" && <section className="profile-tab-panel">
           <div className="section-heading">
             <div className="section-label">ACTIVE JOB OPENINGS</div>
-            <b>{startup.hiring.jobs.length} LIVE</b>
+            <b>{startup.hiring.jobs.length ? `${startup.hiring.jobs.length} LIVE` : startup.hiring.careersUrl ? "LISTED" : "NONE"}</b>
           </div>
           {startup.hiring.jobs.length ? startup.hiring.jobs.map((job) => (
             <div className={`drawer-job ${job.isFeatured ? "featured" : ""}`} key={job.id}>
@@ -124,7 +124,15 @@ function CompanyProfile({ startup, bookmarked, onToggleBookmark }: { startup: St
               </div>
               <a href={job.applyUrl} target="_blank" rel="noreferrer">Apply <ArrowUpRight size={13} /></a>
             </div>
-          )) : <p className="muted">No open roles right now. Bookmark this company to check back.</p>}
+          )) : startup.hiring.careersUrl ? (
+            <div className="drawer-job">
+              <div>
+                <h4>Roles are listed off-map</h4>
+                <p>Open their careers page, LinkedIn, or Wellfound. When the role closes, that link stops being wrong on its own.</p>
+              </div>
+              <a href={startup.hiring.careersUrl} target="_blank" rel="noreferrer">View listings <ArrowUpRight size={13} /></a>
+            </div>
+          ) : <p className="muted">Not hiring right now. Bookmark this company to check back.</p>}
         </section>}
 
         {tab === "funding" && <section className="profile-tab-panel">

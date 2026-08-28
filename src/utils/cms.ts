@@ -14,7 +14,8 @@ import type {
   TechEvent,
 } from "@/types";
 
-const CMS_KEY = "hydtechpulse:cms:v1";
+const CMS_KEY = "hydtechpulse:cms:v2";
+const PLACEHOLDER_BOARD_IDS = new Set(["bill-1", "bill-2", "bill-3", "ooh-1", "ooh-2", "wall-1"]);
 const ADMIN_SESSION_KEY = "hydtechpulse:admin-session";
 const DEFAULT_ADMIN_PIN = "hydpulse2026";
 
@@ -89,14 +90,7 @@ export function loadCms(): CmsState {
       startups: parsed.startups?.length ? parsed.startups : seedState().startups,
       events: parsed.events?.length ? parsed.events : seedState().events,
       news: parsed.news?.length ? parsed.news : seedState().news,
-      billboards: (() => {
-        const seeded = seedState().billboards;
-        const saved = parsed.billboards ?? [];
-        const seedIds = new Set(seeded.map((item) => item.id));
-        // Prefer curated seed placement for known inventory so road coordinates stay correct.
-        const custom = saved.filter((item) => !seedIds.has(item.id));
-        return [...seeded, ...custom];
-      })(),
+      billboards: (parsed.billboards ?? []).filter((item) => !PLACEHOLDER_BOARD_IDS.has(item.id)),
       hoardings: parsed.hoardings ?? [],
       submissions: parsed.submissions ?? [],
       adOrders: parsed.adOrders ?? [],
@@ -185,7 +179,7 @@ export function approveSubmission(id: string, edits?: Partial<Startup>) {
     },
     hiring: edits?.hiring ?? {
       isHiring: Boolean(submission.careersUrl),
-      careersUrl: submission.careersUrl ?? submission.website,
+      careersUrl: submission.careersUrl ?? "",
       jobs: [],
     },
     vibes: edits?.vibes ?? ["🆕 Newly listed"],
