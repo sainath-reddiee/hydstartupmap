@@ -13,13 +13,8 @@ import BottomAdStrip from "./BottomAdStrip";
 const spaces = thirdspacesData as ThirdSpace[];
 const lineage = lineageData as LineageConnection[];
 
-/** Greater Hyderabad / GHMC + ORR — Charminar to Shamshabad, Miyapur to Pocharam. */
-const HYD_BOUNDS: [[number, number], [number, number]] = [
-  [78.22, 17.20],
-  [78.66, 17.60],
-];
-const HYD_CENTER: [number, number] = [78.43, 17.405];
-const CITY_VIEW = { center: HYD_CENTER, zoom: 10.65, pitch: 22, bearing: -8 } as const;
+const DEFAULT_CENTER: [number, number] = [78.43, 17.405];
+const DEFAULT_VIEW = { center: DEFAULT_CENTER, zoom: 11.2, pitch: 28, bearing: -10 } as const;
 
 type Props = {
   mode: Mode;
@@ -51,12 +46,6 @@ function arcCoordinates(connection: LineageConnection) {
   });
 }
 
-function clusterTone(count: number) {
-  if (count >= 8) return "orange";
-  if (count >= 4) return "amber";
-  return "green";
-}
-
 export default function MapContainer({
   mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
   onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onPromote,
@@ -65,11 +54,10 @@ export default function MapContainer({
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const [showBillboards, setShowBillboards] = useState(true);
-  const [detailZoom, setDetailZoom] = useState(false);
   const callbacksRef = useRef({ onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard });
-  const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, detailZoom, mode });
+  const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode });
   callbacksRef.current = { onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard };
-  dataRef.current = { startups, events, billboards, focusedArea, showBillboards, detailZoom, mode };
+  dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode };
 
   const clearMarkers = () => {
     markersRef.current.forEach((marker) => marker.remove());
@@ -84,53 +72,29 @@ export default function MapContainer({
       billboards: nextBillboards,
       focusedArea: areaFocus,
       showBillboards: boardsOn,
-      detailZoom: zoomedIn,
       mode: currentMode,
     } = dataRef.current;
 
-    const counts = nextStartups.reduce<Record<string, number>>((result, startup) => {
-      result[startup.location.area] = (result[startup.location.area] ?? 0) + 1;
-      return result;
-    }, {});
-
-    // Bangalore-style numbered area bubbles — always visible at city overview.
-    Object.entries(counts).forEach(([area, count]) => {
-      const coordinates = AREA_CENTERS[area];
-      if (!coordinates) return;
-      if (zoomedIn && areaFocus && area !== areaFocus) return;
-      const element = document.createElement("button");
-      element.className = `area-cluster tone-${clusterTone(count)} ${areaFocus === area ? "active" : ""}`;
-      element.innerHTML = `<b>${count}</b><span>${area}</span>`;
-      element.setAttribute("aria-label", `${count} startups in ${area}`);
-      element.addEventListener("click", () => {
-        callbacksRef.current.onFocusArea(area);
-      });
-      markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(coordinates).addTo(map));
-    });
-
-    // Company / event markers only once the user zooms into an area.
-    if (zoomedIn) {
-      nextStartups
-        .filter((startup) => !areaFocus || startup.location.area === areaFocus)
-        .forEach((startup) => {
-          const element = document.createElement("button");
-          element.className = "map-pin";
-          element.dataset.id = startup.id;
-          element.setAttribute("aria-label", `Open ${startup.name}`);
-          element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span><i></i>`;
-          element.addEventListener("click", () => callbacksRef.current.onSelectStartup(startup));
-          markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(startup.location.coordinates).addTo(map));
-        });
-
-      nextEvents.forEach((event) => {
+    nextStartups
+      .filter((startup) => !areaFocus || startup.location.area === areaFocus)
+      .forEach((startup) => {
         const element = document.createElement("button");
-        element.className = `event-beacon ${event.isFeatured ? "event-beacon--featured" : ""}`;
-        element.setAttribute("aria-label", event.title);
-        element.innerHTML = "<span></span>";
-        element.addEventListener("click", () => callbacksRef.current.onSelectEvent(event));
-        markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(event.venue.coordinates).addTo(map));
+        element.className = "map-pin";
+        element.dataset.id = startup.id;
+        element.setAttribute("aria-label", `Open ${startup.name}`);
+        element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span><i></i>`;
+        element.addEventListener("click", () => callbacksRef.current.onSelectStartup(startup));
+        markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(startup.location.coordinates).addTo(map));
       });
-    }
+
+    nextEvents.forEach((event) => {
+      const element = document.createElement("button");
+      element.className = `event-beacon ${event.isFeatured ? "event-beacon--featured" : ""}`;
+      element.setAttribute("aria-label", event.title);
+      element.innerHTML = "<span></span>";
+      element.addEventListener("click", () => callbacksRef.current.onSelectEvent(event));
+      markersRef.current.push(new maplibregl.Marker({ element, anchor: "center" }).setLngLat(event.venue.coordinates).addTo(map));
+    });
 
     if (boardsOn) {
       nextBillboards.forEach((billboard) => {
@@ -147,7 +111,6 @@ export default function MapContainer({
           <i class="board-base"></i>
         `;
         element.addEventListener("click", () => callbacksRef.current.onSelectBillboard(billboard));
-        // Anchor at the base of the pole so the board sits beside the road, not on rooftops.
         markersRef.current.push(
           new maplibregl.Marker({ element, anchor: "bottom", offset: [0, 0] })
             .setLngLat(billboard.coordinates)
@@ -156,7 +119,7 @@ export default function MapContainer({
       });
     }
 
-    if (zoomedIn && currentMode === "night") {
+    if (currentMode === "night") {
       spaces.forEach((space) => {
         const element = document.createElement("div");
         element.className = "night-marker";
@@ -176,13 +139,12 @@ export default function MapContainer({
     const map = new maplibregl.Map({
       container: containerRef.current,
       style: "https://tiles.openfreemap.org/styles/liberty",
-      center: CITY_VIEW.center,
-      zoom: CITY_VIEW.zoom,
-      pitch: CITY_VIEW.pitch,
-      bearing: CITY_VIEW.bearing,
-      minZoom: 10,
+      center: DEFAULT_VIEW.center,
+      zoom: DEFAULT_VIEW.zoom,
+      pitch: DEFAULT_VIEW.pitch,
+      bearing: DEFAULT_VIEW.bearing,
+      minZoom: 2,
       maxZoom: 18,
-      maxBounds: HYD_BOUNDS,
       pixelRatio: Math.max(window.devicePixelRatio || 1, 2),
       canvasContextAttributes: { antialias: true, powerPreference: "high-performance" },
       fadeDuration: 80,
@@ -193,12 +155,6 @@ export default function MapContainer({
     mapRef.current = map;
     map.addControl(new maplibregl.NavigationControl({ visualizePitch: true }), "bottom-right");
     map.addControl(new maplibregl.AttributionControl({ compact: true }), "bottom-left");
-
-    const syncZoomMode = () => {
-      const zoomed = map.getZoom() >= 13.4;
-      setDetailZoom(zoomed);
-      if (!zoomed) callbacksRef.current.onFocusArea(null);
-    };
 
     map.on("load", () => {
       const layers = map.getStyle().layers as StyleSpecification["layers"];
@@ -251,11 +207,8 @@ export default function MapContainer({
         paint: { "line-color": "#0f766e", "line-width": 3, "line-opacity": 0.72 },
       });
 
-      syncZoomMode();
       renderMarkers(map);
     });
-
-    map.on("zoomend", syncZoomMode);
 
     const dashFrames = [[0, 4, 3], [1, 4, 2], [2, 4, 1], [3, 4, 0]];
     let frame = 0;
@@ -279,7 +232,7 @@ export default function MapContainer({
     if (!map) return;
     const update = () => renderMarkers(map);
     map.loaded() ? update() : map.once("load", update);
-  }, [startups, events, billboards, mode, showBillboards, focusedArea, detailZoom]);
+  }, [startups, events, billboards, mode, showBillboards, focusedArea]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -356,8 +309,8 @@ export default function MapContainer({
       <div ref={containerRef} className="map-canvas" />
       <div className="map-gradient" />
       <div className="map-status">
-        <span className="status-dot" /> GREATER HYDERABAD
-        <b>{detailZoom ? "STREET DETAIL" : "CITY OVERVIEW"}</b>
+        <span className="status-dot" /> LIVE MAP
+        <b>FREE EXPLORE</b>
       </div>
       <div className="map-layer-switcher">
         <button className={showBillboards ? "active" : ""} onClick={() => setShowBillboards((value) => !value)}>
@@ -366,12 +319,12 @@ export default function MapContainer({
         <button onClick={onSubmitHoarding}>+ Spotted a hoarding?</button>
         <button onClick={() => {
           onFocusArea(null);
-          mapRef.current?.flyTo({ ...CITY_VIEW, duration: 1100 });
-        }}>Reset city view</button>
+          mapRef.current?.flyTo({ ...DEFAULT_VIEW, duration: 1100 });
+        }}>Reset view</button>
       </div>
       <div className="map-legend">
-        <span><i className="legend-cluster" /> Area counts</span>
         <span><i className="legend-startup" /> Startups</span>
+        <span><i className="legend-event" /> Events</span>
         <span><i className="legend-ooh" /> Road boards</span>
       </div>
       <BottomAdStrip onPromote={onPromote} />
