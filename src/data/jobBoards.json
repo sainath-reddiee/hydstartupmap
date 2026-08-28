@@ -1,0 +1,66 @@
+{
+  "boards": {
+    "darwinbox": { "provider": "careers-feed", "careersUrl": "https://darwinbox.com/careers" },
+    "keka": { "provider": "careers-feed", "careersUrl": "https://www.keka.com/careers" },
+    "skyroot": { "provider": "careers-feed", "careersUrl": "https://skyroot.in/careers" },
+    "nxtwave": { "provider": "careers-feed", "careersUrl": "https://www.ccbp.in" },
+    "bluecopa": { "provider": "careers-feed", "careersUrl": "https://www.bluecopa.com/careers" },
+    "bhanzu": { "provider": "careers-feed", "careersUrl": "https://bhanzu.com/careers" },
+    "callhealth": { "provider": "careers-feed", "careersUrl": "https://www.callhealth.com" },
+    "infinitylearn": { "provider": "careers-feed", "careersUrl": "https://infinitylearn.com" },
+    "orbit-ai": { "provider": "careers-feed", "careersUrl": "https://example.com/careers" },
+    "quanta-sec": { "provider": "careers-feed", "careersUrl": "https://example.com/careers" },
+    "cloudmint": { "provider": "careers-feed", "careersUrl": "https://example.com/careers" }
+  },
+  "feeds": {
+    "darwinbox": [
+      {"title": "Senior Backend Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹35–55 LPA", "techStack": ["Java", "AWS", "Kafka"], "isFeatured": true, "description": "Scale HCM microservices for global tenants."},
+      {"title": "Staff Platform Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹45–70 LPA", "techStack": ["Kubernetes", "AWS"], "description": "Own reliability of core People platform."},
+      {"title": "Product Designer", "department": "Design", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹25–40 LPA", "techStack": ["Figma"], "description": "Design workflow-heavy enterprise UX."},
+      {"title": "AI Product Manager", "department": "Product", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹32–50 LPA", "techStack": ["LLM", "HCM"], "isFeatured": true}
+    ],
+    "keka": [
+      {"title": "Full Stack Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹22–38 LPA", "techStack": ["React", ".NET"], "isFeatured": true},
+      {"title": "Payroll Domain Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹20–34 LPA", "techStack": [".NET", "SQL Server"]},
+      {"title": "Customer Success Manager", "department": "Sales", "type": "Full-time", "workMode": "On-site", "salaryRange": "₹12–20 LPA"}
+    ],
+    "skyroot": [
+      {"title": "Propulsion Engineer", "department": "Engineering", "type": "Full-time", "workMode": "On-site", "salaryRange": "₹18–32 LPA", "techStack": ["MATLAB", "CFD"], "isFeatured": true},
+      {"title": "Avionics Software Engineer", "department": "Engineering", "type": "Full-time", "workMode": "On-site", "salaryRange": "₹16–28 LPA", "techStack": ["C++", "Embedded"]},
+      {"title": "Structures Analyst", "department": "Engineering", "type": "Full-time", "workMode": "On-site", "salaryRange": "₹14–24 LPA", "techStack": ["FEA", "CAD"]}
+    ],
+    "nxtwave": [
+      {"title": "Curriculum Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹15–28 LPA", "techStack": ["Python", "React"], "isFeatured": true},
+      {"title": "Growth Marketer", "department": "Growth", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹12–22 LPA", "techStack": ["Performance marketing"]},
+      {"title": "Content Engineer Intern", "department": "Engineering", "type": "Internship", "workMode": "Hybrid", "salaryRange": "₹25–40K / mo", "techStack": ["JavaScript"]}
+    ],
+    "bluecopa": [
+      {"title": "ML Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹24–40 LPA", "techStack": ["Python", "AWS"], "isFeatured": true},
+      {"title": "Forward Deployed Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹20–35 LPA", "techStack": ["TypeScript", "SQL"]}
+    ],
+    "bhanzu": [
+      {"title": "Product Manager", "department": "Product", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹25–40 LPA", "isFeatured": true},
+      {"title": "Math Content Lead", "department": "Growth", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹14–22 LPA"}
+    ],
+    "callhealth": [
+      {"title": "Backend Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹16–28 LPA", "techStack": ["Java", "AWS"], "isFeatured": true},
+      {"title": "Clinical Product Analyst", "department": "Product", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹12–20 LPA"}
+    ],
+    "infinitylearn": [
+      {"title": "Android Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹18–30 LPA", "techStack": ["Kotlin"], "isFeatured": true},
+      {"title": "Data Analyst", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹12–20 LPA", "techStack": ["SQL", "Python"]}
+    ],
+    "orbit-ai": [
+      {"title": "Senior ML Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹28–42 LPA", "techStack": ["PyTorch", "Python"], "isFeatured": true},
+      {"title": "Applied Research Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹24–38 LPA", "techStack": ["Transformers"]}
+    ],
+    "quanta-sec": [
+      {"title": "Security Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹26–38 LPA", "techStack": ["Rust", "IAM"], "isFeatured": true},
+      {"title": "Detection Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹20–32 LPA", "techStack": ["SIEM", "Python"]}
+    ],
+    "cloudmint": [
+      {"title": "Founding Product Manager", "department": "Product", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹24–34 LPA", "techStack": ["FinOps", "B2B SaaS"], "isFeatured": true},
+      {"title": "Cloud Cost Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹18–30 LPA", "techStack": ["AWS", "Terraform"]}
+    ]
+  }
+}

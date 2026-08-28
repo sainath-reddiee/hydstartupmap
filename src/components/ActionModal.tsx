@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { ArrowUpRight, Building2, Check, Plus, ShieldCheck, Sparkles, X } from "lucide-react";
 import type { AreaName, StartupCategory } from "@/types";
 import { checkoutFor, createAdOrder, submitCompany, submitHoarding } from "@/utils/cms";
+import { CAREERS_HINT, isGoogleFormUrl } from "@/utils/careers";
 
 export type ModalKind = "billboard" | "submit" | "job" | "event" | "hoarding";
 
@@ -119,6 +120,14 @@ export default function ActionModal({ kind, onClose }: { kind: ModalKind | null;
     const onSubmit = (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const data = new FormData(event.currentTarget);
+      const careersUrl = String(data.get("careersUrl") || "").trim();
+      if (careersUrl && isGoogleFormUrl(careersUrl)) {
+        event.currentTarget.querySelector<HTMLInputElement>("[name=careersUrl]")?.setCustomValidity(
+          "Use a careers page, LinkedIn, or Wellfound — not a Google Form.",
+        );
+        event.currentTarget.querySelector<HTMLInputElement>("[name=careersUrl]")?.reportValidity();
+        return;
+      }
       submitCompany({
         companyName: String(data.get("companyName") || ""),
         website: String(data.get("website") || ""),
@@ -126,7 +135,7 @@ export default function ActionModal({ kind, onClose }: { kind: ModalKind | null;
         area: String(data.get("area") || "HITEC City") as AreaName,
         category: String(data.get("category") || "SaaS & Enterprise") as StartupCategory,
         contactEmail: String(data.get("email") || ""),
-        careersUrl: String(data.get("careersUrl") || ""),
+        careersUrl,
       });
       setSubmitted(true);
     };
@@ -150,7 +159,16 @@ export default function ActionModal({ kind, onClose }: { kind: ModalKind | null;
                   <label>AREA<select name="area">{areas.map((area) => <option key={area}>{area}</option>)}</select></label>
                   <label>CATEGORY<select name="category">{categories.map((category) => <option key={category}>{category}</option>)}</select></label>
                 </div>
-                <label>CAREERS URL<input name="careersUrl" type="url" placeholder="https://..." /></label>
+                <label>
+                  Hiring?— <span className="field-optional">optional</span>
+                  <input
+                    name="careersUrl"
+                    type="url"
+                    placeholder="https://yourcompany.com/careers"
+                    onInput={(event) => event.currentTarget.setCustomValidity("")}
+                  />
+                  <small className="field-hint">{CAREERS_HINT}</small>
+                </label>
                 <label>ONE-LINE PITCH<textarea name="pitch" required placeholder="What are you building in Hyderabad?" /></label>
                 <button className="modal-primary" type="submit">Send for approval <ArrowUpRight size={15} /></button>
               </form>
