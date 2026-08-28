@@ -1,0 +1,17 @@
+{
+  "marquee": [
+    {"label":"DARWINBOX","message":"Hyderabad unicorn · engineering roles open","tone":"cyan"},
+    {"label":"SKYROOT","message":"Private launch stack hiring in HYD","tone":"violet"},
+    {"label":"KEKA","message":"People platform teams expanding in Gachibowli","tone":"lime"},
+    {"label":"BLUECOPA","message":"T-Hub finance AI · featured on the map","tone":"amber"},
+    {"label":"NXTWAVE","message":"Edtech builders hiring curriculum engineers","tone":"cyan"}
+  ],
+  "billboards": [
+    {"id":"bill-1","junctionName":"Cyber Towers Junction","coordinates":[78.3773,17.4504],"sponsorName":"Darwinbox","tagline":"AI-NATIVE HCM FROM HYDERABAD","ctaLink":"https://darwinbox.com/careers","isLive":true,"kind":"virtual","status":"Live campaign","dailyImpressions":"38K map views","weeklyPrice":"₹1,999","dimensions":"Digital unipole","mediaOwner":"HydTechPulse"},
+    {"id":"bill-2","junctionName":"Gachibowli Flyover","coordinates":[78.3566,17.4374],"sponsorName":"HydTechPulse","tagline":"YOUR CAMPAIGN ABOVE THE GRID","ctaLink":"https://checkout.dodopayments.com/buy/pdt_billboard_demo","isLive":true,"kind":"virtual","status":"Available","dailyImpressions":"31K map views","weeklyPrice":"₹1,999","dimensions":"Digital unipole","mediaOwner":"HydTechPulse"},
+    {"id":"bill-3","junctionName":"Mindspace Circle","coordinates":[78.3814,17.4432],"sponsorName":"Keka HR","tagline":"BUILD PEOPLE PRODUCTS HERE","ctaLink":"https://www.keka.com/careers","isLive":true,"kind":"virtual","status":"Live campaign","dailyImpressions":"42K map views","weeklyPrice":"₹1,999","dimensions":"Digital unipole","mediaOwner":"HydTechPulse"},
+    {"id":"ooh-1","junctionName":"Durgam Cheruvu Cable Bridge","coordinates":[78.3891,17.4309],"sponsorName":"Prime OOH Slot 01","tagline":"PHYSICAL HOARDING · INQUIRE TO BOOK","ctaLink":"mailto:ads@hydtechpulse.in?subject=Durgam%20Cheruvu%20OOH%20inquiry","isLive":true,"kind":"physical","status":"Available","dailyImpressions":"1.8L road impressions","weeklyPrice":"On request","dimensions":"40 × 20 ft","mediaOwner":"Partner media owner"},
+    {"id":"ooh-2","junctionName":"ORR Nanakramguda Exit","coordinates":[78.3427,17.4096],"sponsorName":"Prime OOH Slot 02","tagline":"HIGH-SPEED TECH CORRIDOR INVENTORY","ctaLink":"mailto:ads@hydtechpulse.in?subject=ORR%20Nanakramguda%20OOH%20inquiry","isLive":true,"kind":"physical","status":"Available","dailyImpressions":"2.4L road impressions","weeklyPrice":"On request","dimensions":"60 × 30 ft","mediaOwner":"Partner media owner"},
+    {"id":"wall-1","junctionName":"Jubilee Hills Checkpost","coordinates":[78.4076,17.4292],"sponsorName":"Hoarding Wall of Fame","tagline":"SPOTTED: HYDERABAD STARTUP BANTER","ctaLink":"#","isLive":true,"kind":"wall-of-fame","status":"Booked","dailyImpressions":"Community spotted","weeklyPrice":"Not for sale","dimensions":"Real-world campaign","mediaOwner":"Community"}
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "hydtechpulse-3d",
+  "version": "1.0.0",
+  "description": "A hyper-local 3D technology ecosystem map for Hyderabad",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sainath-reddiee/hydstartupmap.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sainath-reddiee/hydstartupmap/issues"
+  },
+  "homepage": "https://github.com/sainath-reddiee/hydstartupmap#readme",
+  "dependencies": {
+    "@turf/turf": "^7.4.0",
+    "lucide-react": "^1.34.0",
+    "maplibre-gl": "^6.6.0",
+    "next": "^16.3.3",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2"
+  }
+}

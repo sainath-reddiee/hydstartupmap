@@ -1,0 +1,10 @@
+[
+  {"id":"lin-1","sourceName":"Microsoft IDC","sourceCoords":[78.3392,17.4385],"targetName":"Orbit AI","targetCoords":[78.3778,17.4349],"relation":"Alumni Mafia","color":"#65d9ff"},
+  {"id":"lin-2","sourceName":"Microsoft IDC","sourceCoords":[78.3392,17.4385],"targetName":"QuantaSec","targetCoords":[78.3508,17.4149],"relation":"Alumni Mafia","color":"#65d9ff"},
+  {"id":"lin-3","sourceName":"Amazon HYD","sourceCoords":[78.3398,17.4225],"targetName":"NxtWave","targetCoords":[78.3911,17.4407],"relation":"Alumni Mafia","color":"#ffbd66"},
+  {"id":"lin-4","sourceName":"T-Hub","sourceCoords":[78.3662,17.4439],"targetName":"Bluecopa","targetCoords":[78.3666,17.4441],"relation":"Incubated At","color":"#4ade80"},
+  {"id":"lin-5","sourceName":"T-Hub","sourceCoords":[78.3662,17.4439],"targetName":"Cosmoserve","targetCoords":[78.3658,17.4434],"relation":"Incubated At","color":"#4ade80"},
+  {"id":"lin-6","sourceName":"T-Hub","sourceCoords":[78.3662,17.4439],"targetName":"CloudMint","targetCoords":[78.3728,17.4337],"relation":"Incubated At","color":"#4ade80"},
+  {"id":"lin-7","sourceName":"T-Hub","sourceCoords":[78.3662,17.4439],"targetName":"Xeeed IO","targetCoords":[78.3728,17.4337],"relation":"Incubated At","color":"#4ade80"},
+  {"id":"lin-8","sourceName":"ISRO alumni","sourceCoords":[78.3432,17.4215],"targetName":"Skyroot Aerospace","targetCoords":[78.3432,17.4215],"relation":"Alumni Mafia","color":"#a78bfa"}
+]
