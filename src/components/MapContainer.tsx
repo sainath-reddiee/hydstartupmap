@@ -7,18 +7,22 @@ import { circle, featureCollection, lineString } from "@turf/turf";
 import { Flame, Search } from "lucide-react";
 import thirdspacesData from "@/data/thirdspaces.json";
 import lineageData from "@/data/lineage.json";
-import type { LineageConnection, Mode, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
-import { AREA_CENTERS, buildAreaInsights } from "@/utils/distance";
-import BottomAdStrip from "./BottomAdStrip";
+import landmarksData from "@/data/landmarks.json";
+import type { CityLandmark, CorridorPulse, LineageConnection, Mode, NewsItem, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
+import { AREA_CENTERS, buildAreaInsights, type AreaInsight } from "@/utils/distance";
+import { resolveCorridorSlots } from "@/utils/corridors";
+import CorridorDock from "./CorridorDock";
+import NewsPeek from "./NewsPeek";
 
 const spaces = thirdspacesData as ThirdSpace[];
 const lineage = lineageData as LineageConnection[];
+const landmarks = landmarksData as unknown as CityLandmark[];
 
 const DEFAULT_CENTER: [number, number] = [78.43, 17.405];
 const DEFAULT_VIEW = { center: DEFAULT_CENTER, zoom: 11.2, pitch: 28, bearing: -10 } as const;
 const QUICK_AREAS = [
   "HITEC City", "Madhapur", "Gachibowli", "Financial District",
-  "Kondapur", "Jubilee Hills", "Banjara Hills", "Secunderabad", "Old City", "Uppal",
+  "Kondapur", "Jubilee Hills", "Banjara Hills", "Secunderabad", "Old City", "Uppal", "Shamshabad",
 ];
 
 type Props = {
@@ -26,6 +30,7 @@ type Props = {
   startups: Startup[];
   events: TechEvent[];
   billboards: RoadBillboard[];
+  news: NewsItem[];
   selectedStartup: Startup | null;
   selectedEvent: TechEvent | null;
   hoveredId: string | null;
@@ -36,6 +41,10 @@ type Props = {
   onFocusArea: (area: string | null) => void;
   onSelectBillboard: (billboard: RoadBillboard) => void;
   onSubmitHoarding: () => void;
+  onClaimCorridor: (slot: CorridorPulse) => void;
+  railsCollapsed?: boolean;
+  onOpenDirectory?: () => void;
+  intentMatches?: Startup[];
 };
 
 function arcCoordinates(connection: LineageConnection) {
@@ -51,20 +60,26 @@ function arcCoordinates(connection: LineageConnection) {
 }
 
 export default function MapContainer({
-  mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
-  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding,
+  mode, startups, events, billboards, news, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
+  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onClaimCorridor,
+  railsCollapsed, onOpenDirectory, intentMatches = [],
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const [showBillboards, setShowBillboards] = useState(true);
   const [showHeat, setShowHeat] = useState(true);
+  const [newsOpen, setNewsOpen] = useState(false);
+  const [dockOpen, setDockOpen] = useState(true);
+  const [showLandmarks, setShowLandmarks] = useState(true);
+  const [heatStory, setHeatStory] = useState<AreaInsight | null>(null);
+  const corridorSlots = useMemo(() => resolveCorridorSlots(billboards), [billboards]);
   const [areaJump, setAreaJump] = useState("");
   const [areaMenuOpen, setAreaMenuOpen] = useState(false);
   const callbacksRef = useRef({ onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard });
-  const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode });
+  const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode, corridorSlots, showLandmarks });
   callbacksRef.current = { onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard };
-  dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode };
+  dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode, corridorSlots, showLandmarks };
 
   const insights = useMemo(() => buildAreaInsights(startups), [startups]);
 
@@ -89,17 +104,20 @@ export default function MapContainer({
       focusedArea: areaFocus,
       showBillboards: boardsOn,
       mode: currentMode,
+      corridorSlots: nextCorridors,
+      showLandmarks: landmarksOn,
     } = dataRef.current;
 
     nextStartups
       .filter((startup) => !areaFocus || startup.location.area === areaFocus)
       .forEach((startup) => {
         const element = document.createElement("button");
-        element.className = `map-pin ${startup.hiring.jobs.length ? "has-jobs" : ""}`;
+        element.className = `map-pin ${startup.hiring.jobs.length ? "has-jobs" : ""} ${startup.isBoosted ? "is-pulse" : ""}`;
         element.dataset.id = startup.id;
         element.setAttribute("aria-label", `Open ${startup.name}`);
         const jobs = startup.hiring.jobs.length;
-        element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span>${jobs ? `<em>${jobs}</em>` : ""}<i></i>`;
+        const hiring = jobs ? `${jobs} roles` : startup.hiring.careersUrl ? "Hiring" : startup.location.area;
+        element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span>${jobs ? `<em>${jobs}</em>` : ""}<i></i><div class="pin-tip"><b>${startup.name}</b><small>${startup.location.area} · ${hiring}</small></div>`;
         element.addEventListener("click", (event) => {
           event.stopPropagation();
           callbacksRef.current.onSelectStartup(startup);
@@ -120,7 +138,19 @@ export default function MapContainer({
     });
 
     if (boardsOn) {
-      nextBillboards.forEach((billboard) => {
+      nextCorridors.forEach((slot) => {
+        if (!slot.campaign) return;
+        const element = document.createElement("button");
+        element.className = "corridor-beacon";
+        element.innerHTML = `<small>PULSE</small><strong>${slot.campaign.sponsorName}</strong><span>${slot.label}</span>`;
+        element.addEventListener("click", (clickEvent) => {
+          clickEvent.stopPropagation();
+          if (slot.campaign) callbacksRef.current.onSelectBillboard(slot.campaign);
+        });
+        markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(slot.coordinates).addTo(map));
+      });
+
+      nextBillboards.filter((item) => !item.corridorId).forEach((billboard) => {
         const element = document.createElement("button");
         const personal = billboard.mediaOwner === "Personal";
         element.className = `road-billboard board-card ${personal ? "is-personal" : ""}`;
@@ -144,6 +174,16 @@ export default function MapContainer({
             .setLngLat(billboard.coordinates)
             .addTo(map),
         );
+      });
+    }
+
+    if (landmarksOn) {
+      landmarks.forEach((landmark) => {
+        const element = document.createElement("div");
+        element.className = `landmark-label kind-${landmark.kind}`;
+        element.innerHTML = `<i></i><span>${landmark.name}</span>`;
+        element.title = landmark.building;
+        markersRef.current.push(new maplibregl.Marker({ element, anchor: "left" }).setLngLat(landmark.coordinates).addTo(map));
       });
     }
 
@@ -272,6 +312,33 @@ export default function MapContainer({
         },
       });
 
+      map.addSource("hiring-heat-labels", { type: "geojson", data: featureCollection([]) });
+      map.addLayer({
+        id: "hiring-heat-labels",
+        type: "symbol",
+        source: "hiring-heat-labels",
+        layout: {
+          "text-field": ["concat", ["get", "area"], " · ", ["to-string", ["get", "count"]], " cos"],
+          "text-size": 11,
+          "text-allow-overlap": true,
+        },
+        paint: {
+          "text-color": "#134e4a",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.4,
+        },
+      });
+
+      map.addSource("intent-rings", { type: "geojson", data: featureCollection([]) });
+      map.addLayer({
+        id: "intent-rings-fill", type: "fill", source: "intent-rings",
+        paint: { "fill-color": "#8b5cf6", "fill-opacity": 0.16 },
+      });
+      map.addLayer({
+        id: "intent-rings-line", type: "line", source: "intent-rings",
+        paint: { "line-color": "#7c3aed", "line-width": 2, "line-opacity": 0.85 },
+      });
+
       renderMarkers(map);
     });
 
@@ -281,6 +348,9 @@ export default function MapContainer({
       if (map.loaded() && map.getLayer("lineage-lines")) {
         map.setPaintProperty("lineage-lines", "line-dasharray", dashFrames[frame % dashFrames.length]);
         frame += 1;
+      }
+      if (map.loaded() && map.getLayer("hiring-heat-fill")) {
+        map.setPaintProperty("hiring-heat-fill", "fill-opacity", frame % 2 === 0 ? 0.14 : 0.24);
       }
     }, 220);
 
@@ -297,7 +367,7 @@ export default function MapContainer({
     if (!map) return;
     const update = () => renderMarkers(map);
     map.loaded() ? update() : map.once("load", update);
-  }, [startups, events, billboards, mode, showBillboards, focusedArea]);
+  }, [startups, events, billboards, mode, showBillboards, focusedArea, corridorSlots, showLandmarks]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -373,6 +443,8 @@ export default function MapContainer({
       if (!source) return;
       if (!showHeat) {
         source.setData(featureCollection([]));
+        (map.getSource("hiring-heat-labels") as GeoJSONSource | undefined)?.setData(featureCollection([]));
+        setHeatStory(null);
         return;
       }
       const features = insights
@@ -380,15 +452,65 @@ export default function MapContainer({
         .map((item) => circle(AREA_CENTERS[item.name], item.heat === "hot" ? 1.4 : item.heat === "warm" ? 1.1 : 0.85, {
           steps: 64,
           units: "kilometers",
-          properties: { heat: item.heat, jobs: item.openJobs, area: item.name },
+          properties: { heat: item.heat, jobs: item.openJobs, area: item.name, signal: item.signal },
         }));
       source.setData(featureCollection(features));
+      const labels = map.getSource("hiring-heat-labels") as GeoJSONSource | undefined;
+      labels?.setData({
+        type: "FeatureCollection",
+        features: insights.filter((item) => AREA_CENTERS[item.name]).map((item) => ({
+          type: "Feature",
+          properties: { area: item.name, jobs: item.openJobs, count: item.count },
+          geometry: { type: "Point", coordinates: AREA_CENTERS[item.name] },
+        })),
+      });
     };
     map.loaded() ? update() : map.once("load", update);
   }, [insights, showHeat]);
 
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const onClick = (event: maplibregl.MapMouseEvent) => {
+      if (!map.getLayer("hiring-heat-fill")) return;
+      const hit = map.queryRenderedFeatures(event.point, { layers: ["hiring-heat-fill"] })[0];
+      const area = hit?.properties?.area as string | undefined;
+      if (!area) return;
+      flyToArea(area);
+      setHeatStory(insights.find((item) => item.name === area) ?? null);
+    };
+    const onMove = (event: maplibregl.MapMouseEvent) => {
+      if (!map.getLayer("hiring-heat-fill")) return;
+      const hit = map.queryRenderedFeatures(event.point, { layers: ["hiring-heat-fill"] })[0];
+      map.getCanvas().style.cursor = hit ? "pointer" : "";
+    };
+    map.on("click", onClick);
+    map.on("mousemove", onMove);
+    return () => {
+      map.off("click", onClick);
+      map.off("mousemove", onMove);
+    };
+  }, [insights]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const update = () => {
+      const source = map.getSource("intent-rings") as GeoJSONSource | undefined;
+      if (!source) return;
+      source.setData(featureCollection(intentMatches.map((startup) =>
+        circle(startup.location.coordinates, 0.45, {
+          steps: 48,
+          units: "kilometers",
+          properties: { name: startup.name },
+        }),
+      )));
+    };
+    map.loaded() ? update() : map.once("load", update);
+  }, [intentMatches]);
+
   return (
-    <div className={`map-shell ${billboards.length ? "" : "map-shell--no-ads"}`}>
+    <div className="map-shell">
       <div ref={containerRef} className="map-canvas" />
       <div className="map-gradient" />
 
@@ -431,10 +553,13 @@ export default function MapContainer({
 
       <div className="map-layer-switcher">
         <button className={showBillboards ? "active" : ""} onClick={() => setShowBillboards((value) => !value)}>
-          <i className="layer-ooh" /> Boards
+          <i className="layer-ooh" /> Pulse
         </button>
         <button className={showHeat ? "active" : ""} onClick={() => setShowHeat((value) => !value)}>
           <Flame size={12} /> Hiring heat
+        </button>
+        <button className={showLandmarks ? "active" : ""} onClick={() => setShowLandmarks((value) => !value)}>
+          Buildings
         </button>
         <button onClick={onSubmitHoarding}>+ Spotted</button>
         <button onClick={() => {
@@ -443,13 +568,42 @@ export default function MapContainer({
         }}>Reset</button>
       </div>
 
+      <NewsPeek news={news} open={newsOpen} onToggle={() => setNewsOpen((value) => !value)} />
+
       <div className="map-legend">
         <span><i className="legend-startup" /> Startups</span>
         <span><i className="legend-jobs" /> Open roles</span>
-        <span><i className="legend-ooh" /> Boards</span>
-        <span><i className="legend-heat" /> Hiring heat</span>
+        <span><i className="legend-ooh" /> Corridor pulse</span>
+        <span><i className="legend-heat" /> Hiring heat · tap a ring</span>
+        <span><i className="legend-landmark" /> Buildings</span>
+        {intentMatches.length > 0 && <span><i className="legend-intent" /> Role match</span>}
       </div>
-      <BottomAdStrip billboards={billboards} onSelectBillboard={onSelectBillboard} />
+      {heatStory && (
+        <div className="heat-card">
+          <small>{heatStory.heat.toUpperCase()} RING</small>
+          <strong>{heatStory.name}</strong>
+          <p>{heatStory.count} companies · {heatStory.signal}</p>
+          <button type="button" onClick={() => setHeatStory(null)}>Close</button>
+        </div>
+      )}
+      {railsCollapsed && onOpenDirectory && (
+        <button type="button" className="map-reopen-rail" onClick={onOpenDirectory}>
+          Show directory
+        </button>
+      )}
+      <CorridorDock
+        slots={corridorSlots}
+        collapsed={!dockOpen}
+        onToggle={() => setDockOpen((value) => !value)}
+        onClaim={(slot) => {
+          flyToArea(slot.name);
+          onClaimCorridor(slot);
+        }}
+        onOpenLive={(slot) => {
+          flyToArea(slot.name);
+          if (slot.campaign) onSelectBillboard(slot.campaign);
+        }}
+      />
     </div>
   );
 }

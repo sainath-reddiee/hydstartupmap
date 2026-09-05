@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  Bookmark, BriefcaseBusiness, Building2, CalendarDays, ChevronRight, Clock3,
+  Bookmark, BriefcaseBusiness, Building2, CalendarDays, ChevronLeft, ChevronRight, Clock3,
   Flame, MapPinned, Moon, Navigation, Newspaper, Search, Sparkles, Wifi, X,
 } from "lucide-react";
-import type { DirectoryTab, Mode, NewsItem, Startup, StartupCategory, TechEvent, ThirdSpace } from "@/types";
+import type { DirectoryTab, Mode, NewsItem, Startup, StartupCategory, TechEvent, ThirdSpace, ViewMode } from "@/types";
 import { AREA_CENTERS, buildAreaInsights, distanceKm, relativeTime } from "@/utils/distance";
+import { hiringSignal, isActivelyHiring } from "@/utils/hiring";
 import spacesData from "@/data/thirdspaces.json";
 
 const spaces = spacesData as ThirdSpace[];
@@ -29,12 +30,22 @@ type Props = {
   onCommuteChange: (value: { area: string; radius: number } | null) => void;
   focusedArea: string | null;
   onAreaFocus: (area: string | null) => void;
+  query?: string;
+  jumpTab?: DirectoryTab | null;
+  tabNonce?: number;
+  viewMode?: ViewMode;
+  collapsed?: boolean;
+  onCollapse?: () => void;
+  onPromoteJob?: () => void;
+  onHireSprint?: () => void;
+  suggested?: Startup[];
 };
 
 export default function DirectoryPanel(props: Props) {
-  const [tab, setTab] = useState<DirectoryTab>(props.mode === "night" ? "night" : "startups");
-  const [query, setQuery] = useState("");
+  const [tab, setTab] = useState<DirectoryTab>("startups");
+  const [query, setQuery] = useState(props.query ?? "");
   const [category, setCategory] = useState<StartupCategory | "All">("All");
+  const [stage, setStage] = useState<"All" | Startup["stage"]>("All");
   const [area, setArea] = useState("All");
   const [sortBy, setSortBy] = useState<"signal" | "hiring" | "newest">("signal");
   const [commuteEnabled, setCommuteEnabled] = useState(false);
@@ -44,6 +55,14 @@ export default function DirectoryPanel(props: Props) {
   useEffect(() => {
     setArea(props.focusedArea ?? "All");
   }, [props.focusedArea]);
+
+  useEffect(() => {
+    if (props.query !== undefined) setQuery(props.query);
+  }, [props.query]);
+
+  useEffect(() => {
+    if (props.jumpTab) setTab(props.jumpTab);
+  }, [props.jumpTab, props.tabNonce]);
 
   const areaInsights = useMemo(() => buildAreaInsights(props.startups), [props.startups]);
 
@@ -77,20 +96,24 @@ export default function DirectoryPanel(props: Props) {
 
   const filteredStartups = useMemo(() => {
     const q = query.trim().toLowerCase();
+    const suggestedIds = new Set((props.suggested ?? []).map((item) => item.id));
     const list = props.startups.filter((startup) => {
       const hay = `${startup.name} ${startup.tagline} ${startup.category} ${startup.location.area} ${startup.techStack.join(" ")} ${startup.vibes.join(" ")}`.toLowerCase();
-      const matchesText = !q || hay.includes(q);
+      const matchesText = !q || hay.includes(q) || suggestedIds.has(startup.id);
       const matchesCategory = category === "All" || startup.category === category;
+      const matchesStage = stage === "All" || startup.stage === stage;
       const matchesArea = area === "All" || startup.location.area === area;
       const matchesRadius = !commuteEnabled || distanceKm(AREA_CENTERS[homeArea], startup.location.coordinates) <= radius;
-      return matchesText && matchesCategory && matchesArea && matchesRadius;
+      return matchesText && matchesCategory && matchesStage && matchesArea && matchesRadius;
     });
     return list.sort((a, b) => {
-      if (sortBy === "hiring") return b.hiring.jobs.length - a.hiring.jobs.length;
+      const suggestedDelta = Number(suggestedIds.has(b.id)) - Number(suggestedIds.has(a.id));
+      if (suggestedDelta) return suggestedDelta;
+      if (sortBy === "hiring") return hiringSignal(b) - hiringSignal(a);
       if (sortBy === "newest") return b.foundedYear - a.foundedYear;
-      return Number(Boolean(b.isBoosted)) - Number(Boolean(a.isBoosted)) || b.hiring.jobs.length - a.hiring.jobs.length;
+      return Number(Boolean(b.isBoosted)) - Number(Boolean(a.isBoosted)) || hiringSignal(b) - hiringSignal(a);
     });
-  }, [props.startups, query, category, area, commuteEnabled, homeArea, radius, sortBy]);
+  }, [props.startups, query, category, stage, area, commuteEnabled, homeArea, radius, sortBy, props.suggested]);
 
   const allJobs = useMemo(() => props.startups
     .flatMap((startup) => startup.hiring.jobs.map((job) => ({ ...job, startup })))
@@ -98,8 +121,8 @@ export default function DirectoryPanel(props: Props) {
     .sort((a, b) => Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured))), [props.startups, query]);
 
   const hiringBoards = useMemo(() => props.startups.filter((startup) => {
-    if (!startup.hiring.careersUrl || startup.hiring.jobs.length > 0) return false;
-    return `${startup.name} ${startup.hiring.careersUrl}`.toLowerCase().includes(query.toLowerCase());
+    if (!isActivelyHiring(startup)) return false;
+    return `${startup.name} ${startup.hiring.careersUrl} ${startup.location.building}`.toLowerCase().includes(query.toLowerCase());
   }), [props.startups, query]);
 
   const filteredNews = useMemo(() => props.news
@@ -108,10 +131,9 @@ export default function DirectoryPanel(props: Props) {
 
   const tabs: Array<{ id: DirectoryTab; label: string; icon: typeof Building2; count: number }> = [
     { id: "startups", label: "Startups", icon: Building2, count: props.startups.length },
-    { id: "jobs", label: "Jobs", icon: BriefcaseBusiness, count: allJobs.length + hiringBoards.length },
+    { id: "jobs", label: "Jobs", icon: BriefcaseBusiness, count: allJobs.length || hiringBoards.length },
     { id: "news", label: "News", icon: Newspaper, count: props.news.length },
     { id: "events", label: "Events", icon: CalendarDays, count: props.events.length },
-    { id: "night", label: "Night", icon: Moon, count: spaces.length },
   ];
 
   const applySuggestion = (item: { type: "area" | "startup" | "category"; label: string }) => {
@@ -134,14 +156,23 @@ export default function DirectoryPanel(props: Props) {
     }
   };
 
+  if (props.collapsed) return null;
+
   return (
     <aside className="directory">
-      <div className="directory-heading">
+      <div className="directory-heading compact">
         <div>
-          <span className="eyebrow"><span className="status-dot" /> LIVE DIRECTORY</span>
-          <h1>Hyderabad&apos;s tech<br /><em>signal layer.</em></h1>
+          <span className="eyebrow"><span className="status-dot" /> HYDERABAD</span>
+          <h1>{props.startups.length} companies <em>on the map</em></h1>
         </div>
-        <p>Discover verified startups, open roles, ecosystem news and after-hours spots — curated for Hyderabad.</p>
+        <div className="directory-heading-actions">
+          <p>Filter by corridor, stage, or sector. Jobs stay on the company careers page — we do not invent titles or salaries.</p>
+          {props.onCollapse && (
+            <button type="button" className="directory-collapse" onClick={props.onCollapse} aria-label="Collapse directory for full-screen map">
+              <ChevronLeft size={16} /> Map
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="tabs">
@@ -187,6 +218,13 @@ export default function DirectoryPanel(props: Props) {
             <div className="filter-scroll">
               {categories.map((item) => (
                 <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{item}</button>
+              ))}
+            </div>
+            <div className="filter-scroll stage-scroll">
+              {(["All", "Bootstrapped", "Seed", "Series A", "Series B+", "Public", "Unicorn"] as const).map((item) => (
+                <button key={item} className={stage === item ? "active" : ""} onClick={() => setStage(item)}>
+                  {item === "All" ? "All stages" : item}
+                </button>
               ))}
             </div>
 
@@ -249,10 +287,43 @@ export default function DirectoryPanel(props: Props) {
       </div>
 
       <div className="list">
+        {tab === "startups" && props.startups.some((item) => item.isBoosted) && (
+          <div className="looking-now">
+            <div className="featured-roles-head">
+              <strong>Looking now</strong>
+              <button type="button" onClick={props.onHireSprint}>Run a 72-hr hire sprint</button>
+            </div>
+            <p>Paid pulse for teams that need someone this week — still a real careers URL.</p>
+          </div>
+        )}
+
+        {tab === "startups" && props.mode === "night" && (
+          <div className="night-intro">
+            <Moon size={20} />
+            <div>
+              <b>AFTER DARK · switched from the top bar</b>
+              <p>Late cafes and always-on spots glow on the map. Night is a theme, not a hidden tab.</p>
+            </div>
+          </div>
+        )}
+
+        {tab === "startups" && props.mode === "night" && spaces.map((space, index) => (
+          <article key={space.id} className="space-card" style={{ animationDelay: `${index * 35}ms` }}>
+            <span className="space-rank">0{index + 1}</span>
+            <div>
+              <span className="event-type">{space.type}</span>
+              <h3>{space.name}</h3>
+              <p><Clock3 size={12} /> {space.timings} · {space.location.area}</p>
+              {space.wifiSpeed && <p className="wifi"><Wifi size={12} /> {space.wifiSpeed}</p>}
+              <div className="stack">{space.tags.slice(0, 2).map((tag) => <span key={tag}>{tag}</span>)}</div>
+            </div>
+          </article>
+        ))}
+
         {tab === "startups" && filteredStartups.map((startup, index) => (
           <article
             key={startup.id}
-            className="startup-card"
+            className={`startup-card ${startup.isBoosted ? "boosted" : ""}`}
             style={{ animationDelay: `${index * 40}ms` }}
             onMouseEnter={() => props.onHover(startup.id)}
             onMouseLeave={() => props.onHover(null)}
@@ -268,10 +339,11 @@ export default function DirectoryPanel(props: Props) {
               <div className="meta">
                 <span><MapPinned size={12} /> {startup.location.area}</span>
                 <span>{startup.category}</span>
+                {startup.isBoosted && <span className="hiring sprint-tag">LOOKING NOW</span>}
                 {startup.hiring.jobs.length > 0 ? (
                   <span className="hiring">{startup.hiring.jobs.length} OPEN</span>
-                ) : startup.hiring.careersUrl ? (
-                  <span className="hiring">HIRING</span>
+                ) : isActivelyHiring(startup) ? (
+                  <span className="hiring">CAREERS</span>
                 ) : null}
               </div>
               <div className="vibes">{startup.vibes.slice(0, 2).map((vibe) => <span key={vibe}>{vibe}</span>)}</div>
@@ -287,6 +359,18 @@ export default function DirectoryPanel(props: Props) {
           </article>
         ))}
 
+        {tab === "jobs" && (
+          <div className="featured-roles">
+            <div className="featured-roles-head">
+              <strong>Hiring boards</strong>
+              <button type="button" onClick={props.onPromoteJob}>Spotlight a real listing</button>
+            </div>
+            {allJobs.length === 0 && (
+              <p>Roles open on each company’s careers / Freshteam / ATS page. We only show a card when that URL is live — no invented LPA ranges.</p>
+            )}
+          </div>
+        )}
+
         {tab === "jobs" && hiringBoards.map((startup, index) => (
           <article
             key={`${startup.id}-careers`}
@@ -298,7 +382,7 @@ export default function DirectoryPanel(props: Props) {
               <div className="startup-logo small">{startup.name.slice(0, 2).toUpperCase()}</div>
               <div>
                 <h3>Open roles at {startup.name}</h3>
-                <p>{startup.location.area} · listed on their careers page</p>
+                <p>{startup.location.building} · {startup.location.area}</p>
               </div>
             </div>
             <a href={startup.hiring.careersUrl} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>
@@ -375,30 +459,6 @@ export default function DirectoryPanel(props: Props) {
             <ChevronRight size={18} />
           </article>
         ))}
-
-        {tab === "night" && (
-          <>
-            <div className="night-intro">
-              <Moon size={20} />
-              <div>
-                <b>AFTER DARK / HYDERABAD</b>
-                <p>Late-night work spots, fuel stops and always-on communities.</p>
-              </div>
-            </div>
-            {spaces.map((space, index) => (
-              <article key={space.id} className="space-card" style={{ animationDelay: `${index * 35}ms` }}>
-                <span className="space-rank">0{index + 1}</span>
-                <div>
-                  <span className="event-type">{space.type}</span>
-                  <h3>{space.name}</h3>
-                  <p><Clock3 size={12} /> {space.timings} · {space.location.area}</p>
-                  {space.wifiSpeed && <p className="wifi"><Wifi size={12} /> {space.wifiSpeed}</p>}
-                  <div className="stack">{space.tags.slice(0, 2).map((tag) => <span key={tag}>{tag}</span>)}</div>
-                </div>
-              </article>
-            ))}
-          </>
-        )}
 
         {tab === "startups" && filteredStartups.length === 0 && (
           <div className="empty"><Search size={28} /><h3>No signals in range</h3><p>Try another area, clear search, or widen commute radar.</p></div>

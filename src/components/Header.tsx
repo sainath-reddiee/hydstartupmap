@@ -1,17 +1,27 @@
 "use client";
 
-import { Building2, Moon, Plus, Radio, Sparkles, Sun } from "lucide-react";
-import sponsorsData from "@/data/sponsors.json";
-import type { Mode } from "@/types";
+import { Bell, BriefcaseBusiness, LayoutGrid, Map, Maximize2, Minimize2, Moon, Plus, Radio, Sun, Zap } from "lucide-react";
+import type { Mode, ViewMode } from "@/types";
 
 type Props = {
   mode: Mode;
-  stats: { startups: number; jobs: number; events: number; news: number };
+  viewMode: ViewMode;
+  railsCollapsed: boolean;
+  stats: { startups: number; jobs: number; jobsLabel: string; events: number; news: number };
+  search: string;
+  onSearch: (value: string) => void;
   onModeChange: (mode: Mode) => void;
-  onOpenModal: (modal: "billboard" | "submit" | "job" | "event") => void;
+  onViewModeChange: (mode: ViewMode) => void;
+  onToggleRails: () => void;
+  onOpenJobs: () => void;
+  onOpenAlerts: () => void;
+  onOpenModal: (modal: "billboard" | "submit" | "job" | "event" | "sprint") => void;
 };
 
-export default function Header({ mode, stats, onModeChange, onOpenModal }: Props) {
+export default function Header({
+  mode, viewMode, railsCollapsed, stats, search, onSearch, onModeChange, onViewModeChange,
+  onToggleRails, onOpenJobs, onOpenAlerts, onOpenModal,
+}: Props) {
   return (
     <header className="top">
       <nav className="navbar">
@@ -23,31 +33,61 @@ export default function Header({ mode, stats, onModeChange, onOpenModal }: Props
           </div>
         </div>
 
-        <div className="live-stats">
-          <span><b>{stats.startups}+</b> startups</span>
-          <span><b>{stats.jobs}+</b> jobs</span>
-          <span><b>{stats.events}+</b> events</span>
-          <span><b>{stats.news}+</b> news</span>
+        <div className="theme-switch" role="group" aria-label="Color theme">
+          <button
+            type="button"
+            className={mode === "day" ? "active" : ""}
+            onClick={() => onModeChange("day")}
+          >
+            <Sun size={14} /> Day
+          </button>
+          <button
+            type="button"
+            className={mode === "night" ? "active" : ""}
+            onClick={() => onModeChange("night")}
+          >
+            <Moon size={14} /> Night
+          </button>
         </div>
 
+        <label className="header-search">
+          <input
+            value={search}
+            onChange={(event) => onSearch(event.target.value)}
+            placeholder="Try “data engineer”, corridor, founder..."
+            aria-label="Search the map"
+          />
+        </label>
+
         <div className="nav-actions">
-          <div className="mode-toggle" aria-label="Map mode">
-            <button className={mode === "day" ? "active" : ""} onClick={() => onModeChange("day")}><Sun size={14} /> Day</button>
-            <button className={mode === "night" ? "active" : ""} onClick={() => onModeChange("night")}><Moon size={14} /> Night</button>
+          {viewMode === "map" && (
+            <button
+              className={`rail-toggle ${railsCollapsed ? "is-full" : ""}`}
+              onClick={onToggleRails}
+              aria-pressed={railsCollapsed}
+              title={railsCollapsed ? "Show directory" : "Full-screen map"}
+            >
+              {railsCollapsed ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              <span>{railsCollapsed ? "Directory" : "Full map"}</span>
+            </button>
+          )}
+          <div className="view-toggle" aria-label="Map or grid">
+            <button className={viewMode === "map" ? "active" : ""} onClick={() => onViewModeChange("map")}><Map size={14} /> Map</button>
+            <button className={viewMode === "grid" ? "active" : ""} onClick={() => onViewModeChange("grid")}><LayoutGrid size={14} /> Grid</button>
           </div>
-          <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("billboard")}><Building2 size={15} /> Billboard</button>
-          <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("job")}><Sparkles size={15} /> Job ad</button>
+          <button className="alerts-chip" onClick={onOpenAlerts}>
+            <Bell size={14} /> Alerts
+          </button>
+          <button className="jobs-chip" onClick={onOpenJobs}>
+            <BriefcaseBusiness size={14} /> {stats.jobs} {stats.jobsLabel}
+          </button>
+          <button className="sprint-chip" onClick={() => onOpenModal("sprint")}>
+            <Zap size={14} /> Hire sprint
+          </button>
+          <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("billboard")}>Claim corridor</button>
           <button className="action-btn action-btn--submit" onClick={() => onOpenModal("submit")}><Plus size={15} /> Add company</button>
         </div>
       </nav>
-
-      <div className="marquee">
-        <div className="marquee-track">
-          {[...sponsorsData.marquee, ...sponsorsData.marquee].map((item, index) => (
-            <span key={`${item.label}-${index}`}><b>{item.label}</b> {item.message}<i>◆</i></span>
-          ))}
-        </div>
-      </div>
     </header>
   );
 }

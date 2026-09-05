@@ -51,6 +51,9 @@ function CompanyProfile({ startup, bookmarked, onToggleBookmark }: { startup: St
         <p>{startup.tagline}</p>
         <div className="drawer-links">
           <a href={startup.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> Website <ArrowUpRight size={12} /></a>
+          {startup.hiring.careersUrl ? (
+            <a href={startup.hiring.careersUrl} target="_blank" rel="noreferrer"><BriefcaseBusiness size={14} /> View open jobs <ArrowUpRight size={12} /></a>
+          ) : null}
           <a href={startup.socials?.linkedin ?? `https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(startup.name)}`} target="_blank" rel="noreferrer"><Share2 size={14} /> LinkedIn</a>
           <button className={bookmarked ? "active" : ""} onClick={() => onToggleBookmark(startup.id)}><Bookmark size={14} fill="currentColor" /> {bookmarked ? "Saved" : "Save"}</button>
         </div>
@@ -62,10 +65,11 @@ function CompanyProfile({ startup, bookmarked, onToggleBookmark }: { startup: St
           <span><CalendarDays size={15} /><small>FOUNDED</small><b>{startup.foundedYear}</b></span>
           <span><MapPin size={15} /><small>BASE</small><b>{startup.location.area}</b></span>
         </div>
+        <p className="building-line"><Landmark size={13} /> {startup.location.building}</p>
 
         <div className="profile-tabs">
           <button className={tab === "overview" ? "active" : ""} onClick={() => setTab("overview")}><Globe2 size={14} /> Overview</button>
-          <button className={tab === "jobs" ? "active" : ""} onClick={() => setTab("jobs")}><BriefcaseBusiness size={14} /> Jobs <span>{startup.hiring.jobs.length}</span></button>
+          <button className={tab === "jobs" ? "active" : ""} onClick={() => setTab("jobs")}><BriefcaseBusiness size={14} /> Jobs <span>{startup.hiring.jobs.length || (startup.hiring.careersUrl ? "→" : 0)}</span></button>
           <button className={tab === "funding" ? "active" : ""} onClick={() => setTab("funding")}><Landmark size={14} /> Funding</button>
         </div>
 

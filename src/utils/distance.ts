@@ -1,5 +1,6 @@
 import { distance, point } from "@turf/turf";
 import type { Startup } from "@/types";
+import { hiringSignal } from "@/utils/hiring";
 
 export const AREA_CENTERS: Record<string, [number, number]> = {
   "HITEC City": [78.3772, 17.4483],
@@ -22,6 +23,7 @@ export const AREA_CENTERS: Record<string, [number, number]> = {
   Pocharam: [78.6128, 17.4582],
   Shamshabad: [78.4298, 17.2403],
   Kompally: [78.4795, 17.5462],
+  Nacharam: [78.5598, 17.4235],
 };
 
 export function distanceKm(from: [number, number], to: [number, number]) {
@@ -76,15 +78,16 @@ export function buildAreaInsights(startups: Startup[]): AreaInsight[] {
 
   return Array.from(buckets.entries())
     .map(([name, items]) => {
-      const openJobs = items.reduce((sum, item) => sum + item.hiring.jobs.length, 0);
+      const openJobs = items.reduce((sum, item) => sum + hiringSignal(item), 0);
       const categoryVotes = items.reduce<Record<string, number>>((votes, item) => {
         votes[item.category] = (votes[item.category] ?? 0) + 1;
         return votes;
       }, {});
       const topCategory = Object.entries(categoryVotes).sort((a, b) => b[1] - a[1])[0]?.[0] ?? "Mixed";
-      const heat: AreaInsight["heat"] = openJobs >= 6 || items.length >= 4 ? "hot" : openJobs >= 2 ? "warm" : "calm";
+      const heat: AreaInsight["heat"] = openJobs >= 4 || items.length >= 3 ? "hot" : openJobs >= 2 ? "warm" : "calm";
+      const hiringBoards = items.filter((item) => item.hiring.careersUrl).length;
       const signal = heat === "hot"
-        ? `${openJobs} open roles · dense`
+        ? `${hiringBoards} careers pages · dense`
         : heat === "warm"
           ? `${topCategory.split(" ")[0]} pulse`
           : "Quiet corridor";

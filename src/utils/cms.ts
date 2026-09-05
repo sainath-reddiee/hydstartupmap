@@ -2,6 +2,7 @@ import startupsSeed from "@/data/startups.json";
 import eventsSeed from "@/data/events.json";
 import newsSeed from "@/data/news.json";
 import sponsorsSeed from "@/data/sponsors.json";
+import { listCorridors } from "@/utils/corridors";
 import type {
   AdOrder,
   AdProduct,
@@ -14,7 +15,7 @@ import type {
   TechEvent,
 } from "@/types";
 
-const CMS_KEY = "hydtechpulse:cms:v2";
+const CMS_KEY = "hydtechpulse:cms:v3";
 const PLACEHOLDER_BOARD_IDS = new Set(["bill-1", "bill-2", "bill-3", "ooh-1", "ooh-2", "wall-1"]);
 const ADMIN_SESSION_KEY = "hydtechpulse:admin-session";
 const DEFAULT_ADMIN_PIN = "hydpulse2026";
@@ -36,13 +37,21 @@ const CHECKOUT: Record<AdProduct, { amount: string; url: string }> = {
     amount: "₹499",
     url: process.env.NEXT_PUBLIC_DODO_EVENT_URL ?? "https://checkout.dodopayments.com/buy/pdt_event_demo",
   },
+  "corridor-pulse": {
+    amount: "₹1,999",
+    url: process.env.NEXT_PUBLIC_DODO_CORRIDOR_URL ?? process.env.NEXT_PUBLIC_DODO_BILLBOARD_URL ?? "https://checkout.dodopayments.com/buy/pdt_billboard_demo",
+  },
+  "hire-sprint": {
+    amount: "₹1,499",
+    url: process.env.NEXT_PUBLIC_DODO_SPRINT_URL ?? process.env.NEXT_PUBLIC_DODO_JOB_URL ?? "https://checkout.dodopayments.com/buy/pdt_job_demo",
+  },
 };
 
 function seedState(): CmsState {
   return {
-    startups: (startupsSeed as Startup[]).map((item) => ({ ...item, isPublished: item.isPublished ?? true })),
-    events: eventsSeed as TechEvent[],
-    news: newsSeed as NewsItem[],
+    startups: (startupsSeed as unknown as Startup[]).map((item) => ({ ...item, isPublished: item.isPublished ?? true })),
+    events: eventsSeed as unknown as TechEvent[],
+    news: newsSeed as unknown as NewsItem[],
     billboards: sponsorsSeed.billboards as RoadBillboard[],
     hoardings: [],
     submissions: [],
@@ -318,7 +327,7 @@ export function markAdOrder(id: string, status: AdOrder["status"]) {
   };
 
   const order = next.adOrders.find((item) => item.id === id);
-  if (order && status === "live" && order.product === "boost") {
+  if (order && status === "live" && (order.product === "boost" || order.product === "hire-sprint")) {
     next = {
       ...next,
       startups: next.startups.map((startup) =>
@@ -329,15 +338,22 @@ export function markAdOrder(id: string, status: AdOrder["status"]) {
     };
   }
 
-  if (order && status === "live" && order.product === "billboard") {
+  if (order && status === "live" && (order.product === "billboard" || order.product === "corridor-pulse")) {
+    const match = listCorridors().find((item) =>
+      (order.notes ?? "").toLowerCase().includes(item.id) || (order.notes ?? "").toLowerCase().includes(item.name.toLowerCase()),
+    ) ?? listCorridors()[0];
     const billboard: RoadBillboard = {
       id: `bill-${Date.now()}`,
-      junctionName: "Cyber Towers",
-      coordinates: [78.3773, 17.4504],
+      junctionName: match.name,
+      coordinates: match.coordinates,
       sponsorName: order.companyName,
-      tagline: order.notes || "FEATURED ON HYDTECHPULSE",
+      tagline: order.notes || `Pulse on ${match.label}`,
       ctaLink: order.checkoutUrl,
       isLive: true,
+      kind: "corridor-pulse",
+      corridorId: match.id,
+      weeklyPrice: match.weeklyPrice,
+      status: "Live campaign",
     };
     next = { ...next, billboards: [billboard, ...next.billboards] };
   }
