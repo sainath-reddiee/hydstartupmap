@@ -4,11 +4,12 @@ import { isActivelyHiring } from "@/utils/hiring";
 export type DayPart = "morning" | "midday" | "evening" | "late";
 
 export function hydHour() {
-  return Number(new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    hour12: false,
+  const hour = new Intl.DateTimeFormat("en-GB", {
+    hour: "numeric",
+    hourCycle: "h23",
     timeZone: "Asia/Kolkata",
-  }).format(new Date()));
+  }).formatToParts(new Date()).find((part) => part.type === "hour")?.value;
+  return Number(hour ?? 0);
 }
 
 export function dayPart(hour = hydHour()): DayPart {

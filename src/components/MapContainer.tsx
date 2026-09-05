@@ -318,7 +318,7 @@ export default function MapContainer({
         type: "symbol",
         source: "hiring-heat-labels",
         layout: {
-          "text-field": ["concat", ["get", "area"], "  ", ["to-string", ["get", "jobs"]], " live"],
+          "text-field": ["concat", ["get", "area"], " · ", ["to-string", ["get", "count"]], " cos"],
           "text-size": 11,
           "text-allow-overlap": true,
         },
@@ -460,7 +460,7 @@ export default function MapContainer({
         type: "FeatureCollection",
         features: insights.filter((item) => AREA_CENTERS[item.name]).map((item) => ({
           type: "Feature",
-          properties: { area: item.name, jobs: item.openJobs },
+          properties: { area: item.name, jobs: item.openJobs, count: item.count },
           geometry: { type: "Point", coordinates: AREA_CENTERS[item.name] },
         })),
       });
