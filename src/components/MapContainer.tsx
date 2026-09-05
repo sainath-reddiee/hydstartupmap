@@ -451,7 +451,7 @@ export default function MapContainer({
 
       <div className="map-layer-switcher">
         <button className={showBillboards ? "active" : ""} onClick={() => setShowBillboards((value) => !value)}>
-          <i className="layer-ooh" /> Boards
+          <i className="layer-ooh" /> Pulse
         </button>
         <button className={showHeat ? "active" : ""} onClick={() => setShowHeat((value) => !value)}>
           <Flame size={12} /> Hiring heat

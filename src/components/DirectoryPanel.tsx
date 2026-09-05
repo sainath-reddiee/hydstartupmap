@@ -154,7 +154,7 @@ export default function DirectoryPanel(props: Props) {
       <div className="directory-heading compact">
         <div>
           <span className="eyebrow"><span className="status-dot" /> HYDERABAD</span>
-          <h1>{filteredStartups.length} companies <em>on the map</em></h1>
+          <h1>{props.startups.length} companies <em>on the map</em></h1>
         </div>
         <p>Filter by corridor, stage, or sector. Jobs stay linked to a live careers page.</p>
       </div>

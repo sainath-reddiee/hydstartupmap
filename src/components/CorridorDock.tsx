@@ -33,7 +33,7 @@ export default function CorridorDock({ slots, onClaim, onOpenLive }: Props) {
               <span>{liveBoard ? "LIVE" : "OPEN"}</span>
               <strong>{liveBoard ? liveBoard.sponsorName : slot.label}</strong>
               <small>{slot.name}</small>
-              <em>{liveBoard ? liveBoard.tagline : `${slot.weeklyPrice} / week`}</em>
+              <em>{liveBoard ? liveBoard.tagline : `Claim · ${slot.weeklyPrice}/wk`}</em>
             </button>
           );
         })}
