@@ -33,23 +33,6 @@ export default function Header({
           </div>
         </div>
 
-        <div className="theme-switch" role="group" aria-label="Color theme">
-          <button
-            type="button"
-            className={mode === "day" ? "active" : ""}
-            onClick={() => onModeChange("day")}
-          >
-            <Sun size={14} /> Day
-          </button>
-          <button
-            type="button"
-            className={mode === "night" ? "active" : ""}
-            onClick={() => onModeChange("night")}
-          >
-            <Moon size={14} /> Night
-          </button>
-        </div>
-
         <label className="header-search">
           <input
             value={search}
@@ -75,6 +58,15 @@ export default function Header({
             <button className={viewMode === "map" ? "active" : ""} onClick={() => onViewModeChange("map")}><Map size={14} /> Map</button>
             <button className={viewMode === "grid" ? "active" : ""} onClick={() => onViewModeChange("grid")}><LayoutGrid size={14} /> Grid</button>
           </div>
+          <button
+            type="button"
+            className="theme-icon"
+            aria-label={mode === "night" ? "Switch to light theme" : "Switch to dark theme"}
+            title={mode === "night" ? "Light" : "Dark"}
+            onClick={() => onModeChange(mode === "night" ? "day" : "night")}
+          >
+            {mode === "night" ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
           <button className="alerts-chip" onClick={onOpenAlerts}>
             <Bell size={14} /> Alerts
           </button>
