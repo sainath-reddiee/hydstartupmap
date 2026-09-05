@@ -7,9 +7,11 @@ import { circle, featureCollection, lineString } from "@turf/turf";
 import { Flame, Search } from "lucide-react";
 import thirdspacesData from "@/data/thirdspaces.json";
 import lineageData from "@/data/lineage.json";
-import type { LineageConnection, Mode, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
+import type { CorridorPulse, LineageConnection, Mode, NewsItem, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
 import { AREA_CENTERS, buildAreaInsights } from "@/utils/distance";
-import BottomAdStrip from "./BottomAdStrip";
+import { resolveCorridorSlots } from "@/utils/corridors";
+import CorridorDock from "./CorridorDock";
+import NewsPeek from "./NewsPeek";
 
 const spaces = thirdspacesData as ThirdSpace[];
 const lineage = lineageData as LineageConnection[];
@@ -26,6 +28,7 @@ type Props = {
   startups: Startup[];
   events: TechEvent[];
   billboards: RoadBillboard[];
+  news: NewsItem[];
   selectedStartup: Startup | null;
   selectedEvent: TechEvent | null;
   hoveredId: string | null;
@@ -36,6 +39,7 @@ type Props = {
   onFocusArea: (area: string | null) => void;
   onSelectBillboard: (billboard: RoadBillboard) => void;
   onSubmitHoarding: () => void;
+  onClaimCorridor: (slot: CorridorPulse) => void;
 };
 
 function arcCoordinates(connection: LineageConnection) {
@@ -51,20 +55,22 @@ function arcCoordinates(connection: LineageConnection) {
 }
 
 export default function MapContainer({
-  mode, startups, events, billboards, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
-  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding,
+  mode, startups, events, billboards, news, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
+  onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onClaimCorridor,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<Marker[]>([]);
   const [showBillboards, setShowBillboards] = useState(true);
   const [showHeat, setShowHeat] = useState(true);
+  const [newsOpen, setNewsOpen] = useState(false);
+  const corridorSlots = useMemo(() => resolveCorridorSlots(billboards), [billboards]);
   const [areaJump, setAreaJump] = useState("");
   const [areaMenuOpen, setAreaMenuOpen] = useState(false);
   const callbacksRef = useRef({ onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard });
-  const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode });
+  const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode, corridorSlots });
   callbacksRef.current = { onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard };
-  dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode };
+  dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode, corridorSlots };
 
   const insights = useMemo(() => buildAreaInsights(startups), [startups]);
 
@@ -89,17 +95,19 @@ export default function MapContainer({
       focusedArea: areaFocus,
       showBillboards: boardsOn,
       mode: currentMode,
+      corridorSlots: nextCorridors,
     } = dataRef.current;
 
     nextStartups
       .filter((startup) => !areaFocus || startup.location.area === areaFocus)
       .forEach((startup) => {
         const element = document.createElement("button");
-        element.className = `map-pin ${startup.hiring.jobs.length ? "has-jobs" : ""}`;
+        element.className = `map-pin ${startup.hiring.jobs.length ? "has-jobs" : ""} ${startup.isBoosted ? "is-pulse" : ""}`;
         element.dataset.id = startup.id;
         element.setAttribute("aria-label", `Open ${startup.name}`);
         const jobs = startup.hiring.jobs.length;
-        element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span>${jobs ? `<em>${jobs}</em>` : ""}<i></i>`;
+        const hiring = jobs ? `${jobs} roles` : startup.hiring.careersUrl ? "Hiring" : startup.location.area;
+        element.innerHTML = `<span>${startup.name.slice(0, 2).toUpperCase()}</span>${jobs ? `<em>${jobs}</em>` : ""}<i></i><div class="pin-tip"><b>${startup.name}</b><small>${startup.location.area} · ${hiring}</small></div>`;
         element.addEventListener("click", (event) => {
           event.stopPropagation();
           callbacksRef.current.onSelectStartup(startup);
@@ -120,7 +128,19 @@ export default function MapContainer({
     });
 
     if (boardsOn) {
-      nextBillboards.forEach((billboard) => {
+      nextCorridors.forEach((slot) => {
+        if (!slot.campaign) return;
+        const element = document.createElement("button");
+        element.className = "corridor-beacon";
+        element.innerHTML = `<small>PULSE</small><strong>${slot.campaign.sponsorName}</strong><span>${slot.label}</span>`;
+        element.addEventListener("click", (clickEvent) => {
+          clickEvent.stopPropagation();
+          if (slot.campaign) callbacksRef.current.onSelectBillboard(slot.campaign);
+        });
+        markersRef.current.push(new maplibregl.Marker({ element, anchor: "bottom" }).setLngLat(slot.coordinates).addTo(map));
+      });
+
+      nextBillboards.filter((item) => !item.corridorId).forEach((billboard) => {
         const element = document.createElement("button");
         const personal = billboard.mediaOwner === "Personal";
         element.className = `road-billboard board-card ${personal ? "is-personal" : ""}`;
@@ -297,7 +317,7 @@ export default function MapContainer({
     if (!map) return;
     const update = () => renderMarkers(map);
     map.loaded() ? update() : map.once("load", update);
-  }, [startups, events, billboards, mode, showBillboards, focusedArea]);
+  }, [startups, events, billboards, mode, showBillboards, focusedArea, corridorSlots]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -388,7 +408,7 @@ export default function MapContainer({
   }, [insights, showHeat]);
 
   return (
-    <div className={`map-shell ${billboards.length ? "" : "map-shell--no-ads"}`}>
+    <div className="map-shell">
       <div ref={containerRef} className="map-canvas" />
       <div className="map-gradient" />
 
@@ -443,13 +463,25 @@ export default function MapContainer({
         }}>Reset</button>
       </div>
 
+      <NewsPeek news={news} open={newsOpen} onToggle={() => setNewsOpen((value) => !value)} />
+
       <div className="map-legend">
         <span><i className="legend-startup" /> Startups</span>
         <span><i className="legend-jobs" /> Open roles</span>
-        <span><i className="legend-ooh" /> Boards</span>
+        <span><i className="legend-ooh" /> Corridor pulse</span>
         <span><i className="legend-heat" /> Hiring heat</span>
       </div>
-      <BottomAdStrip billboards={billboards} onSelectBillboard={onSelectBillboard} />
+      <CorridorDock
+        slots={corridorSlots}
+        onClaim={(slot) => {
+          flyToArea(slot.name);
+          onClaimCorridor(slot);
+        }}
+        onOpenLive={(slot) => {
+          flyToArea(slot.name);
+          if (slot.campaign) onSelectBillboard(slot.campaign);
+        }}
+      />
     </div>
   );
 }

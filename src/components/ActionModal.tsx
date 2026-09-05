@@ -11,13 +11,13 @@ export type ModalKind = "billboard" | "submit" | "job" | "event" | "hoarding";
 const offers = {
   billboard: {
     icon: Building2,
-    kicker: "ROADSIDE BILLBOARD",
-    title: "Virtual Tech Billboard",
+    kicker: "CORRIDOR PULSE",
+    title: "Own a Hyderabad corridor",
     price: "₹1,999",
     period: "/ week",
-    description: "Book a glowing roadside digital unipole at Cyber Towers, Mindspace Circle or Gachibowli Flyover — placed on the road, not on rooftops.",
-    features: ["Roadside unipole", "Clickable CTA", "Prime junction", "Bottom strip option"],
-    product: "billboard" as const,
+    description: "One brand per belt — HITEC City, Gachibowli, Financial District, Genome Valley. Your name sits on that corridor, not a generic banner.",
+    features: ["One slot per corridor", "Map pulse pin", "Dock card", "No fake filler ads"],
+    product: "corridor-pulse" as const,
   },
   job: {
     icon: Sparkles,
@@ -49,7 +49,15 @@ const areas: AreaName[] = [
 ];
 const categories: StartupCategory[] = ["AI & Data", "SaaS & Enterprise", "Fintech", "Healthtech & Bio", "Deeptech & Hardware", "Consumer & D2C", "Edtech", "Space & Aerospace"];
 
-export default function ActionModal({ kind, onClose }: { kind: ModalKind | null; onClose: () => void }) {
+export default function ActionModal({
+  kind,
+  onClose,
+  corridorName,
+}: {
+  kind: ModalKind | null;
+  onClose: () => void;
+  corridorName?: string;
+}) {
   const [submitted, setSubmitted] = useState(false);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
@@ -217,7 +225,7 @@ export default function ActionModal({ kind, onClose }: { kind: ModalKind | null;
           <form onSubmit={startCheckout}>
             <label>COMPANY / BRAND<input name="companyName" required placeholder="Company name" /></label>
             <label>BILLING EMAIL<input name="email" required type="email" placeholder="finance@company.com" /></label>
-            <label>NOTES<textarea name="notes" placeholder="Junction preference, job title, campaign dates..." /></label>
+            <label>NOTES<textarea name="notes" defaultValue={corridorName ? `Corridor: ${corridorName}` : ""} placeholder="Corridor, role title, or campaign dates..." /></label>
             <button className="modal-primary" type="submit">Pay with Dodo Payments <ArrowUpRight size={15} /></button>
           </form>
         ) : (

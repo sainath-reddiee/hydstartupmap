@@ -34,7 +34,8 @@ export type WorkMode = "On-site" | "Hybrid" | "Remote";
 export type Mode = "day" | "night";
 export type DirectoryTab = "startups" | "jobs" | "events" | "news" | "night";
 export type SubmissionStatus = "pending" | "approved" | "rejected";
-export type AdProduct = "boost" | "billboard" | "job-spotlight" | "event-beacon";
+export type ViewMode = "map" | "grid";
+export type AdProduct = "boost" | "billboard" | "job-spotlight" | "event-beacon" | "corridor-pulse";
 
 export interface JobRole {
   id: string;
@@ -148,7 +149,7 @@ export interface RoadBillboard {
   tagline: string;
   ctaLink: string;
   isLive: boolean;
-  kind?: "virtual" | "physical" | "wall-of-fame";
+  kind?: "virtual" | "physical" | "wall-of-fame" | "corridor-pulse";
   status?: "Available" | "Booked" | "Live campaign";
   dailyImpressions?: string;
   weeklyPrice?: string;
@@ -157,6 +158,18 @@ export interface RoadBillboard {
   imageUrl?: string;
   startsAt?: string;
   endsAt?: string;
+  corridorId?: string;
+}
+
+export interface CorridorPulse {
+  id: string;
+  name: AreaName;
+  area: AreaName;
+  label: string;
+  tagline: string;
+  weeklyPrice: string;
+  coordinates: [number, number];
+  campaign?: RoadBillboard;
 }
 
 export interface HoardingSighting {

@@ -51,6 +51,9 @@ function CompanyProfile({ startup, bookmarked, onToggleBookmark }: { startup: St
         <p>{startup.tagline}</p>
         <div className="drawer-links">
           <a href={startup.website} target="_blank" rel="noreferrer"><Globe2 size={14} /> Website <ArrowUpRight size={12} /></a>
+          {startup.hiring.careersUrl ? (
+            <a href={startup.hiring.careersUrl} target="_blank" rel="noreferrer"><BriefcaseBusiness size={14} /> View open jobs <ArrowUpRight size={12} /></a>
+          ) : null}
           <a href={startup.socials?.linkedin ?? `https://www.linkedin.com/search/results/companies/?keywords=${encodeURIComponent(startup.name)}`} target="_blank" rel="noreferrer"><Share2 size={14} /> LinkedIn</a>
           <button className={bookmarked ? "active" : ""} onClick={() => onToggleBookmark(startup.id)}><Bookmark size={14} fill="currentColor" /> {bookmarked ? "Saved" : "Save"}</button>
         </div>

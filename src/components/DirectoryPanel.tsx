@@ -5,7 +5,7 @@ import {
   Bookmark, BriefcaseBusiness, Building2, CalendarDays, ChevronRight, Clock3,
   Flame, MapPinned, Moon, Navigation, Newspaper, Search, Sparkles, Wifi, X,
 } from "lucide-react";
-import type { DirectoryTab, Mode, NewsItem, Startup, StartupCategory, TechEvent, ThirdSpace } from "@/types";
+import type { DirectoryTab, Mode, NewsItem, Startup, StartupCategory, TechEvent, ThirdSpace, ViewMode } from "@/types";
 import { AREA_CENTERS, buildAreaInsights, distanceKm, relativeTime } from "@/utils/distance";
 import spacesData from "@/data/thirdspaces.json";
 
@@ -29,12 +29,18 @@ type Props = {
   onCommuteChange: (value: { area: string; radius: number } | null) => void;
   focusedArea: string | null;
   onAreaFocus: (area: string | null) => void;
+  query?: string;
+  jumpTab?: DirectoryTab | null;
+  tabNonce?: number;
+  viewMode?: ViewMode;
+  onPromoteJob?: () => void;
 };
 
 export default function DirectoryPanel(props: Props) {
   const [tab, setTab] = useState<DirectoryTab>(props.mode === "night" ? "night" : "startups");
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(props.query ?? "");
   const [category, setCategory] = useState<StartupCategory | "All">("All");
+  const [stage, setStage] = useState<"All" | Startup["stage"]>("All");
   const [area, setArea] = useState("All");
   const [sortBy, setSortBy] = useState<"signal" | "hiring" | "newest">("signal");
   const [commuteEnabled, setCommuteEnabled] = useState(false);
@@ -44,6 +50,14 @@ export default function DirectoryPanel(props: Props) {
   useEffect(() => {
     setArea(props.focusedArea ?? "All");
   }, [props.focusedArea]);
+
+  useEffect(() => {
+    if (props.query !== undefined) setQuery(props.query);
+  }, [props.query]);
+
+  useEffect(() => {
+    if (props.jumpTab) setTab(props.jumpTab);
+  }, [props.jumpTab, props.tabNonce]);
 
   const areaInsights = useMemo(() => buildAreaInsights(props.startups), [props.startups]);
 
@@ -81,16 +95,17 @@ export default function DirectoryPanel(props: Props) {
       const hay = `${startup.name} ${startup.tagline} ${startup.category} ${startup.location.area} ${startup.techStack.join(" ")} ${startup.vibes.join(" ")}`.toLowerCase();
       const matchesText = !q || hay.includes(q);
       const matchesCategory = category === "All" || startup.category === category;
+      const matchesStage = stage === "All" || startup.stage === stage;
       const matchesArea = area === "All" || startup.location.area === area;
       const matchesRadius = !commuteEnabled || distanceKm(AREA_CENTERS[homeArea], startup.location.coordinates) <= radius;
-      return matchesText && matchesCategory && matchesArea && matchesRadius;
+      return matchesText && matchesCategory && matchesStage && matchesArea && matchesRadius;
     });
     return list.sort((a, b) => {
       if (sortBy === "hiring") return b.hiring.jobs.length - a.hiring.jobs.length;
       if (sortBy === "newest") return b.foundedYear - a.foundedYear;
       return Number(Boolean(b.isBoosted)) - Number(Boolean(a.isBoosted)) || b.hiring.jobs.length - a.hiring.jobs.length;
     });
-  }, [props.startups, query, category, area, commuteEnabled, homeArea, radius, sortBy]);
+  }, [props.startups, query, category, stage, area, commuteEnabled, homeArea, radius, sortBy]);
 
   const allJobs = useMemo(() => props.startups
     .flatMap((startup) => startup.hiring.jobs.map((job) => ({ ...job, startup })))
@@ -136,12 +151,12 @@ export default function DirectoryPanel(props: Props) {
 
   return (
     <aside className="directory">
-      <div className="directory-heading">
+      <div className="directory-heading compact">
         <div>
-          <span className="eyebrow"><span className="status-dot" /> LIVE DIRECTORY</span>
-          <h1>Hyderabad&apos;s tech<br /><em>signal layer.</em></h1>
+          <span className="eyebrow"><span className="status-dot" /> HYDERABAD</span>
+          <h1>{filteredStartups.length} companies <em>on the map</em></h1>
         </div>
-        <p>Discover verified startups, open roles, ecosystem news and after-hours spots — curated for Hyderabad.</p>
+        <p>Filter by corridor, stage, or sector. Jobs stay linked to a live careers page.</p>
       </div>
 
       <div className="tabs">
@@ -187,6 +202,13 @@ export default function DirectoryPanel(props: Props) {
             <div className="filter-scroll">
               {categories.map((item) => (
                 <button key={item} className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{item}</button>
+              ))}
+            </div>
+            <div className="filter-scroll stage-scroll">
+              {(["All", "Bootstrapped", "Seed", "Series A", "Series B+", "Public", "Unicorn"] as const).map((item) => (
+                <button key={item} className={stage === item ? "active" : ""} onClick={() => setStage(item)}>
+                  {item === "All" ? "All stages" : item}
+                </button>
               ))}
             </div>
 
@@ -252,7 +274,7 @@ export default function DirectoryPanel(props: Props) {
         {tab === "startups" && filteredStartups.map((startup, index) => (
           <article
             key={startup.id}
-            className="startup-card"
+            className={`startup-card ${startup.isBoosted ? "boosted" : ""}`}
             style={{ animationDelay: `${index * 40}ms` }}
             onMouseEnter={() => props.onHover(startup.id)}
             onMouseLeave={() => props.onHover(null)}
@@ -286,6 +308,18 @@ export default function DirectoryPanel(props: Props) {
             <ChevronRight className="card-arrow" size={18} />
           </article>
         ))}
+
+        {tab === "jobs" && (
+          <div className="featured-roles">
+            <div className="featured-roles-head">
+              <strong>Featured roles</strong>
+              <button type="button" onClick={props.onPromoteJob}>Promote a role</button>
+            </div>
+            {allJobs.filter((item) => item.isFeatured).length === 0 && (
+              <p>No paid spotlights yet. Companies can pin a real listing here — not a Google Form.</p>
+            )}
+          </div>
+        )}
 
         {tab === "jobs" && hiringBoards.map((startup, index) => (
           <article

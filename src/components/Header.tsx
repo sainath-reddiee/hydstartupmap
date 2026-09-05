@@ -1,17 +1,23 @@
 "use client";
 
-import { Building2, Moon, Plus, Radio, Sparkles, Sun } from "lucide-react";
-import sponsorsData from "@/data/sponsors.json";
-import type { Mode } from "@/types";
+import { BriefcaseBusiness, LayoutGrid, Map, Moon, Plus, Radio, Sun } from "lucide-react";
+import type { Mode, ViewMode } from "@/types";
 
 type Props = {
   mode: Mode;
+  viewMode: ViewMode;
   stats: { startups: number; jobs: number; events: number; news: number };
+  search: string;
+  onSearch: (value: string) => void;
   onModeChange: (mode: Mode) => void;
+  onViewModeChange: (mode: ViewMode) => void;
+  onOpenJobs: () => void;
   onOpenModal: (modal: "billboard" | "submit" | "job" | "event") => void;
 };
 
-export default function Header({ mode, stats, onModeChange, onOpenModal }: Props) {
+export default function Header({
+  mode, viewMode, stats, search, onSearch, onModeChange, onViewModeChange, onOpenJobs, onOpenModal,
+}: Props) {
   return (
     <header className="top">
       <nav className="navbar">
@@ -23,31 +29,31 @@ export default function Header({ mode, stats, onModeChange, onOpenModal }: Props
           </div>
         </div>
 
-        <div className="live-stats">
-          <span><b>{stats.startups}+</b> startups</span>
-          <span><b>{stats.jobs}+</b> jobs</span>
-          <span><b>{stats.events}+</b> events</span>
-          <span><b>{stats.news}+</b> news</span>
-        </div>
+        <label className="header-search">
+          <input
+            value={search}
+            onChange={(event) => onSearch(event.target.value)}
+            placeholder="Search startups, corridors, founders..."
+            aria-label="Search the map"
+          />
+        </label>
 
         <div className="nav-actions">
-          <div className="mode-toggle" aria-label="Map mode">
-            <button className={mode === "day" ? "active" : ""} onClick={() => onModeChange("day")}><Sun size={14} /> Day</button>
-            <button className={mode === "night" ? "active" : ""} onClick={() => onModeChange("night")}><Moon size={14} /> Night</button>
+          <div className="view-toggle" aria-label="Map or grid">
+            <button className={viewMode === "map" ? "active" : ""} onClick={() => onViewModeChange("map")}><Map size={14} /> Map</button>
+            <button className={viewMode === "grid" ? "active" : ""} onClick={() => onViewModeChange("grid")}><LayoutGrid size={14} /> Grid</button>
           </div>
-          <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("billboard")}><Building2 size={15} /> Billboard</button>
-          <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("job")}><Sparkles size={15} /> Job ad</button>
+          <div className="mode-toggle" aria-label="Day or night">
+            <button className={mode === "day" ? "active" : ""} onClick={() => onModeChange("day")}><Sun size={14} /></button>
+            <button className={mode === "night" ? "active" : ""} onClick={() => onModeChange("night")}><Moon size={14} /></button>
+          </div>
+          <button className="jobs-chip" onClick={onOpenJobs}>
+            <BriefcaseBusiness size={14} /> {stats.jobs} jobs
+          </button>
+          <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("billboard")}>Claim corridor</button>
           <button className="action-btn action-btn--submit" onClick={() => onOpenModal("submit")}><Plus size={15} /> Add company</button>
         </div>
       </nav>
-
-      <div className="marquee">
-        <div className="marquee-track">
-          {[...sponsorsData.marquee, ...sponsorsData.marquee].map((item, index) => (
-            <span key={`${item.label}-${index}`}><b>{item.label}</b> {item.message}<i>◆</i></span>
-          ))}
-        </div>
-      </div>
     </header>
   );
 }

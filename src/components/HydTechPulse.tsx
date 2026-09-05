@@ -7,7 +7,7 @@ import DirectoryPanel from "./DirectoryPanel";
 import DetailDrawer from "./DetailDrawer";
 import BillboardDrawer from "./BillboardDrawer";
 import ActionModal, { ModalKind } from "./ActionModal";
-import type { Mode, NewsItem, RoadBillboard, Startup, TechEvent } from "@/types";
+import type { CorridorPulse, DirectoryTab, Mode, NewsItem, RoadBillboard, Startup, TechEvent, ViewMode } from "@/types";
 import { deleteBillboard, getPublishedStartups, loadCms, subscribeCms } from "@/utils/cms";
 import { getBookmarks, getStoredMode, setStoredMode, toggleStoredBookmark } from "@/utils/storage";
 
@@ -34,6 +34,11 @@ function istMode(): Mode {
 
 export default function HydTechPulse() {
   const [mode, setMode] = useState<Mode>("day");
+  const [viewMode, setViewMode] = useState<ViewMode>("map");
+  const [headerQuery, setHeaderQuery] = useState("");
+  const [jumpTab, setJumpTab] = useState<DirectoryTab | null>(null);
+  const [tabNonce, setTabNonce] = useState(0);
+  const [corridorName, setCorridorName] = useState<string | undefined>();
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [startups, setStartups] = useState<Startup[]>([]);
   const [events, setEvents] = useState<TechEvent[]>([]);
@@ -87,8 +92,25 @@ export default function HydTechPulse() {
   };
 
   return (
-    <main className={`app ${mode}`}>
-      <Header mode={mode} stats={stats} onModeChange={changeMode} onOpenModal={setModal} />
+    <main className={`app ${mode} view-${viewMode}`}>
+      <Header
+        mode={mode}
+        viewMode={viewMode}
+        stats={stats}
+        search={headerQuery}
+        onSearch={setHeaderQuery}
+        onModeChange={changeMode}
+        onViewModeChange={setViewMode}
+        onOpenJobs={() => {
+          setViewMode("map");
+          setJumpTab("jobs");
+          setTabNonce((value) => value + 1);
+        }}
+        onOpenModal={(kind) => {
+          setCorridorName(undefined);
+          setModal(kind);
+        }}
+      />
       <div className="workspace">
         <DirectoryPanel
           mode={mode}
@@ -96,6 +118,11 @@ export default function HydTechPulse() {
           events={events}
           news={news}
           bookmarks={bookmarks}
+          query={headerQuery}
+          jumpTab={jumpTab}
+          tabNonce={tabNonce}
+          viewMode={viewMode}
+          onPromoteJob={() => setModal("job")}
           onToggleBookmark={(id) => setBookmarks(toggleStoredBookmark(id))}
           onSelectStartup={selectStartup}
           onSelectEvent={selectEvent}
@@ -104,11 +131,13 @@ export default function HydTechPulse() {
           focusedArea={focusedArea}
           onAreaFocus={setFocusedArea}
         />
+        {viewMode === "map" && (
         <MapContainer
           mode={mode}
           startups={startups}
           events={events}
           billboards={billboards}
+          news={news}
           selectedStartup={selectedStartup}
           selectedEvent={selectedEvent}
           hoveredId={hoveredId}
@@ -123,7 +152,12 @@ export default function HydTechPulse() {
             setSelectedBillboard(billboard);
           }}
           onSubmitHoarding={() => setModal("hoarding")}
+          onClaimCorridor={(slot: CorridorPulse) => {
+            setCorridorName(`${slot.label} · ${slot.name}`);
+            setModal("billboard");
+          }}
         />
+        )}
       </div>
       <DetailDrawer
         startup={selectedStartup}
@@ -152,7 +186,7 @@ export default function HydTechPulse() {
           refresh();
         }}
       />
-      <ActionModal kind={modal} onClose={() => setModal(null)} />
+      <ActionModal kind={modal} corridorName={corridorName} onClose={() => { setModal(null); setCorridorName(undefined); }} />
     </main>
   );
 }

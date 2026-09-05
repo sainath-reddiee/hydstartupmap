@@ -1,0 +1,52 @@
+{
+  "corridors": [
+    {
+      "id": "hitec",
+      "name": "HITEC City",
+      "area": "HITEC City",
+      "label": "Cyber Corridor",
+      "tagline": "Cyber Towers · Mindspace spine",
+      "weeklyPrice": "₹1,999"
+    },
+    {
+      "id": "madhapur",
+      "name": "Madhapur",
+      "area": "Madhapur",
+      "label": "Inorbit Belt",
+      "tagline": "Durgam Cheruvu · product studios",
+      "weeklyPrice": "₹1,999"
+    },
+    {
+      "id": "gachibowli",
+      "name": "Gachibowli",
+      "area": "Gachibowli",
+      "label": "ORR West",
+      "tagline": "Flyover edge · SaaS campus row",
+      "weeklyPrice": "₹1,999"
+    },
+    {
+      "id": "financial-district",
+      "name": "Financial District",
+      "area": "Financial District",
+      "label": "Nanakramguda",
+      "tagline": "WaveRock · rising FD cluster",
+      "weeklyPrice": "₹1,999"
+    },
+    {
+      "id": "genome-valley",
+      "name": "Pocharam",
+      "area": "Pocharam",
+      "label": "Genome Valley",
+      "tagline": "Bio + deeptech · unique to HYD",
+      "weeklyPrice": "₹1,499"
+    },
+    {
+      "id": "old-city",
+      "name": "Old City",
+      "area": "Old City",
+      "label": "Charminar Trail",
+      "tagline": "Heritage-side builders",
+      "weeklyPrice": "₹1,199"
+    }
+  ]
+}

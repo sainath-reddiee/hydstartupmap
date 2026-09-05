@@ -2,6 +2,7 @@ import startupsSeed from "@/data/startups.json";
 import eventsSeed from "@/data/events.json";
 import newsSeed from "@/data/news.json";
 import sponsorsSeed from "@/data/sponsors.json";
+import { listCorridors } from "@/utils/corridors";
 import type {
   AdOrder,
   AdProduct,
@@ -35,6 +36,10 @@ const CHECKOUT: Record<AdProduct, { amount: string; url: string }> = {
   "event-beacon": {
     amount: "₹499",
     url: process.env.NEXT_PUBLIC_DODO_EVENT_URL ?? "https://checkout.dodopayments.com/buy/pdt_event_demo",
+  },
+  "corridor-pulse": {
+    amount: "₹1,999",
+    url: process.env.NEXT_PUBLIC_DODO_CORRIDOR_URL ?? process.env.NEXT_PUBLIC_DODO_BILLBOARD_URL ?? "https://checkout.dodopayments.com/buy/pdt_billboard_demo",
   },
 };
 
@@ -329,15 +334,22 @@ export function markAdOrder(id: string, status: AdOrder["status"]) {
     };
   }
 
-  if (order && status === "live" && order.product === "billboard") {
+  if (order && status === "live" && (order.product === "billboard" || order.product === "corridor-pulse")) {
+    const match = listCorridors().find((item) =>
+      (order.notes ?? "").toLowerCase().includes(item.id) || (order.notes ?? "").toLowerCase().includes(item.name.toLowerCase()),
+    ) ?? listCorridors()[0];
     const billboard: RoadBillboard = {
       id: `bill-${Date.now()}`,
-      junctionName: "Cyber Towers",
-      coordinates: [78.3773, 17.4504],
+      junctionName: match.name,
+      coordinates: match.coordinates,
       sponsorName: order.companyName,
-      tagline: order.notes || "FEATURED ON HYDTECHPULSE",
+      tagline: order.notes || `Pulse on ${match.label}`,
       ctaLink: order.checkoutUrl,
       isLive: true,
+      kind: "corridor-pulse",
+      corridorId: match.id,
+      weeklyPrice: match.weeklyPrice,
+      status: "Live campaign",
     };
     next = { ...next, billboards: [billboard, ...next.billboards] };
   }
