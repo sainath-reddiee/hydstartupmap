@@ -7,7 +7,7 @@ import { checkoutFor, createAdOrder, submitCompany, submitHoarding } from "@/uti
 import { getJobAlert, saveJobAlert } from "@/utils/storage";
 import { CAREERS_HINT, isGoogleFormUrl } from "@/utils/careers";
 
-export type ModalKind = "billboard" | "submit" | "job" | "event" | "hoarding" | "alerts";
+export type ModalKind = "billboard" | "submit" | "job" | "event" | "hoarding" | "alerts" | "sprint";
 
 const offers = {
   billboard: {
@@ -39,6 +39,16 @@ const offers = {
     description: "Highlight your meetup, hackathon or demo day with a glowing calendar beacon.",
     features: ["Featured badge", "Map beacon", "Directory boost", "RSVP spotlight"],
     product: "event-beacon" as const,
+  },
+  sprint: {
+    icon: Sparkles,
+    kicker: "HIRE SPRINT · 72 HOURS",
+    title: "Look for people who can join now",
+    price: "₹1,499",
+    period: "/ 72 hrs",
+    description: "When you need immediate joiners — not a 60-day pipeline. Your company pulses on the map, sits in “Looking now”, and is suggested when someone searches data engineer, frontend, or space.",
+    features: ["Looking-now strip", "Map pulse for 72 hours", "Role-search boost", "Still links to your real careers page"],
+    product: "hire-sprint" as const,
   },
 };
 
@@ -258,7 +268,7 @@ export default function ActionModal({
     );
   }
 
-  if (kind !== "billboard" && kind !== "job" && kind !== "event") return null;
+  if (kind !== "billboard" && kind !== "job" && kind !== "event" && kind !== "sprint") return null;
   const offer = offers[kind];
   const Icon = offer.icon;
 

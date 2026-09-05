@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, BriefcaseBusiness, LayoutGrid, Map, Maximize2, Minimize2, Moon, Plus, Radio, Sun } from "lucide-react";
+import { Bell, BriefcaseBusiness, LayoutGrid, Map, Maximize2, Minimize2, Moon, Plus, Radio, Sun, Zap } from "lucide-react";
 import type { Mode, ViewMode } from "@/types";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
   onToggleRails: () => void;
   onOpenJobs: () => void;
   onOpenAlerts: () => void;
-  onOpenModal: (modal: "billboard" | "submit" | "job" | "event") => void;
+  onOpenModal: (modal: "billboard" | "submit" | "job" | "event" | "sprint") => void;
 };
 
 export default function Header({
@@ -33,11 +33,28 @@ export default function Header({
           </div>
         </div>
 
+        <div className="theme-switch" role="group" aria-label="Color theme">
+          <button
+            type="button"
+            className={mode === "day" ? "active" : ""}
+            onClick={() => onModeChange("day")}
+          >
+            <Sun size={14} /> Day
+          </button>
+          <button
+            type="button"
+            className={mode === "night" ? "active" : ""}
+            onClick={() => onModeChange("night")}
+          >
+            <Moon size={14} /> Night
+          </button>
+        </div>
+
         <label className="header-search">
           <input
             value={search}
             onChange={(event) => onSearch(event.target.value)}
-            placeholder="Search startups, corridors, founders..."
+            placeholder="Try “data engineer”, corridor, founder..."
             aria-label="Search the map"
           />
         </label>
@@ -58,15 +75,14 @@ export default function Header({
             <button className={viewMode === "map" ? "active" : ""} onClick={() => onViewModeChange("map")}><Map size={14} /> Map</button>
             <button className={viewMode === "grid" ? "active" : ""} onClick={() => onViewModeChange("grid")}><LayoutGrid size={14} /> Grid</button>
           </div>
-          <div className="mode-toggle" aria-label="Day or night">
-            <button className={mode === "day" ? "active" : ""} onClick={() => onModeChange("day")}><Sun size={14} /></button>
-            <button className={mode === "night" ? "active" : ""} onClick={() => onModeChange("night")}><Moon size={14} /></button>
-          </div>
           <button className="alerts-chip" onClick={onOpenAlerts}>
             <Bell size={14} /> Alerts
           </button>
           <button className="jobs-chip" onClick={onOpenJobs}>
             <BriefcaseBusiness size={14} /> {stats.jobs} {stats.jobsLabel}
+          </button>
+          <button className="sprint-chip" onClick={() => onOpenModal("sprint")}>
+            <Zap size={14} /> Hire sprint
           </button>
           <button className="action-btn action-btn--desktop" onClick={() => onOpenModal("billboard")}>Claim corridor</button>
           <button className="action-btn action-btn--submit" onClick={() => onOpenModal("submit")}><Plus size={15} /> Add company</button>

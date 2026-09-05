@@ -41,6 +41,10 @@ const CHECKOUT: Record<AdProduct, { amount: string; url: string }> = {
     amount: "₹1,999",
     url: process.env.NEXT_PUBLIC_DODO_CORRIDOR_URL ?? process.env.NEXT_PUBLIC_DODO_BILLBOARD_URL ?? "https://checkout.dodopayments.com/buy/pdt_billboard_demo",
   },
+  "hire-sprint": {
+    amount: "₹1,499",
+    url: process.env.NEXT_PUBLIC_DODO_SPRINT_URL ?? process.env.NEXT_PUBLIC_DODO_JOB_URL ?? "https://checkout.dodopayments.com/buy/pdt_job_demo",
+  },
 };
 
 function seedState(): CmsState {
@@ -323,7 +327,7 @@ export function markAdOrder(id: string, status: AdOrder["status"]) {
   };
 
   const order = next.adOrders.find((item) => item.id === id);
-  if (order && status === "live" && order.product === "boost") {
+  if (order && status === "live" && (order.product === "boost" || order.product === "hire-sprint")) {
     next = {
       ...next,
       startups: next.startups.map((startup) =>

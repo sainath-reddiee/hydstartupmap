@@ -8,9 +8,12 @@ import DetailDrawer from "./DetailDrawer";
 import BillboardDrawer from "./BillboardDrawer";
 import ActionModal, { ModalKind } from "./ActionModal";
 import PulseBanner from "./PulseBanner";
+import TimingStrip from "./TimingStrip";
 import type { CorridorPulse, DirectoryTab, Mode, NewsItem, RoadBillboard, Startup, TechEvent, ViewMode } from "@/types";
 import { deleteBillboard, getPublishedStartups, loadCms, subscribeCms } from "@/utils/cms";
 import { hiringStats } from "@/utils/hiring";
+import { matchRoleIntent } from "@/utils/intent";
+import { timingCopy } from "@/utils/timing";
 import {
   getBannerDismissed, getBookmarks, getRailsCollapsed, getStoredMode,
   setBannerDismissed, setRailsCollapsed, setStoredMode, toggleStoredBookmark,
@@ -79,6 +82,8 @@ export default function HydTechPulse() {
   }, []);
 
   const hiring = useMemo(() => hiringStats(startups), [startups]);
+  const roleMatch = useMemo(() => matchRoleIntent(headerQuery, startups), [headerQuery, startups]);
+  const timing = useMemo(() => timingCopy({ startups, events, news }), [startups, events, news]);
   const stats = useMemo(() => ({
     startups: startups.length,
     jobs: hiring.jobs,
@@ -159,6 +164,13 @@ export default function HydTechPulse() {
           }}
         />
       )}
+      <TimingStrip
+        timing={timing}
+        intent={roleMatch.intent}
+        matches={roleMatch.matches}
+        onSelect={selectStartup}
+        onHireSprint={() => setModal("sprint")}
+      />
       <div className="workspace">
         <DirectoryPanel
           mode={mode}
@@ -173,6 +185,8 @@ export default function HydTechPulse() {
           collapsed={railsCollapsed && viewMode === "map"}
           onCollapse={toggleRails}
           onPromoteJob={() => setModal("job")}
+          onHireSprint={() => setModal("sprint")}
+          suggested={roleMatch.matches}
           onToggleBookmark={(id) => setBookmarks(toggleStoredBookmark(id))}
           onSelectStartup={selectStartup}
           onSelectEvent={selectEvent}
@@ -208,6 +222,7 @@ export default function HydTechPulse() {
             setModal("billboard");
           }}
           onOpenDirectory={toggleRails}
+          intentMatches={roleMatch.matches}
         />
         )}
       </div>

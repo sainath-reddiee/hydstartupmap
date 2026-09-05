@@ -33,10 +33,10 @@ export type AreaName =
 
 export type WorkMode = "On-site" | "Hybrid" | "Remote";
 export type Mode = "day" | "night";
-export type DirectoryTab = "startups" | "jobs" | "events" | "news" | "night";
+export type DirectoryTab = "startups" | "jobs" | "events" | "news";
 export type SubmissionStatus = "pending" | "approved" | "rejected";
 export type ViewMode = "map" | "grid";
-export type AdProduct = "boost" | "billboard" | "job-spotlight" | "event-beacon" | "corridor-pulse";
+export type AdProduct = "boost" | "billboard" | "job-spotlight" | "event-beacon" | "corridor-pulse" | "hire-sprint";
 
 export interface JobRole {
   id: string;

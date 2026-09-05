@@ -9,7 +9,7 @@ import thirdspacesData from "@/data/thirdspaces.json";
 import lineageData from "@/data/lineage.json";
 import landmarksData from "@/data/landmarks.json";
 import type { CityLandmark, CorridorPulse, LineageConnection, Mode, NewsItem, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
-import { AREA_CENTERS, buildAreaInsights } from "@/utils/distance";
+import { AREA_CENTERS, buildAreaInsights, type AreaInsight } from "@/utils/distance";
 import { resolveCorridorSlots } from "@/utils/corridors";
 import CorridorDock from "./CorridorDock";
 import NewsPeek from "./NewsPeek";
@@ -44,6 +44,7 @@ type Props = {
   onClaimCorridor: (slot: CorridorPulse) => void;
   railsCollapsed?: boolean;
   onOpenDirectory?: () => void;
+  intentMatches?: Startup[];
 };
 
 function arcCoordinates(connection: LineageConnection) {
@@ -61,7 +62,7 @@ function arcCoordinates(connection: LineageConnection) {
 export default function MapContainer({
   mode, startups, events, billboards, news, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
   onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onClaimCorridor,
-  railsCollapsed, onOpenDirectory,
+  railsCollapsed, onOpenDirectory, intentMatches = [],
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -71,6 +72,7 @@ export default function MapContainer({
   const [newsOpen, setNewsOpen] = useState(false);
   const [dockOpen, setDockOpen] = useState(true);
   const [showLandmarks, setShowLandmarks] = useState(true);
+  const [heatStory, setHeatStory] = useState<AreaInsight | null>(null);
   const corridorSlots = useMemo(() => resolveCorridorSlots(billboards), [billboards]);
   const [areaJump, setAreaJump] = useState("");
   const [areaMenuOpen, setAreaMenuOpen] = useState(false);
@@ -310,6 +312,33 @@ export default function MapContainer({
         },
       });
 
+      map.addSource("hiring-heat-labels", { type: "geojson", data: featureCollection([]) });
+      map.addLayer({
+        id: "hiring-heat-labels",
+        type: "symbol",
+        source: "hiring-heat-labels",
+        layout: {
+          "text-field": ["concat", ["get", "area"], "  ", ["to-string", ["get", "jobs"]], " live"],
+          "text-size": 11,
+          "text-allow-overlap": true,
+        },
+        paint: {
+          "text-color": "#134e4a",
+          "text-halo-color": "#ffffff",
+          "text-halo-width": 1.4,
+        },
+      });
+
+      map.addSource("intent-rings", { type: "geojson", data: featureCollection([]) });
+      map.addLayer({
+        id: "intent-rings-fill", type: "fill", source: "intent-rings",
+        paint: { "fill-color": "#8b5cf6", "fill-opacity": 0.16 },
+      });
+      map.addLayer({
+        id: "intent-rings-line", type: "line", source: "intent-rings",
+        paint: { "line-color": "#7c3aed", "line-width": 2, "line-opacity": 0.85 },
+      });
+
       renderMarkers(map);
     });
 
@@ -319,6 +348,9 @@ export default function MapContainer({
       if (map.loaded() && map.getLayer("lineage-lines")) {
         map.setPaintProperty("lineage-lines", "line-dasharray", dashFrames[frame % dashFrames.length]);
         frame += 1;
+      }
+      if (map.loaded() && map.getLayer("hiring-heat-fill")) {
+        map.setPaintProperty("hiring-heat-fill", "fill-opacity", frame % 2 === 0 ? 0.14 : 0.24);
       }
     }, 220);
 
@@ -411,6 +443,8 @@ export default function MapContainer({
       if (!source) return;
       if (!showHeat) {
         source.setData(featureCollection([]));
+        (map.getSource("hiring-heat-labels") as GeoJSONSource | undefined)?.setData(featureCollection([]));
+        setHeatStory(null);
         return;
       }
       const features = insights
@@ -418,12 +452,62 @@ export default function MapContainer({
         .map((item) => circle(AREA_CENTERS[item.name], item.heat === "hot" ? 1.4 : item.heat === "warm" ? 1.1 : 0.85, {
           steps: 64,
           units: "kilometers",
-          properties: { heat: item.heat, jobs: item.openJobs, area: item.name },
+          properties: { heat: item.heat, jobs: item.openJobs, area: item.name, signal: item.signal },
         }));
       source.setData(featureCollection(features));
+      const labels = map.getSource("hiring-heat-labels") as GeoJSONSource | undefined;
+      labels?.setData({
+        type: "FeatureCollection",
+        features: insights.filter((item) => AREA_CENTERS[item.name]).map((item) => ({
+          type: "Feature",
+          properties: { area: item.name, jobs: item.openJobs },
+          geometry: { type: "Point", coordinates: AREA_CENTERS[item.name] },
+        })),
+      });
     };
     map.loaded() ? update() : map.once("load", update);
   }, [insights, showHeat]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const onClick = (event: maplibregl.MapMouseEvent) => {
+      if (!map.getLayer("hiring-heat-fill")) return;
+      const hit = map.queryRenderedFeatures(event.point, { layers: ["hiring-heat-fill"] })[0];
+      const area = hit?.properties?.area as string | undefined;
+      if (!area) return;
+      flyToArea(area);
+      setHeatStory(insights.find((item) => item.name === area) ?? null);
+    };
+    const onMove = (event: maplibregl.MapMouseEvent) => {
+      if (!map.getLayer("hiring-heat-fill")) return;
+      const hit = map.queryRenderedFeatures(event.point, { layers: ["hiring-heat-fill"] })[0];
+      map.getCanvas().style.cursor = hit ? "pointer" : "";
+    };
+    map.on("click", onClick);
+    map.on("mousemove", onMove);
+    return () => {
+      map.off("click", onClick);
+      map.off("mousemove", onMove);
+    };
+  }, [insights]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const update = () => {
+      const source = map.getSource("intent-rings") as GeoJSONSource | undefined;
+      if (!source) return;
+      source.setData(featureCollection(intentMatches.map((startup) =>
+        circle(startup.location.coordinates, 0.45, {
+          steps: 48,
+          units: "kilometers",
+          properties: { name: startup.name },
+        }),
+      )));
+    };
+    map.loaded() ? update() : map.once("load", update);
+  }, [intentMatches]);
 
   return (
     <div className="map-shell">
@@ -490,9 +574,18 @@ export default function MapContainer({
         <span><i className="legend-startup" /> Startups</span>
         <span><i className="legend-jobs" /> Open roles</span>
         <span><i className="legend-ooh" /> Corridor pulse</span>
-        <span><i className="legend-heat" /> Hiring heat</span>
+        <span><i className="legend-heat" /> Hiring heat · tap a ring</span>
         <span><i className="legend-landmark" /> Buildings</span>
+        {intentMatches.length > 0 && <span><i className="legend-intent" /> Role match</span>}
       </div>
+      {heatStory && (
+        <div className="heat-card">
+          <small>{heatStory.heat.toUpperCase()} RING</small>
+          <strong>{heatStory.name}</strong>
+          <p>{heatStory.count} companies · {heatStory.signal}</p>
+          <button type="button" onClick={() => setHeatStory(null)}>Close</button>
+        </div>
+      )}
       {railsCollapsed && onOpenDirectory && (
         <button type="button" className="map-reopen-rail" onClick={onOpenDirectory}>
           Show directory
