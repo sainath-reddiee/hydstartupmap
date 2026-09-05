@@ -154,7 +154,8 @@ export default function MapContainer({
           element.style.setProperty("--size", `${size}px`);
           element.setAttribute("aria-label", `${item.count} companies in ${item.name}. Zoom in`);
           element.innerHTML = `<b>${item.count}</b><small>${item.name}</small>`;
-          element.addEventListener("click", (event) => {
+          element.addEventListener("pointerdown", (event) => {
+            event.preventDefault();
             event.stopPropagation();
             flyToArea(item.name);
           });
@@ -182,7 +183,8 @@ export default function MapContainer({
       element.className = "building-stack";
       element.setAttribute("aria-label", `${group.startups.length} companies at ${group.building}. Expand`);
       element.innerHTML = `<b>${group.startups.length}</b><small>${shortBuilding(group.building)}</small>`;
-      element.addEventListener("click", (event) => {
+      element.addEventListener("pointerdown", (event) => {
+        event.preventDefault();
         event.stopPropagation();
         const expand = () => callbacksRef.current.setExpandedStack(group.key);
         if (map.getZoom() < 15.2) {
@@ -448,6 +450,19 @@ export default function MapContainer({
     };
     map.loaded() ? update() : map.once("load", update);
   }, [commute]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    const coords = focusedArea ? AREA_CENTERS[focusedArea] : null;
+    if (!map || !coords) return;
+    if (map.getZoom() >= 14.2) {
+      const center = map.getCenter();
+      const near = Math.abs(center.lng - coords[0]) < 0.02 && Math.abs(center.lat - coords[1]) < 0.02;
+      if (near) return;
+    }
+    setExpandedStack(null);
+    map.flyTo({ center: coords, zoom: 14.6, pitch: 50, bearing: -14, duration: 1200 });
+  }, [focusedArea]);
 
   return (
     <div className="map-shell">
