@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  Bookmark, BriefcaseBusiness, Building2, CalendarDays, ChevronRight, Clock3,
+  Bookmark, BriefcaseBusiness, Building2, CalendarDays, ChevronLeft, ChevronRight, Clock3,
   Flame, MapPinned, Moon, Navigation, Newspaper, Search, Sparkles, Wifi, X,
 } from "lucide-react";
 import type { DirectoryTab, Mode, NewsItem, Startup, StartupCategory, TechEvent, ThirdSpace, ViewMode } from "@/types";
 import { AREA_CENTERS, buildAreaInsights, distanceKm, relativeTime } from "@/utils/distance";
+import { hiringSignal, isActivelyHiring } from "@/utils/hiring";
 import spacesData from "@/data/thirdspaces.json";
 
 const spaces = spacesData as ThirdSpace[];
@@ -33,6 +34,8 @@ type Props = {
   jumpTab?: DirectoryTab | null;
   tabNonce?: number;
   viewMode?: ViewMode;
+  collapsed?: boolean;
+  onCollapse?: () => void;
   onPromoteJob?: () => void;
 };
 
@@ -101,9 +104,9 @@ export default function DirectoryPanel(props: Props) {
       return matchesText && matchesCategory && matchesStage && matchesArea && matchesRadius;
     });
     return list.sort((a, b) => {
-      if (sortBy === "hiring") return b.hiring.jobs.length - a.hiring.jobs.length;
+      if (sortBy === "hiring") return hiringSignal(b) - hiringSignal(a);
       if (sortBy === "newest") return b.foundedYear - a.foundedYear;
-      return Number(Boolean(b.isBoosted)) - Number(Boolean(a.isBoosted)) || b.hiring.jobs.length - a.hiring.jobs.length;
+      return Number(Boolean(b.isBoosted)) - Number(Boolean(a.isBoosted)) || hiringSignal(b) - hiringSignal(a);
     });
   }, [props.startups, query, category, stage, area, commuteEnabled, homeArea, radius, sortBy]);
 
@@ -113,8 +116,8 @@ export default function DirectoryPanel(props: Props) {
     .sort((a, b) => Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured))), [props.startups, query]);
 
   const hiringBoards = useMemo(() => props.startups.filter((startup) => {
-    if (!startup.hiring.careersUrl || startup.hiring.jobs.length > 0) return false;
-    return `${startup.name} ${startup.hiring.careersUrl}`.toLowerCase().includes(query.toLowerCase());
+    if (!isActivelyHiring(startup)) return false;
+    return `${startup.name} ${startup.hiring.careersUrl} ${startup.location.building}`.toLowerCase().includes(query.toLowerCase());
   }), [props.startups, query]);
 
   const filteredNews = useMemo(() => props.news
@@ -123,7 +126,7 @@ export default function DirectoryPanel(props: Props) {
 
   const tabs: Array<{ id: DirectoryTab; label: string; icon: typeof Building2; count: number }> = [
     { id: "startups", label: "Startups", icon: Building2, count: props.startups.length },
-    { id: "jobs", label: "Jobs", icon: BriefcaseBusiness, count: allJobs.length + hiringBoards.length },
+    { id: "jobs", label: "Jobs", icon: BriefcaseBusiness, count: allJobs.length || hiringBoards.length },
     { id: "news", label: "News", icon: Newspaper, count: props.news.length },
     { id: "events", label: "Events", icon: CalendarDays, count: props.events.length },
     { id: "night", label: "Night", icon: Moon, count: spaces.length },
@@ -149,6 +152,8 @@ export default function DirectoryPanel(props: Props) {
     }
   };
 
+  if (props.collapsed) return null;
+
   return (
     <aside className="directory">
       <div className="directory-heading compact">
@@ -156,7 +161,14 @@ export default function DirectoryPanel(props: Props) {
           <span className="eyebrow"><span className="status-dot" /> HYDERABAD</span>
           <h1>{props.startups.length} companies <em>on the map</em></h1>
         </div>
-        <p>Filter by corridor, stage, or sector. Jobs stay linked to a live careers page.</p>
+        <div className="directory-heading-actions">
+          <p>Filter by corridor, stage, or sector. Jobs stay on the company careers page — we do not invent titles or salaries.</p>
+          {props.onCollapse && (
+            <button type="button" className="directory-collapse" onClick={props.onCollapse} aria-label="Collapse directory for full-screen map">
+              <ChevronLeft size={16} /> Map
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="tabs">
@@ -292,8 +304,8 @@ export default function DirectoryPanel(props: Props) {
                 <span>{startup.category}</span>
                 {startup.hiring.jobs.length > 0 ? (
                   <span className="hiring">{startup.hiring.jobs.length} OPEN</span>
-                ) : startup.hiring.careersUrl ? (
-                  <span className="hiring">HIRING</span>
+                ) : isActivelyHiring(startup) ? (
+                  <span className="hiring">CAREERS</span>
                 ) : null}
               </div>
               <div className="vibes">{startup.vibes.slice(0, 2).map((vibe) => <span key={vibe}>{vibe}</span>)}</div>
@@ -312,11 +324,11 @@ export default function DirectoryPanel(props: Props) {
         {tab === "jobs" && (
           <div className="featured-roles">
             <div className="featured-roles-head">
-              <strong>Featured roles</strong>
-              <button type="button" onClick={props.onPromoteJob}>Promote a role</button>
+              <strong>Hiring boards</strong>
+              <button type="button" onClick={props.onPromoteJob}>Spotlight a real listing</button>
             </div>
-            {allJobs.filter((item) => item.isFeatured).length === 0 && (
-              <p>No paid spotlights yet. Companies can pin a real listing here — not a Google Form.</p>
+            {allJobs.length === 0 && (
+              <p>Roles open on each company’s careers / Freshteam / ATS page. We only show a card when that URL is live — no invented LPA ranges.</p>
             )}
           </div>
         )}
@@ -332,7 +344,7 @@ export default function DirectoryPanel(props: Props) {
               <div className="startup-logo small">{startup.name.slice(0, 2).toUpperCase()}</div>
               <div>
                 <h3>Open roles at {startup.name}</h3>
-                <p>{startup.location.area} · listed on their careers page</p>
+                <p>{startup.location.building} · {startup.location.area}</p>
               </div>
             </div>
             <a href={startup.hiring.careersUrl} target="_blank" rel="noreferrer" onClick={(event) => event.stopPropagation()}>

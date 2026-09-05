@@ -136,7 +136,7 @@ export function applyJobsToCompany(companyId: string, jobs: JobRole[], source: s
     ...company,
     hiring: {
       ...company.hiring,
-      isHiring: jobs.length > 0,
+      isHiring: jobs.length > 0 || Boolean(company.hiring.careersUrl),
       jobs,
     },
     source: `${company.source ?? "HydTechPulse"} · synced:${source}`,

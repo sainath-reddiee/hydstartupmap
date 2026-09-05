@@ -20,7 +20,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "companyId is required" }, { status: 400 });
     }
 
-    const startups = startupsSeed as Startup[];
+    const startups = startupsSeed as unknown as Startup[];
     const targets = companyId === "all"
       ? startups.filter((item) => listSyncableCompanyIds().includes(item.id))
       : startups.filter((item) => item.id === companyId);

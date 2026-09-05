@@ -28,7 +28,8 @@ export type AreaName =
   | "Uppal"
   | "Pocharam"
   | "Shamshabad"
-  | "Kompally";
+  | "Kompally"
+  | "Nacharam";
 
 export type WorkMode = "On-site" | "Hybrid" | "Remote";
 export type Mode = "day" | "night";
@@ -181,6 +182,22 @@ export interface HoardingSighting {
   caption: string;
   submittedBy: string;
   imageDataUrl?: string;
+}
+
+export interface CityLandmark {
+  id: string;
+  name: string;
+  kind: "campus" | "transit" | "landmark";
+  area: AreaName;
+  building: string;
+  coordinates: [number, number];
+}
+
+export interface JobAlertPref {
+  email: string;
+  corridors: string[];
+  roleFocus: string;
+  createdAt: string;
 }
 
 export interface NewsItem {

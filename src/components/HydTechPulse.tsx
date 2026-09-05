@@ -7,9 +7,14 @@ import DirectoryPanel from "./DirectoryPanel";
 import DetailDrawer from "./DetailDrawer";
 import BillboardDrawer from "./BillboardDrawer";
 import ActionModal, { ModalKind } from "./ActionModal";
+import PulseBanner from "./PulseBanner";
 import type { CorridorPulse, DirectoryTab, Mode, NewsItem, RoadBillboard, Startup, TechEvent, ViewMode } from "@/types";
 import { deleteBillboard, getPublishedStartups, loadCms, subscribeCms } from "@/utils/cms";
-import { getBookmarks, getStoredMode, setStoredMode, toggleStoredBookmark } from "@/utils/storage";
+import { hiringStats } from "@/utils/hiring";
+import {
+  getBannerDismissed, getBookmarks, getRailsCollapsed, getStoredMode,
+  setBannerDismissed, setRailsCollapsed, setStoredMode, toggleStoredBookmark,
+} from "@/utils/storage";
 
 const MapContainer = dynamic(() => import("./MapContainer"), {
   ssr: false,
@@ -51,6 +56,8 @@ export default function HydTechPulse() {
   const [modal, setModal] = useState<ModalKind | null>(null);
   const [focusedArea, setFocusedArea] = useState<string | null>(null);
   const [selectedBillboard, setSelectedBillboard] = useState<RoadBillboard | null>(null);
+  const [railsCollapsed, setRails] = useState(false);
+  const [bannerOn, setBannerOn] = useState(true);
 
   const refresh = () => {
     const cms = loadCms();
@@ -65,20 +72,42 @@ export default function HydTechPulse() {
   useEffect(() => {
     setMode(getStoredMode() ?? istMode());
     setBookmarks(getBookmarks());
+    setRails(getRailsCollapsed());
+    setBannerOn(!getBannerDismissed());
     refresh();
     return subscribeCms(refresh);
   }, []);
 
+  const hiring = useMemo(() => hiringStats(startups), [startups]);
   const stats = useMemo(() => ({
     startups: startups.length,
-    jobs: startups.reduce((sum, item) => sum + item.hiring.jobs.length, 0),
+    jobs: hiring.jobs,
+    jobsLabel: hiring.label,
     events: events.length,
     news: news.length,
-  }), [startups, events, news]);
+  }), [startups, events, news, hiring]);
 
   const changeMode = (next: Mode) => {
     setMode(next);
     setStoredMode(next);
+  };
+
+  const toggleRails = () => {
+    setRails((current) => {
+      const next = !current;
+      setRailsCollapsed(next);
+      return next;
+    });
+  };
+
+  const openDirectory = (tab: DirectoryTab) => {
+    setViewMode("map");
+    if (railsCollapsed) {
+      setRails(false);
+      setRailsCollapsed(false);
+    }
+    setJumpTab(tab);
+    setTabNonce((value) => value + 1);
   };
 
   const selectStartup = (startup: Startup) => {
@@ -92,25 +121,44 @@ export default function HydTechPulse() {
   };
 
   return (
-    <main className={`app ${mode} view-${viewMode}`}>
+    <main className={`app ${mode} view-${viewMode} ${railsCollapsed && viewMode === "map" ? "rails-collapsed" : ""}`}>
       <Header
         mode={mode}
         viewMode={viewMode}
+        railsCollapsed={railsCollapsed}
         stats={stats}
         search={headerQuery}
         onSearch={setHeaderQuery}
         onModeChange={changeMode}
-        onViewModeChange={setViewMode}
-        onOpenJobs={() => {
-          setViewMode("map");
-          setJumpTab("jobs");
-          setTabNonce((value) => value + 1);
+        onViewModeChange={(next) => {
+          setViewMode(next);
+          if (next === "grid" && railsCollapsed) {
+            setRails(false);
+            setRailsCollapsed(false);
+          }
         }}
+        onToggleRails={toggleRails}
+        onOpenJobs={() => openDirectory("jobs")}
+        onOpenAlerts={() => setModal("alerts")}
         onOpenModal={(kind) => {
           setCorridorName(undefined);
           setModal(kind);
         }}
       />
+      {bannerOn && (
+        <PulseBanner
+          hiring={hiring.boards}
+          news={news.length}
+          events={events.length}
+          onAlerts={() => setModal("alerts")}
+          onJobs={() => openDirectory("jobs")}
+          onClaim={() => setModal("billboard")}
+          onDismiss={() => {
+            setBannerOn(false);
+            setBannerDismissed();
+          }}
+        />
+      )}
       <div className="workspace">
         <DirectoryPanel
           mode={mode}
@@ -122,6 +170,8 @@ export default function HydTechPulse() {
           jumpTab={jumpTab}
           tabNonce={tabNonce}
           viewMode={viewMode}
+          collapsed={railsCollapsed && viewMode === "map"}
+          onCollapse={toggleRails}
           onPromoteJob={() => setModal("job")}
           onToggleBookmark={(id) => setBookmarks(toggleStoredBookmark(id))}
           onSelectStartup={selectStartup}
@@ -143,6 +193,7 @@ export default function HydTechPulse() {
           hoveredId={hoveredId}
           commute={commute}
           focusedArea={focusedArea}
+          railsCollapsed={railsCollapsed}
           onSelectStartup={selectStartup}
           onSelectEvent={selectEvent}
           onFocusArea={setFocusedArea}
@@ -156,6 +207,7 @@ export default function HydTechPulse() {
             setCorridorName(`${slot.label} · ${slot.name}`);
             setModal("billboard");
           }}
+          onOpenDirectory={toggleRails}
         />
         )}
       </div>

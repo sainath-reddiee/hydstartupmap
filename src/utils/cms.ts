@@ -15,7 +15,7 @@ import type {
   TechEvent,
 } from "@/types";
 
-const CMS_KEY = "hydtechpulse:cms:v2";
+const CMS_KEY = "hydtechpulse:cms:v3";
 const PLACEHOLDER_BOARD_IDS = new Set(["bill-1", "bill-2", "bill-3", "ooh-1", "ooh-2", "wall-1"]);
 const ADMIN_SESSION_KEY = "hydtechpulse:admin-session";
 const DEFAULT_ADMIN_PIN = "hydpulse2026";
@@ -45,9 +45,9 @@ const CHECKOUT: Record<AdProduct, { amount: string; url: string }> = {
 
 function seedState(): CmsState {
   return {
-    startups: (startupsSeed as Startup[]).map((item) => ({ ...item, isPublished: item.isPublished ?? true })),
-    events: eventsSeed as TechEvent[],
-    news: newsSeed as NewsItem[],
+    startups: (startupsSeed as unknown as Startup[]).map((item) => ({ ...item, isPublished: item.isPublished ?? true })),
+    events: eventsSeed as unknown as TechEvent[],
+    news: newsSeed as unknown as NewsItem[],
     billboards: sponsorsSeed.billboards as RoadBillboard[],
     hoardings: [],
     submissions: [],

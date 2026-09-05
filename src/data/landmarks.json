@@ -1,0 +1,17 @@
+[
+  {"id": "thub2", "name": "T-Hub Phase 2", "kind": "campus", "area": "Raidurg", "building": "T-Hub 2.0, Raidurg Knowledge City", "coordinates": [78.3802, 17.4448]},
+  {"id": "cyber-towers", "name": "Cyber Towers", "kind": "landmark", "area": "HITEC City", "building": "Cyber Towers, HITEC City", "coordinates": [78.3826, 17.4504]},
+  {"id": "rmz-futura", "name": "RMZ Futura", "kind": "campus", "area": "HITEC City", "building": "RMZ Futura, Phase 2 HITEC City", "coordinates": [78.3768, 17.4475]},
+  {"id": "mindspace-12c", "name": "Mindspace 12C", "kind": "campus", "area": "Madhapur", "building": "Raheja Mindspace, Building 12C", "coordinates": [78.3778, 17.4432]},
+  {"id": "ilabs", "name": "iLabs Centre", "kind": "campus", "area": "Madhapur", "building": "iLabs Centre, Software Units Layout", "coordinates": [78.3812, 17.4472]},
+  {"id": "vasavi-sky", "name": "Vasavi Sky City", "kind": "campus", "area": "Gachibowli", "building": "Vasavi Sky City, Telecom Nagar", "coordinates": [78.3512, 17.4408]},
+  {"id": "iiith", "name": "IIIT Hyderabad", "kind": "campus", "area": "Gachibowli", "building": "IIIT-H, Gachibowli", "coordinates": [78.3496, 17.4452]},
+  {"id": "waverock", "name": "WaveRock", "kind": "campus", "area": "Financial District", "building": "WaveRock, Nanakramguda", "coordinates": [78.3419, 17.4201]},
+  {"id": "sohini", "name": "Sohini Tech Park", "kind": "campus", "area": "Nanakramguda", "building": "Sohini Tech Park, Financial District", "coordinates": [78.3448, 17.4192]},
+  {"id": "suvarna-durga", "name": "Suvarna Durga Tech Park", "kind": "campus", "area": "Nanakramguda", "building": "Vamsiram Suvarna Durga, Nanakramguda", "coordinates": [78.3448, 17.4185]},
+  {"id": "amazon-hyd13", "name": "Amazon HYD13", "kind": "campus", "area": "HITEC City", "building": "Amazon HYD13, HITEC City", "coordinates": [78.3762, 17.4476]},
+  {"id": "raidurg-metro", "name": "Raidurg Metro", "kind": "transit", "area": "Raidurg", "building": "Raidurg Metro station", "coordinates": [78.3748, 17.442]},
+  {"id": "sln-terminus", "name": "SLN Terminus", "kind": "landmark", "area": "Kondapur", "building": "SLN Terminus, HITEC City Road", "coordinates": [78.3675, 17.4588]},
+  {"id": "white-house", "name": "White House Begumpet", "kind": "landmark", "area": "Begumpet", "building": "White House, Begumpet", "coordinates": [78.4688, 17.444]},
+  {"id": "infinity-campus", "name": "Skyroot Infinity Campus", "kind": "campus", "area": "Shamshabad", "building": "Hardware Park, Pahadi Sharif", "coordinates": [78.4585, 17.2685]}
+]

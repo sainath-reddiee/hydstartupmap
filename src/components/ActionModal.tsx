@@ -4,9 +4,10 @@ import { FormEvent, useState } from "react";
 import { ArrowUpRight, Building2, Check, Plus, ShieldCheck, Sparkles, X } from "lucide-react";
 import type { AreaName, StartupCategory } from "@/types";
 import { checkoutFor, createAdOrder, submitCompany, submitHoarding } from "@/utils/cms";
+import { getJobAlert, saveJobAlert } from "@/utils/storage";
 import { CAREERS_HINT, isGoogleFormUrl } from "@/utils/careers";
 
-export type ModalKind = "billboard" | "submit" | "job" | "event" | "hoarding";
+export type ModalKind = "billboard" | "submit" | "job" | "event" | "hoarding" | "alerts";
 
 const offers = {
   billboard: {
@@ -45,7 +46,7 @@ const areas: AreaName[] = [
   "HITEC City", "Madhapur", "Gachibowli", "Financial District", "Jubilee Hills",
   "Kondapur", "Banjara Hills", "Raidurg", "Nanakramguda", "Kokapet", "Kukatpally",
   "Miyapur", "Ameerpet", "Begumpet", "Secunderabad", "Old City", "Uppal",
-  "Pocharam", "Shamshabad", "Kompally",
+  "Pocharam", "Shamshabad", "Kompally", "Nacharam",
 ];
 const categories: StartupCategory[] = ["AI & Data", "SaaS & Enterprise", "Fintech", "Healthtech & Bio", "Deeptech & Hardware", "Consumer & D2C", "Edtech", "Space & Aerospace"];
 
@@ -62,6 +63,69 @@ export default function ActionModal({
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
 
   if (!kind) return null;
+
+  if (kind === "alerts") {
+    const existing = getJobAlert();
+    const onAlert = (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      const data = new FormData(event.currentTarget);
+      saveJobAlert({
+        email: String(data.get("email") || ""),
+        corridors: String(data.get("corridor") || "All Hyderabad").split(",").map((item) => item.trim()),
+        roleFocus: String(data.get("roleFocus") || "Any role"),
+      });
+      setSubmitted(true);
+    };
+    return (
+      <div className="modal-wrap" role="dialog" aria-modal="true">
+        <button className="modal-scrim" onClick={onClose} aria-label="Close" />
+        <div className="modal animate-pop">
+          <button className="modal-close" onClick={onClose}><X size={18} /></button>
+          {!submitted ? (
+            <>
+              <span className="modal-icon"><Sparkles /></span>
+              <span className="eyebrow">HYD JOB ALERTS</span>
+              <h2>Get pinged when a corridor is hiring</h2>
+              <p>Saved on this device only. We never invent roles — alerts point at the company careers page, LinkedIn, or ATS board.</p>
+              <form onSubmit={onAlert}>
+                <label>EMAIL<input name="email" type="email" required defaultValue={existing?.email} placeholder="you@email.com" /></label>
+                <label>CORRIDOR
+                  <select name="corridor" defaultValue={existing?.corridors[0] ?? "All Hyderabad"}>
+                    <option>All Hyderabad</option>
+                    <option>HITEC City</option>
+                    <option>Madhapur</option>
+                    <option>Gachibowli</option>
+                    <option>Financial District</option>
+                    <option>Nanakramguda</option>
+                    <option>Shamshabad</option>
+                    <option>Begumpet</option>
+                  </select>
+                </label>
+                <label>ROLE FOCUS
+                  <select name="roleFocus" defaultValue={existing?.roleFocus ?? "Any role"}>
+                    <option>Any role</option>
+                    <option>Engineering</option>
+                    <option>Product</option>
+                    <option>Data / AI</option>
+                    <option>Sales</option>
+                    <option>Space / hardware</option>
+                  </select>
+                </label>
+                <button className="modal-primary" type="submit">Save alert <ArrowUpRight size={15} /></button>
+              </form>
+            </>
+          ) : (
+            <div className="success">
+              <span><Check size={28} /></span>
+              <h2>Alert saved</h2>
+              <p>We stored your corridor and role focus locally. When a company publishes a real careers URL, it shows on the Jobs tab.</p>
+              <button className="modal-primary" onClick={onClose}>Back to the map</button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   if (kind === "hoarding") {
     const submitSighting = async (event: FormEvent<HTMLFormElement>) => {
@@ -194,6 +258,7 @@ export default function ActionModal({
     );
   }
 
+  if (kind !== "billboard" && kind !== "job" && kind !== "event") return null;
   const offer = offers[kind];
   const Icon = offer.icon;
 

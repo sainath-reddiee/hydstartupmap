@@ -2,8 +2,8 @@
   {
     "id": "darwinbox",
     "name": "Darwinbox",
-    "tagline": "AI-native HCM for the modern enterprise",
-    "description": "Darwinbox is Hyderabad's unicorn HR platform used by global enterprises to run hiring, payroll, performance and employee experience on one cloud stack.\n\nBuilt for Asia-first complexity, the product blends workflow automation with AI copilots so People teams can operate at scale without losing local compliance nuance.",
+    "tagline": "AI-native HCM for global enterprises",
+    "description": "Darwinbox is a Hyderabad-built human capital management platform used by 1,400+ enterprises worldwide.\n\nIts India headquarters is at Skootr Forest, RMZ Futura in HITEC City. In August 2026 the company launched Cortex, an AI-native HCM rebuild. Mint later reported buyout interest from Microsoft, Salesforce and ADP; Darwinbox said it is still pursuing a medium-term IPO.",
     "website": "https://darwinbox.com",
     "foundedYear": 2015,
     "teamSize": "1001–5000",
@@ -11,165 +11,344 @@
     "stage": "Unicorn",
     "techStack": ["Java", "React", "Kubernetes", "AWS", "Python"],
     "funding": [
-      {"stage": "Unicorn", "amount": "$1B+ valuation", "date": "2022+", "leadInvestors": ["SoftBank Vision Fund", "Microsoft"], "valuation": "$1B+"}
+      {"stage": "Unicorn", "amount": "$1B+ valuation", "date": "2022+", "leadInvestors": ["KKR", "Partners Group", "Peak XV"], "valuation": "$1B+"}
     ],
     "founders": [
-      {"name": "Jayadeep Pati", "role": "Co-founder", "previous": "Enterprise SaaS"},
-      {"name": "Chaitanya Peddi", "role": "Co-founder", "previous": "Product & Growth"},
-      {"name": "Rohit Chennamaneni", "role": "Co-founder", "previous": "Technology"}
+      {"name": "Jayant Paleti", "role": "Co-founder"},
+      {"name": "Rohit Chennamaneni", "role": "Co-founder"},
+      {"name": "Chaitanya Peddi", "role": "Co-founder"},
+      {"name": "Vineet Singh", "role": "Co-founder"}
     ],
-    "benefits": ["Health insurance", "Flexible leave", "Learning stipend", "Hybrid friendly"],
-    "investors": ["SoftBank Vision Fund", "Microsoft", "Sequoia"],
+    "benefits": ["Health insurance", "Learning stipend", "Hybrid options"],
+    "investors": ["KKR", "Partners Group", "Salesforce Ventures", "Microsoft", "Peak XV", "TCV", "Lightspeed"],
+    "socials": {"linkedin": "https://www.linkedin.com/company/thedarwinbox"},
     "origin": {"type": "Local Unicorn", "anchorCompany": "Hyderabad HQ"},
-    "location": {"area": "HITEC City", "building": "Raidurg / Knowledge City corridor", "coordinates": [78.3752, 17.4448]},
+    "location": {
+      "area": "HITEC City",
+      "building": "3rd & 4th Floor, Skootr Forest, Block C, RMZ Futura, Plot 14 & 15, Phase 2, HITEC City",
+      "coordinates": [78.3768, 17.4475]
+    },
     "hiring": {
       "isHiring": true,
       "careersUrl": "https://darwinbox.com/careers",
-      "jobs": [
-        {"id": "dar-1", "title": "Senior Backend Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹35–55 LPA", "techStack": ["Java", "AWS"], "applyUrl": "https://darwinbox.com/careers", "isFeatured": true, "description": "Build scalable HCM services used by global enterprises."},
-        {"id": "dar-2", "title": "Product Designer", "department": "Design", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹25–40 LPA", "techStack": ["Figma"], "applyUrl": "https://darwinbox.com/careers"}
-      ]
+      "jobs": []
     },
-    "vibes": ["🦄 Unicorn campus", "🚇 Near Raidurg", "🌏 Global customers"],
-    "isBoosted": true,
+    "vibes": ["🦄 Hyd unicorn", "🏢 RMZ Futura", "🌏 APAC enterprise"],
     "isPublished": true,
-    "source": "StartupBlink / Built In Hyderabad"
+    "source": "Official site / Mint / Darwinbox newsroom"
   },
   {
     "id": "keka",
     "name": "Keka HR",
-    "tagline": "People management software for growing companies",
-    "description": "Keka helps mid-market companies run payroll, attendance, performance and employee engagement without spreadsheet chaos.\n\nFrom Gachibowli, the team ships a polished HR suite loved by startups and scale-ups across India.",
+    "tagline": "PeopleOS for growing companies",
+    "description": "Keka is a Hyderabad-founded HRMS and payroll platform for mid-market teams.\n\nCorporate HQ is Vasavi Sky City on Telecom Nagar, Gachibowli (12th and 14th floors). Open roles are listed on Keka Careers and the live Freshteam board — not invented here.",
     "website": "https://www.keka.com",
-    "foundedYear": 2017,
+    "foundedYear": 2014,
     "teamSize": "501–1000",
     "category": "SaaS & Enterprise",
-    "stage": "Series B+",
+    "stage": "Series A",
     "techStack": [".NET", "React", "Azure", "SQL Server"],
     "funding": [
-      {"stage": "Series B+", "amount": "Undisclosed", "date": "2022+", "leadInvestors": ["WestBridge"]}
+      {"stage": "Series A", "amount": "WestBridge-backed", "date": "2022+", "leadInvestors": ["WestBridge"]}
     ],
-    "founders": [{"name": "Vijay Yalamanchili", "role": "Founder & CEO", "previous": "HRTech founder"}],
-    "benefits": ["Medical cover", "WFH setup support", "Learning budget"],
+    "founders": [{"name": "Vijay Yalamanchili", "role": "Founder & CEO"}],
+    "benefits": ["Medical cover", "Learning budget"],
     "investors": ["WestBridge"],
+    "socials": {"linkedin": "https://www.linkedin.com/company/keka-hr"},
     "origin": {"type": "Independent"},
-    "location": {"area": "Gachibowli", "building": "Keka HQ, Gachibowli", "coordinates": [78.3485, 17.4408]},
+    "location": {
+      "area": "Gachibowli",
+      "building": "12th & 14th Floor, Vasavi Sky City, Telecom Nagar, Gachibowli 500032",
+      "coordinates": [78.3512, 17.4408]
+    },
     "hiring": {
       "isHiring": true,
-      "careersUrl": "https://www.keka.com/careers",
-      "jobs": [
-        {"id": "kek-1", "title": "Full Stack Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹22–38 LPA", "techStack": ["React", ".NET"], "applyUrl": "https://www.keka.com/careers", "isFeatured": true},
-        {"id": "kek-2", "title": "Customer Success Manager", "department": "Sales", "type": "Full-time", "workMode": "On-site", "salaryRange": "₹12–20 LPA", "applyUrl": "https://www.keka.com/careers"}
-      ]
+      "careersUrl": "https://keka.freshteam.com/jobs",
+      "jobs": []
     },
-    "vibes": ["💚 Strong culture", "🏢 Gachibowli HQ", "📈 Fast shipping"],
-    "isBoosted": true,
+    "vibes": ["💚 PeopleOS", "🏢 Vasavi Sky City", "📈 Mid-market SaaS"],
     "isPublished": true,
-    "source": "StartupBlink"
+    "source": "keka.com/llm-info / official careers"
   },
   {
     "id": "skyroot",
     "name": "Skyroot Aerospace",
-    "tagline": "Private space launch vehicles built in Hyderabad",
-    "description": "Skyroot is building India's private launch capability with the Vikram rocket family for small satellite missions.\n\nThe company combines propulsion, structures and mission software under one deeptech stack in Hyderabad.",
+    "tagline": "Private orbital launch vehicles from Hyderabad",
+    "description": "Skyroot builds the Vikram family of small-satellite launch vehicles. Founders Pawan Kumar Chandana and Naga Bharath Daka are former ISRO scientists.\n\nInfinity Campus (about 2 lakh sq ft) is at Imarath Kancha Hardware Park on Srisailam Road, Pahadi Sharif. In May 2026 Skyroot became India’s first spacetech unicorn after a $60M round at $1.1B. Inc42 later reported a bid process for about $200M at a $2B ask.",
     "website": "https://skyroot.in",
     "foundedYear": 2018,
-    "teamSize": "201–500",
+    "teamSize": "501–1000",
     "category": "Space & Aerospace",
-    "stage": "Series B+",
+    "stage": "Unicorn",
     "techStack": ["C++", "Python", "MATLAB", "Embedded"],
     "funding": [
-      {"stage": "Series B+", "amount": "$50M+", "date": "2023+", "leadInvestors": ["GIC", "Temasek"]}
+      {"stage": "Unicorn", "amount": "$60M at $1.1B", "date": "May 2026", "leadInvestors": ["Sherpalo Ventures", "GIC"], "valuation": "$1.1B"}
     ],
     "founders": [
       {"name": "Pawan Kumar Chandana", "role": "Co-founder & CEO", "previous": "ISRO"},
       {"name": "Naga Bharath Daka", "role": "Co-founder & COO", "previous": "ISRO"}
     ],
-    "benefits": ["Mission ownership", "Deeptech lab access", "Health cover"],
-    "investors": ["GIC", "Temasek", "Greenko"],
+    "benefits": ["Mission hardware", "Health cover"],
+    "investors": ["Sherpalo Ventures", "GIC", "Temasek", "Greenko", "BlackRock", "Arkam Ventures"],
+    "socials": {"linkedin": "https://www.linkedin.com/company/skyroot-aerospace"},
     "origin": {"type": "Independent", "anchorCompany": "ISRO alumni"},
-    "location": {"area": "Financial District", "building": "Skyroot facilities corridor", "coordinates": [78.3432, 17.4215]},
+    "location": {
+      "area": "Shamshabad",
+      "building": "Infinity Campus, Imarath Kancha Hardware Park, UDL 17, Sy No. 1/1, Srisailam Road, Pahadi Sharif 500005",
+      "coordinates": [78.4585, 17.2685]
+    },
     "hiring": {
       "isHiring": true,
       "careersUrl": "https://skyroot.in/careers",
-      "jobs": [
-        {"id": "sky-1", "title": "Propulsion Engineer", "department": "Engineering", "type": "Full-time", "workMode": "On-site", "salaryRange": "₹18–32 LPA", "techStack": ["MATLAB", "CFD"], "applyUrl": "https://skyroot.in/careers", "isFeatured": true}
-      ]
+      "jobs": []
     },
-    "vibes": ["🚀 Rockets", "🧪 Hardware labs", "🇮🇳 Make-in-India"],
+    "vibes": ["🚀 Vikram rockets", "🏭 Hardware Park", "🦄 Spacetech unicorn"],
     "isPublished": true,
-    "source": "StartupBlink"
+    "source": "GST address / Entrackr / Inc42 / PM India"
+  },
+  {
+    "id": "highradius",
+    "name": "HighRadius",
+    "tagline": "Autonomous finance for the office of the CFO",
+    "description": "HighRadius is a Hyderabad-born autonomous finance company (Houston global HQ) focused on order-to-cash, AP and treasury.\n\nThe India registered office is Building 12C, Raheja Mindspace, Madhapur. Roles are posted on the company careers site.",
+    "website": "https://www.highradius.com",
+    "foundedYear": 2006,
+    "teamSize": "1001–5000",
+    "category": "Fintech",
+    "stage": "Series B+",
+    "techStack": ["Java", "Python", "AWS", "AI agents"],
+    "funding": [
+      {"stage": "Series B+", "amount": "Series C+", "leadInvestors": ["Enterprise software investors"]}
+    ],
+    "founders": [{"name": "Sashi Narahari", "role": "Founder"}],
+    "benefits": ["Enterprise campus", "Learning programs"],
+    "investors": [],
+    "socials": {"linkedin": "https://www.linkedin.com/company/highradius"},
+    "origin": {"type": "Independent", "anchorCompany": "Hyderabad-founded"},
+    "location": {
+      "area": "Madhapur",
+      "building": "1st Floor, Building 12C, Raheja Mindspace, HITEC City, Madhapur 500081",
+      "coordinates": [78.3778, 17.4432]
+    },
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.highradius.com/careers/",
+      "jobs": []
+    },
+    "vibes": ["🏦 CFO stack", "🏢 Mindspace 12C", "🤖 Finance AI"],
+    "isPublished": true,
+    "source": "highradius.com/contact"
+  },
+  {
+    "id": "zaggle",
+    "name": "Zaggle",
+    "tagline": "Spend management SaaS, publicly listed",
+    "description": "Zaggle is a Hyderabad B2B SaaS fintech for employee expenses, benefits and vendor payments (NSE: ZAGGLE).\n\nHQ is the 15th floor, Western Block, Vamsiram Suvarna Durga Tech Park, Nanakramguda. Open Hyderabad roles are listed on zaggle.in/careers.",
+    "website": "https://www.zaggle.in",
+    "foundedYear": 2011,
+    "teamSize": "201–500",
+    "category": "Fintech",
+    "stage": "Public",
+    "techStack": ["Java", "React", "Payments"],
+    "funding": [
+      {"stage": "Public", "amount": "NSE: ZAGGLE", "leadInvestors": []}
+    ],
+    "founders": [{"name": "Raj P. Narayanam", "role": "Founder & Executive Chairman"}],
+    "benefits": ["Public-company ops", "Hyd HQ"],
+    "investors": [],
+    "socials": {"linkedin": "https://www.linkedin.com/company/zaggleapp"},
+    "origin": {"type": "Independent"},
+    "location": {
+      "area": "Nanakramguda",
+      "building": "15th Floor, Western Block, Vamsiram Suvarna Durga Tech Park, Nanakramguda 500032",
+      "coordinates": [78.3448, 17.4185]
+    },
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.zaggle.in/careers",
+      "jobs": []
+    },
+    "vibes": ["📈 Listed SaaS", "💳 Spend ops", "🏢 Financial District"],
+    "isPublished": true,
+    "source": "zaggle.in/careers / Hindu Business Line"
+  },
+  {
+    "id": "recykal",
+    "name": "Recykal",
+    "tagline": "Digital circular-economy marketplace",
+    "description": "Recykal is a Hyderabad circular-economy platform connecting brands, recyclers and cities across plastic, paper, metal, e-waste and more.\n\nHQ is 134/2 Platinum Street, HITEC City, opposite SLN Terminus, Kondapur. Hiring is listed on the official Work With Us page.",
+    "website": "https://www.recykal.com",
+    "foundedYear": 2016,
+    "teamSize": "201–500",
+    "category": "Deeptech & Hardware",
+    "stage": "Series B+",
+    "techStack": ["Marketplace", "Cloud", "Traceability"],
+    "funding": [
+      {"stage": "Series B+", "amount": "Series B", "leadInvestors": []}
+    ],
+    "founders": [],
+    "benefits": ["Climate mission"],
+    "investors": [],
+    "socials": {"linkedin": "https://www.linkedin.com/company/recykaldotcom"},
+    "origin": {"type": "Independent"},
+    "location": {
+      "area": "Kondapur",
+      "building": "134/2, Platinum Street, HITEC City, opp. SLN Terminus, Kondapur 500032",
+      "coordinates": [78.3678, 17.4578]
+    },
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.recykal.com/work-with-us",
+      "jobs": []
+    },
+    "vibes": ["♻️ Circularity", "📍 SLN Terminus", "🌍 Climate tech"],
+    "isPublished": true,
+    "source": "recykal.com / LinkedIn HQ"
+  },
+  {
+    "id": "dhruva",
+    "name": "Dhruva Space",
+    "tagline": "Full-stack space engineering from Begumpet",
+    "description": "Dhruva Space is a Hyderabad space-engineering company across satellite, launch and ground segments.\n\nRegistered office: #702, Block-I, White House, Begumpet. Live openings sit on dhruvaspace.com/careers. Inc42 listed Dhruva among Hyderabad startups that raised in H1 2026.",
+    "website": "https://www.dhruvaspace.com",
+    "foundedYear": 2012,
+    "teamSize": "51–200",
+    "category": "Space & Aerospace",
+    "stage": "Series A",
+    "techStack": ["Embedded", "RF", "Systems engineering"],
+    "funding": [
+      {"stage": "Series A", "date": "2026", "leadInvestors": []}
+    ],
+    "founders": [],
+    "benefits": ["Space hardware"],
+    "investors": [],
+    "socials": {"linkedin": "https://www.linkedin.com/company/dhruvaspace"},
+    "origin": {"type": "Independent"},
+    "location": {
+      "area": "Begumpet",
+      "building": "#702, 6-3-1192/1/1, Block-I, White House, Begumpet 500016",
+      "coordinates": [78.4688, 17.444]
+    },
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://www.dhruvaspace.com/careers",
+      "jobs": []
+    },
+    "vibes": ["🛰️ Satellites", "🏛️ White House Begumpet", "🇮🇳 Space stack"],
+    "isPublished": true,
+    "source": "dhruvaspace.com/careers / Inc42 H1 2026"
   },
   {
     "id": "nxtwave",
     "name": "NxtWave",
-    "tagline": "Intensive tech education for India's next builders",
-    "description": "NxtWave runs outcome-driven CCBP programs that help students and early professionals become job-ready developers.\n\nThe Hyderabad-born edtech company mixes product-led learning with high-touch mentorship.",
+    "tagline": "CCBP programs that train job-ready developers",
+    "description": "NxtWave (CCBP) is a Hyderabad edtech company founded by Rahul Attuluri (ex-Amazon, IIIT-H), Sashank Reddy and Anupam Pedarla.\n\nCampus addresses published by NxtWave include Sohini Tech Park, 8th floor, Nanakramguda / Financial District. Roles go through nxtwave.freshteam.com — we do not invent titles or salaries.",
     "website": "https://www.ccbp.in",
     "foundedYear": 2020,
     "teamSize": "501–1000",
     "category": "Edtech",
-    "stage": "Series B+",
-    "techStack": ["Python", "React", "Node.js", "PostgreSQL"],
+    "stage": "Series A",
+    "techStack": ["Python", "React", "Node.js"],
     "funding": [
-      {"stage": "Series B+", "amount": "$50M+", "date": "2024+", "leadInvestors": ["General Catalyst"]}
+      {"stage": "Series A", "amount": "₹275 crore (Feb 2023)", "date": "Feb 2023", "leadInvestors": ["Greater Pacific Capital"]}
     ],
     "founders": [
-      {"name": "Sashank Reddy", "role": "Co-founder", "previous": "Edtech"},
-      {"name": "Rahul Attuluri", "role": "Co-founder", "previous": "Amazon"}
+      {"name": "Rahul Attuluri", "role": "Co-founder", "previous": "Amazon / IIIT Hyderabad"},
+      {"name": "Sashank Reddy", "role": "Co-founder", "previous": "IIT Bombay"},
+      {"name": "Anupam Pedarla", "role": "Co-founder", "previous": "IIT Kharagpur"}
     ],
-    "benefits": ["Learning culture", "Flexible hours", "Medical insurance"],
-    "investors": ["General Catalyst", "Better Capital"],
+    "benefits": ["Learning culture"],
+    "investors": ["Greater Pacific Capital", "General Catalyst", "Better Capital"],
+    "socials": {"linkedin": "https://www.linkedin.com/company/nxtwave"},
     "origin": {"type": "Ex-BigTech", "anchorCompany": "Amazon HYD"},
-    "location": {"area": "Madhapur", "building": "NxtWave campus / Madhapur", "coordinates": [78.3911, 17.4407]},
+    "location": {
+      "area": "Nanakramguda",
+      "building": "8th Floor, Sohini Tech Park, Nanakramguda Road, Financial District 500032",
+      "coordinates": [78.3448, 17.4192]
+    },
     "hiring": {
       "isHiring": true,
-      "careersUrl": "https://www.ccbp.in",
-      "jobs": [
-        {"id": "nxt-1", "title": "Curriculum Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹15–28 LPA", "techStack": ["Python", "React"], "applyUrl": "https://www.ccbp.in", "isFeatured": true},
-        {"id": "nxt-2", "title": "Growth Marketer", "department": "Growth", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹12–22 LPA", "applyUrl": "https://www.ccbp.in"}
-      ]
+      "careersUrl": "https://nxtwave.freshteam.com/jobs",
+      "jobs": []
     },
-    "vibes": ["📚 Builder culture", "🧑‍🏫 Mentorship", "🌱 High energy"],
+    "vibes": ["📚 CCBP", "🧑‍💻 Builder school", "🏢 Sohini Tech Park"],
     "isPublished": true,
-    "source": "StartupBlink"
+    "source": "ccbp.in/contact-us / Freshteam"
+  },
+  {
+    "id": "fourthpartner",
+    "name": "Fourth Partner Energy",
+    "tagline": "Commercial & industrial renewable energy",
+    "description": "Fourth Partner Energy is a Hyderabad-headquartered C&I renewable energy company with offices across India.\n\nHead office: Fourth Partner House, Plot N46, 4-9-10, HMT Nagar, Nacharam. Careers are listed at fourthpartner.co/careers.",
+    "website": "https://fourthpartner.co",
+    "foundedYear": 2010,
+    "teamSize": "251–1000",
+    "category": "Deeptech & Hardware",
+    "stage": "Series B+",
+    "techStack": ["Energy ops", "Asset management"],
+    "funding": [
+      {"stage": "Series B+", "amount": "PE-backed", "leadInvestors": ["The Rise Fund", "IFC", "ADB"]}
+    ],
+    "founders": [
+      {"name": "Saif Dhorajiwala", "role": "Co-founder"},
+      {"name": "Vikas Saluguti", "role": "Co-founder"},
+      {"name": "Vivek Subramanian", "role": "Co-founder"}
+    ],
+    "benefits": ["Climate infrastructure"],
+    "investors": ["The Rise Fund", "IFC", "Asian Development Bank", "British International Investment"],
+    "socials": {"linkedin": "https://www.linkedin.com/company/fourth-partner-energy-private-limited"},
+    "origin": {"type": "Independent"},
+    "location": {
+      "area": "Nacharam",
+      "building": "Fourth Partner House, Plot N46, H.No. 4-9-10, HMT Nagar, Nacharam 500076",
+      "coordinates": [78.5598, 17.4235]
+    },
+    "hiring": {
+      "isHiring": true,
+      "careersUrl": "https://fourthpartner.co/careers/",
+      "jobs": []
+    },
+    "vibes": ["☀️ C&I solar", "🏠 HMT Nagar HQ", "🌱 Energy transition"],
+    "isPublished": true,
+    "source": "fourthpartner.co/contact-us"
   },
   {
     "id": "bluecopa",
     "name": "Bluecopa",
-    "tagline": "AI & automation for finance operations",
-    "description": "Bluecopa helps finance teams automate reconciliation, reporting and operational workflows with AI.\n\nA T-Hub ecosystem company, it is building the modern finance ops layer for Indian enterprises.",
+    "tagline": "AI automation for finance operations",
+    "description": "Bluecopa builds finance-operations automation for enterprise teams and is part of the T-Hub ecosystem in Hyderabad.\n\nMapped to T-Hub Phase 2, Raidurg. Roles, if open, are on the official careers page only.",
     "website": "https://www.bluecopa.com",
     "foundedYear": 2021,
     "teamSize": "51–100",
     "category": "Fintech",
     "stage": "Series A",
-    "techStack": ["Python", "TypeScript", "AWS", "dbt"],
+    "techStack": ["Python", "TypeScript", "AWS"],
     "funding": [
-      {"stage": "Series A", "amount": "Undisclosed", "date": "2024+", "leadInvestors": ["Elevation Capital"]}
+      {"stage": "Series A", "leadInvestors": ["Elevation Capital"]}
     ],
-    "founders": [{"name": "Bluecopa Founding Team", "role": "Founders", "previous": "Finance & SaaS"}],
-    "benefits": ["Hybrid work", "Learning stipend", "Health cover"],
+    "founders": [],
+    "benefits": ["Hybrid work"],
     "investors": ["Elevation Capital"],
     "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
-    "location": {"area": "HITEC City", "building": "T-Hub Phase 2", "coordinates": [78.3666, 17.4441]},
+    "location": {
+      "area": "Raidurg",
+      "building": "T-Hub Phase 2, Raidurg Knowledge City",
+      "coordinates": [78.3802, 17.4448]
+    },
     "hiring": {
       "isHiring": true,
       "careersUrl": "https://www.bluecopa.com/careers",
-      "jobs": [
-        {"id": "blu-1", "title": "ML Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹24–40 LPA", "techStack": ["Python", "AWS"], "applyUrl": "https://www.bluecopa.com/careers", "isFeatured": true}
-      ]
+      "jobs": []
     },
-    "vibes": ["🏦 Finance ops", "🚀 T-Hub DNA", "🤖 AI automation"],
-    "isBoosted": true,
+    "vibes": ["🏦 Finance ops", "🚀 T-Hub", "🤖 Automation"],
     "isPublished": true,
-    "source": "T-Hub"
+    "source": "bluecopa.com / T-Hub ecosystem"
   },
   {
     "id": "bhanzu",
     "name": "Bhanzu",
-    "tagline": "Making every child love mathematics",
-    "description": "Bhanzu is an edtech company building engaging math learning experiences for students.\n\nIts product and growth teams combine pedagogy with high-retention consumer experiences.",
+    "tagline": "Math learning built around performance pedagogy",
+    "description": "Bhanzu is a Hyderabad-founded edtech company created by educator Neelakantha Bhanu Prakash.\n\nWe pin the company to Jubilee Hills as a city base (exact studio floor is not published). Apply only via the official careers page.",
     "website": "https://bhanzu.com",
     "foundedYear": 2020,
     "teamSize": "201–500",
@@ -177,57 +356,96 @@
     "stage": "Series B+",
     "techStack": ["React", "Node.js", "Python"],
     "funding": [
-      {"stage": "Series B+", "amount": "$30M+", "date": "2023+", "leadInvestors": ["Peak XV"]}
+      {"stage": "Series B+", "leadInvestors": ["Peak XV", "Goodwater"]}
     ],
-    "founders": [{"name": "Neelakantha Bhanu", "role": "Founder", "previous": "Educator & performer"}],
-    "benefits": ["Creative culture", "Health benefits", "Flexible leave"],
+    "founders": [{"name": "Neelakantha Bhanu Prakash", "role": "Founder"}],
+    "benefits": ["Creative culture"],
     "investors": ["Peak XV", "Goodwater"],
     "origin": {"type": "Independent"},
-    "location": {"area": "Jubilee Hills", "building": "Bhanzu Hyderabad base", "coordinates": [78.4071, 17.4304]},
+    "location": {
+      "area": "Jubilee Hills",
+      "building": "Hyderabad base (studio address not published on the careers page)",
+      "coordinates": [78.4071, 17.4304]
+    },
     "hiring": {
       "isHiring": true,
       "careersUrl": "https://bhanzu.com/careers",
-      "jobs": [
-        {"id": "bha-1", "title": "Product Manager", "department": "Product", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹25–40 LPA", "applyUrl": "https://bhanzu.com/careers"}
-      ]
+      "jobs": []
     },
-    "vibes": ["🎓 Education impact", "🎨 Creative teams"],
+    "vibes": ["🎓 Math edtech", "🎨 Performance-led"],
     "isPublished": true,
-    "source": "StartupBlink"
+    "source": "bhanzu.com"
+  },
+  {
+    "id": "nowfloats",
+    "name": "NowFloats",
+    "tagline": "Cloud products for local digital commerce",
+    "description": "NowFloats is a Hyderabad company that builds digital-experience products for SMBs and brands.\n\nLinkedIn lists HQ at 6th Floor, D Block, iLabs Centre, Plot 18, Madhapur. No public careers board is wired here — hiring stays off until a live listing URL is added.",
+    "website": "https://www.nowfloats.com",
+    "foundedYear": 2012,
+    "teamSize": "201–500",
+    "category": "SaaS & Enterprise",
+    "stage": "Series B+",
+    "techStack": ["Cloud", "Web", "SaaS"],
+    "funding": [
+      {"stage": "Series B+", "amount": "$17.4M disclosed", "leadInvestors": []}
+    ],
+    "founders": [],
+    "benefits": [],
+    "investors": [],
+    "socials": {"linkedin": "https://www.linkedin.com/company/nowfloats"},
+    "origin": {"type": "Independent"},
+    "location": {
+      "area": "Madhapur",
+      "building": "6th Floor, D Block, iLabs Centre, Plot 18, Software Units Layout, Madhapur 500081",
+      "coordinates": [78.3812, 17.4472]
+    },
+    "hiring": {
+      "isHiring": false,
+      "careersUrl": "",
+      "jobs": []
+    },
+    "vibes": ["🛒 SMB digital", "🏢 iLabs Centre"],
+    "isPublished": true,
+    "source": "LinkedIn company HQ"
   },
   {
     "id": "nephroplus",
     "name": "NephroPlus",
-    "tagline": "India's largest dialysis care network",
-    "description": "NephroPlus operates dialysis centres and care programs across India with a strong Hyderabad presence.\n\nThe company blends clinical operations with care-tech systems for better patient outcomes.",
+    "tagline": "India’s largest dialysis care network",
+    "description": "NephroPlus is a Hyderabad-born dialysis and kidney-care network operating clinics across India.\n\nMapped to Banjara Hills operations. We do not list invented clinical or tech roles; add a careers URL when the company publishes one.",
     "website": "https://www.nephroplus.com",
     "foundedYear": 2009,
     "teamSize": "1001–5000",
     "category": "Healthtech & Bio",
     "stage": "Series B+",
-    "techStack": ["Java", "React", "Cloud"],
+    "techStack": ["Care ops", "Cloud"],
     "funding": [
-      {"stage": "Series B+", "amount": "$100M+", "date": "2021+", "leadInvestors": ["International finance partners"]}
+      {"stage": "Series B+", "leadInvestors": []}
     ],
-    "founders": [{"name": "Kamal Shah / Vikram Vuppala (leadership)", "role": "Leadership", "previous": "Healthcare"}],
-    "benefits": ["Healthcare mission", "Insurance", "Stable ops culture"],
-    "investors": ["International finance partners"],
+    "founders": [{"name": "Vikram Vuppala", "role": "Founder & CEO"}],
+    "benefits": ["Healthcare mission"],
+    "investors": [],
     "origin": {"type": "Independent"},
-    "location": {"area": "Banjara Hills", "building": "NephroPlus Hyderabad ops", "coordinates": [78.4382, 17.4152]},
+    "location": {
+      "area": "Banjara Hills",
+      "building": "Hyderabad operations (clinic network HQ)",
+      "coordinates": [78.4382, 17.4152]
+    },
     "hiring": {
       "isHiring": false,
-      "careersUrl": "https://www.nephroplus.com",
+      "careersUrl": "",
       "jobs": []
     },
-    "vibes": ["🏥 Care network", "❤️ Impact-first"],
+    "vibes": ["🏥 Dialysis network", "❤️ Care-tech"],
     "isPublished": true,
-    "source": "StartupBlink"
+    "source": "nephroplus.com"
   },
   {
     "id": "callhealth",
     "name": "CallHealth",
-    "tagline": "Integrated healthcare delivery platform",
-    "description": "CallHealth connects diagnostics, doctor consults and home healthcare into one care delivery experience.\n\nThe Hyderabad company focuses on accessible, coordinated care for families and enterprises.",
+    "tagline": "Integrated diagnostics, consults and home care",
+    "description": "CallHealth is a Hyderabad healthcare delivery company spanning diagnostics, doctor consults and home healthcare.\n\nPinned to Madhapur. Homepage is not treated as a jobs board.",
     "website": "https://www.callhealth.com",
     "foundedYear": 2015,
     "teamSize": "501–1000",
@@ -235,29 +453,31 @@
     "stage": "Series B+",
     "techStack": ["Java", "Android", "AWS"],
     "funding": [
-      {"stage": "Series B+", "amount": "Undisclosed", "date": "2020+", "leadInvestors": ["Healthcare investors"]}
+      {"stage": "Series B+", "leadInvestors": []}
     ],
-    "founders": [{"name": "CallHealth Founding Team", "role": "Founders", "previous": "Healthcare"}],
-    "benefits": ["Healthcare mission", "Medical cover"],
-    "investors": ["Healthcare investors"],
+    "founders": [],
+    "benefits": [],
+    "investors": [],
     "origin": {"type": "Independent"},
-    "location": {"area": "Madhapur", "building": "CallHealth Hyderabad", "coordinates": [78.3869, 17.4328]},
+    "location": {
+      "area": "Madhapur",
+      "building": "CallHealth Hyderabad",
+      "coordinates": [78.3869, 17.4328]
+    },
     "hiring": {
-      "isHiring": true,
-      "careersUrl": "https://www.callhealth.com",
-      "jobs": [
-        {"id": "cal-1", "title": "Backend Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹16–28 LPA", "techStack": ["Java", "AWS"], "applyUrl": "https://www.callhealth.com"}
-      ]
+      "isHiring": false,
+      "careersUrl": "",
+      "jobs": []
     },
     "vibes": ["🩺 Care delivery", "🏠 Home health"],
     "isPublished": true,
-    "source": "StartupBlink"
+    "source": "callhealth.com"
   },
   {
     "id": "infinitylearn",
     "name": "Infinity Learn",
-    "tagline": "Personalized learning for school students",
-    "description": "Infinity Learn builds adaptive learning products for K-12 students across India.\n\nIts Hyderabad product org focuses on personalization, assessment and parent engagement.",
+    "tagline": "K-12 personalized learning from Hyderabad",
+    "description": "Infinity Learn (Sri Chaitanya group) builds adaptive K-12 learning products from Hyderabad.\n\nPinned to Kondapur. No invented engineering roles — careers stay empty until a dedicated listing URL is added.",
     "website": "https://infinitylearn.com",
     "foundedYear": 2019,
     "teamSize": "201–500",
@@ -265,201 +485,24 @@
     "stage": "Series A",
     "techStack": ["Kotlin", "React", "Python"],
     "funding": [
-      {"stage": "Series A", "amount": "Undisclosed", "date": "2022+", "leadInvestors": ["Edtech investors"]}
+      {"stage": "Series A", "leadInvestors": []}
     ],
-    "founders": [{"name": "Infinity Learn Team", "role": "Founders", "previous": "Edtech"}],
-    "benefits": ["Learning culture", "Hybrid options"],
-    "investors": ["Edtech investors"],
+    "founders": [],
+    "benefits": [],
+    "investors": [],
     "origin": {"type": "Independent"},
-    "location": {"area": "Kondapur", "building": "Infinity Learn HYD", "coordinates": [78.3677, 17.4641]},
-    "hiring": {
-      "isHiring": true,
-      "careersUrl": "https://infinitylearn.com",
-      "jobs": [
-        {"id": "inf-1", "title": "Android Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹18–30 LPA", "techStack": ["Kotlin"], "applyUrl": "https://infinitylearn.com"}
-      ]
+    "location": {
+      "area": "Kondapur",
+      "building": "Infinity Learn Hyderabad",
+      "coordinates": [78.3677, 17.4641]
     },
-    "vibes": ["📱 Mobile-first", "👨‍👩‍👧 Parent apps"],
-    "isPublished": true,
-    "source": "StartupBlink"
-  },
-  {
-    "id": "cosmoserve",
-    "name": "Cosmoserve",
-    "tagline": "Technology for a cleaner orbital environment",
-    "description": "Cosmoserve is a T-Hub highlighted deeptech venture working on space debris and orbital sustainability challenges.\n\nThe team sits at the intersection of aerospace engineering and applied AI.",
-    "website": "https://www.t-hub.co/startups",
-    "foundedYear": 2022,
-    "teamSize": "11–25",
-    "category": "Space & Aerospace",
-    "stage": "Seed",
-    "techStack": ["Python", "C++", "Simulation"],
-    "funding": [
-      {"stage": "Seed", "amount": "Undisclosed", "date": "2024+", "leadInvestors": ["Deeptech angels"]}
-    ],
-    "founders": [{"name": "Cosmoserve Founders", "role": "Founders", "previous": "Space tech"}],
-    "benefits": ["Mission-driven", "Lab access"],
-    "investors": ["Deeptech angels"],
-    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
-    "location": {"area": "HITEC City", "building": "T-Hub Phase 2", "coordinates": [78.3658, 17.4434]},
-    "hiring": {
-      "isHiring": true,
-      "careersUrl": "https://www.t-hub.co/startups",
-      "jobs": [
-        {"id": "cos-1", "title": "Space Systems Intern", "department": "Engineering", "type": "Internship", "workMode": "On-site", "salaryRange": "₹40–70K / mo", "techStack": ["Python", "C++"], "applyUrl": "https://www.t-hub.co/startups"}
-      ]
-    },
-    "vibes": ["🛰️ Space tech", "🌱 Sustainability"],
-    "isPublished": true,
-    "source": "T-Hub"
-  },
-  {
-    "id": "xeeed",
-    "name": "Xeeed IO",
-    "tagline": "Edge AI, IoT and automation for industry",
-    "description": "Xeeed IO builds Edge AI and IoT automation solutions for industrial and enterprise environments.\n\nAs part of the T-Hub community, the company focuses on practical deployments outside the lab.",
-    "website": "https://www.t-hub.co/startups",
-    "foundedYear": 2021,
-    "teamSize": "11–25",
-    "category": "AI & Data",
-    "stage": "Seed",
-    "techStack": ["Python", "Edge AI", "IoT"],
-    "funding": [
-      {"stage": "Seed", "amount": "Undisclosed", "date": "2023+", "leadInvestors": ["Angel network"]}
-    ],
-    "founders": [{"name": "Xeeed Founders", "role": "Founders", "previous": "IoT / AI"}],
-    "benefits": ["Hands-on hardware", "Flexible roles"],
-    "investors": ["Angel network"],
-    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
-    "location": {"area": "Madhapur", "building": "T-Hub ecosystem", "coordinates": [78.3728, 17.4337]},
-    "hiring": {
-      "isHiring": true,
-      "careersUrl": "https://www.t-hub.co/startups",
-      "jobs": [
-        {"id": "xee-1", "title": "Edge AI Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹16–28 LPA", "techStack": ["Python", "PyTorch"], "applyUrl": "https://www.t-hub.co/startups"}
-      ]
-    },
-    "vibes": ["📡 Edge devices", "🏭 Industry AI"],
-    "isPublished": true,
-    "source": "T-Hub"
-  },
-  {
-    "id": "neerovel",
-    "name": "Neerovel",
-    "tagline": "IoT & AI for smart water management",
-    "description": "Neerovel uses sensors and intelligence to help cities and campuses manage water more efficiently.\n\nThe T-Hub associated startup focuses on measurable sustainability outcomes.",
-    "website": "https://www.t-hub.co/startups",
-    "foundedYear": 2020,
-    "teamSize": "11–25",
-    "category": "Deeptech & Hardware",
-    "stage": "Seed",
-    "techStack": ["IoT", "Python", "Cloud"],
-    "funding": [
-      {"stage": "Seed", "amount": "Undisclosed", "date": "2023+", "leadInvestors": ["Climate angels"]}
-    ],
-    "founders": [{"name": "Neerovel Founders", "role": "Founders", "previous": "Climate / IoT"}],
-    "benefits": ["Impact work", "Field + product mix"],
-    "investors": ["Climate angels"],
-    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
-    "location": {"area": "Gachibowli", "building": "T-Hub / IIIT corridor", "coordinates": [78.3496, 17.4452]},
     "hiring": {
       "isHiring": false,
-      "careersUrl": "https://www.t-hub.co/startups",
+      "careersUrl": "",
       "jobs": []
     },
-    "vibes": ["💧 Water tech", "🌍 Climate impact"],
+    "vibes": ["📱 K-12 apps", "👨‍👩‍👧 Parent tools"],
     "isPublished": true,
-    "source": "T-Hub"
-  },
-  {
-    "id": "orbit-ai",
-    "name": "Orbit AI",
-    "tagline": "Autonomous copilots for industrial operations",
-    "description": "Orbit AI gives operations teams a live intelligence layer across factories and field assets.\n\nIts Hyderabad team combines multimodal models with edge inference to catch failures before they happen.",
-    "website": "https://example.com/orbit-ai",
-    "foundedYear": 2022,
-    "teamSize": "51–100",
-    "category": "AI & Data",
-    "stage": "Series A",
-    "techStack": ["Python", "PyTorch", "Rust", "Kubernetes"],
-    "funding": [
-      {"stage": "Series A", "amount": "$8.5M", "date": "Mar 2026", "leadInvestors": ["Peak XV Surge", "Together Fund"]}
-    ],
-    "founders": [{"name": "Ex-Microsoft founders", "role": "Founders", "previous": "Microsoft IDC"}],
-    "benefits": ["Dog-friendly", "Learning budget", "Hybrid"],
-    "investors": ["Peak XV Surge", "Together Fund"],
-    "origin": {"type": "Ex-BigTech", "anchorCompany": "Microsoft IDC"},
-    "location": {"area": "Gachibowli", "building": "Knowledge City, Tower 2", "coordinates": [78.3778, 17.4349]},
-    "hiring": {
-      "isHiring": true,
-      "careersUrl": "https://example.com/orbit-ai/careers",
-      "jobs": [
-        {"id": "orb-1", "title": "Senior ML Engineer", "department": "Data/AI", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹28–42 LPA", "techStack": ["PyTorch", "Python"], "applyUrl": "https://example.com/apply/orb-1", "isFeatured": true}
-      ]
-    },
-    "vibes": ["🚇 6m to Raidurg", "☕ Great coffee"],
-    "isBoosted": true,
-    "isPublished": true,
-    "source": "HydTechPulse curated"
-  },
-  {
-    "id": "quanta-sec",
-    "name": "QuantaSec",
-    "tagline": "Identity security built for machine agents",
-    "description": "QuantaSec issues short-lived credentials to autonomous software agents.\n\nSecurity teams get policy, evidence and revocation in one control plane.",
-    "website": "https://example.com/quanta",
-    "foundedYear": 2024,
-    "teamSize": "11–25",
-    "category": "SaaS & Enterprise",
-    "stage": "Seed",
-    "techStack": ["Rust", "Go", "WebAssembly"],
-    "funding": [
-      {"stage": "Seed", "amount": "$2.2M", "date": "Apr 2026", "leadInvestors": ["Accel"]}
-    ],
-    "founders": [{"name": "Ex-Microsoft security team", "role": "Founders", "previous": "Microsoft IDC"}],
-    "benefits": ["Security guild", "Latest hardware", "Hybrid"],
-    "investors": ["Accel"],
-    "origin": {"type": "Ex-BigTech", "anchorCompany": "Microsoft IDC"},
-    "location": {"area": "Financial District", "building": "GAR Infobahn", "coordinates": [78.3508, 17.4149]},
-    "hiring": {
-      "isHiring": true,
-      "careersUrl": "https://example.com/quanta/jobs",
-      "jobs": [
-        {"id": "qua-1", "title": "Security Engineer", "department": "Engineering", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹26–38 LPA", "techStack": ["Rust", "IAM"], "applyUrl": "https://example.com/apply/qua-1", "isFeatured": true}
-      ]
-    },
-    "vibes": ["🔐 Security guild", "🚌 Metro shuttle"],
-    "isPublished": true,
-    "source": "HydTechPulse curated"
-  },
-  {
-    "id": "cloudmint",
-    "name": "CloudMint",
-    "tagline": "FinOps autopilot for cloud-native teams",
-    "description": "CloudMint continuously maps cloud spend to engineering ownership and suggests safe savings.\n\nBuilt inside the T-Hub ecosystem for engineering leaders who need cost accountability without slowing delivery.",
-    "website": "https://example.com/cloudmint",
-    "foundedYear": 2023,
-    "teamSize": "11–25",
-    "category": "SaaS & Enterprise",
-    "stage": "Seed",
-    "techStack": ["Next.js", "Go", "ClickHouse", "AWS"],
-    "funding": [
-      {"stage": "Seed", "amount": "$2.4M", "date": "Feb 2026", "leadInvestors": ["Together Fund"]}
-    ],
-    "founders": [{"name": "T-Hub cohort founders", "role": "Founders", "previous": "Cloud infra"}],
-    "benefits": ["Dog-friendly", "Maker room", "Hybrid"],
-    "investors": ["Together Fund"],
-    "origin": {"type": "T-Hub Cohort", "anchorCompany": "T-Hub"},
-    "location": {"area": "Madhapur", "building": "Sattva Knowledge City", "coordinates": [78.3728, 17.4337]},
-    "hiring": {
-      "isHiring": true,
-      "careersUrl": "https://example.com/cloudmint/careers",
-      "jobs": [
-        {"id": "clo-1", "title": "Founding Product Manager", "department": "Product", "type": "Full-time", "workMode": "Hybrid", "salaryRange": "₹24–34 LPA", "techStack": ["FinOps", "B2B SaaS"], "applyUrl": "https://example.com/apply/clo-1"}
-      ]
-    },
-    "vibes": ["🐕 Dog-friendly", "🍜 8m to DLF"],
-    "isPublished": true,
-    "source": "T-Hub inspired"
+    "source": "infinitylearn.com"
   }
 ]

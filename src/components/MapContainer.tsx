@@ -7,7 +7,8 @@ import { circle, featureCollection, lineString } from "@turf/turf";
 import { Flame, Search } from "lucide-react";
 import thirdspacesData from "@/data/thirdspaces.json";
 import lineageData from "@/data/lineage.json";
-import type { CorridorPulse, LineageConnection, Mode, NewsItem, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
+import landmarksData from "@/data/landmarks.json";
+import type { CityLandmark, CorridorPulse, LineageConnection, Mode, NewsItem, RoadBillboard, Startup, TechEvent, ThirdSpace } from "@/types";
 import { AREA_CENTERS, buildAreaInsights } from "@/utils/distance";
 import { resolveCorridorSlots } from "@/utils/corridors";
 import CorridorDock from "./CorridorDock";
@@ -15,12 +16,13 @@ import NewsPeek from "./NewsPeek";
 
 const spaces = thirdspacesData as ThirdSpace[];
 const lineage = lineageData as LineageConnection[];
+const landmarks = landmarksData as unknown as CityLandmark[];
 
 const DEFAULT_CENTER: [number, number] = [78.43, 17.405];
 const DEFAULT_VIEW = { center: DEFAULT_CENTER, zoom: 11.2, pitch: 28, bearing: -10 } as const;
 const QUICK_AREAS = [
   "HITEC City", "Madhapur", "Gachibowli", "Financial District",
-  "Kondapur", "Jubilee Hills", "Banjara Hills", "Secunderabad", "Old City", "Uppal",
+  "Kondapur", "Jubilee Hills", "Banjara Hills", "Secunderabad", "Old City", "Uppal", "Shamshabad",
 ];
 
 type Props = {
@@ -40,6 +42,8 @@ type Props = {
   onSelectBillboard: (billboard: RoadBillboard) => void;
   onSubmitHoarding: () => void;
   onClaimCorridor: (slot: CorridorPulse) => void;
+  railsCollapsed?: boolean;
+  onOpenDirectory?: () => void;
 };
 
 function arcCoordinates(connection: LineageConnection) {
@@ -57,6 +61,7 @@ function arcCoordinates(connection: LineageConnection) {
 export default function MapContainer({
   mode, startups, events, billboards, news, selectedStartup, selectedEvent, hoveredId, commute, focusedArea,
   onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard, onSubmitHoarding, onClaimCorridor,
+  railsCollapsed, onOpenDirectory,
 }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
@@ -64,13 +69,15 @@ export default function MapContainer({
   const [showBillboards, setShowBillboards] = useState(true);
   const [showHeat, setShowHeat] = useState(true);
   const [newsOpen, setNewsOpen] = useState(false);
+  const [dockOpen, setDockOpen] = useState(true);
+  const [showLandmarks, setShowLandmarks] = useState(true);
   const corridorSlots = useMemo(() => resolveCorridorSlots(billboards), [billboards]);
   const [areaJump, setAreaJump] = useState("");
   const [areaMenuOpen, setAreaMenuOpen] = useState(false);
   const callbacksRef = useRef({ onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard });
-  const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode, corridorSlots });
+  const dataRef = useRef({ startups, events, billboards, focusedArea, showBillboards, mode, corridorSlots, showLandmarks });
   callbacksRef.current = { onSelectStartup, onSelectEvent, onFocusArea, onSelectBillboard };
-  dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode, corridorSlots };
+  dataRef.current = { startups, events, billboards, focusedArea, showBillboards, mode, corridorSlots, showLandmarks };
 
   const insights = useMemo(() => buildAreaInsights(startups), [startups]);
 
@@ -96,6 +103,7 @@ export default function MapContainer({
       showBillboards: boardsOn,
       mode: currentMode,
       corridorSlots: nextCorridors,
+      showLandmarks: landmarksOn,
     } = dataRef.current;
 
     nextStartups
@@ -164,6 +172,16 @@ export default function MapContainer({
             .setLngLat(billboard.coordinates)
             .addTo(map),
         );
+      });
+    }
+
+    if (landmarksOn) {
+      landmarks.forEach((landmark) => {
+        const element = document.createElement("div");
+        element.className = `landmark-label kind-${landmark.kind}`;
+        element.innerHTML = `<i></i><span>${landmark.name}</span>`;
+        element.title = landmark.building;
+        markersRef.current.push(new maplibregl.Marker({ element, anchor: "left" }).setLngLat(landmark.coordinates).addTo(map));
       });
     }
 
@@ -317,7 +335,7 @@ export default function MapContainer({
     if (!map) return;
     const update = () => renderMarkers(map);
     map.loaded() ? update() : map.once("load", update);
-  }, [startups, events, billboards, mode, showBillboards, focusedArea, corridorSlots]);
+  }, [startups, events, billboards, mode, showBillboards, focusedArea, corridorSlots, showLandmarks]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -456,6 +474,9 @@ export default function MapContainer({
         <button className={showHeat ? "active" : ""} onClick={() => setShowHeat((value) => !value)}>
           <Flame size={12} /> Hiring heat
         </button>
+        <button className={showLandmarks ? "active" : ""} onClick={() => setShowLandmarks((value) => !value)}>
+          Buildings
+        </button>
         <button onClick={onSubmitHoarding}>+ Spotted</button>
         <button onClick={() => {
           onFocusArea(null);
@@ -470,9 +491,17 @@ export default function MapContainer({
         <span><i className="legend-jobs" /> Open roles</span>
         <span><i className="legend-ooh" /> Corridor pulse</span>
         <span><i className="legend-heat" /> Hiring heat</span>
+        <span><i className="legend-landmark" /> Buildings</span>
       </div>
+      {railsCollapsed && onOpenDirectory && (
+        <button type="button" className="map-reopen-rail" onClick={onOpenDirectory}>
+          Show directory
+        </button>
+      )}
       <CorridorDock
         slots={corridorSlots}
+        collapsed={!dockOpen}
+        onToggle={() => setDockOpen((value) => !value)}
         onClaim={(slot) => {
           flyToArea(slot.name);
           onClaimCorridor(slot);
